@@ -1,0 +1,282 @@
+[
+  {
+    "date": "April 21, 2024",
+    "amount": "$938.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_390377XYZ",
+    "tenant_name": "Isla Morgan"
+  },
+  {
+    "date": "January 25, 2023",
+    "amount": "$1167.00",
+    "status": "Unpaid",
+    "method": "Card",
+    "id": "ch_298936XYZ",
+    "tenant_name": "Carmen Diaz"
+  },
+  {
+    "date": "May 17, 2024",
+    "amount": "$1174.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_140332XYZ",
+    "tenant_name": "Grace Kim"
+  },
+  {
+    "date": "December 20, 2024",
+    "amount": "$1011.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_450774XYZ",
+    "tenant_name": "Brian Smith"
+  },
+  {
+    "date": "January 08, 2025",
+    "amount": "$1197.00",
+    "status": "Paid",
+    "method": "Card",
+    "id": "ch_107168XYZ",
+    "tenant_name": "Alice Johnson"
+  },
+  {
+    "date": "May 08, 2024",
+    "amount": "$1032.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_285320XYZ",
+    "tenant_name": "Alice Johnson"
+  },
+  {
+    "date": "February 14, 2023",
+    "amount": "$1060.00",
+    "status": "Refunded",
+    "method": "ACH",
+    "id": "ch_541717XYZ",
+    "tenant_name": "Hassan Ali"
+  },
+  {
+    "date": "August 02, 2023",
+    "amount": "$1157.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_285073XYZ",
+    "tenant_name": "Frank Wilson"
+  },
+  {
+    "date": "July 28, 2024",
+    "amount": "$1058.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_548001XYZ",
+    "tenant_name": "Hassan Ali"
+  },
+  {
+    "date": "January 19, 2024",
+    "amount": "$1062.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_620655XYZ",
+    "tenant_name": "Brian Smith"
+  },
+  {
+    "date": "August 08, 2023",
+    "amount": "$1061.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_782570XYZ",
+    "tenant_name": "Frank Wilson"
+  },
+  {
+    "date": "November 11, 2024",
+    "amount": "$1174.00",
+    "status": "Refunded",
+    "method": "ACH",
+    "id": "ch_549021XYZ",
+    "tenant_name": "Derek Lee"
+  },
+  {
+    "date": "May 08, 2024",
+    "amount": "$1086.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_501684XYZ",
+    "tenant_name": "Isla Morgan"
+  },
+  {
+    "date": "May 24, 2024",
+    "amount": "$868.00",
+    "status": "Refunded",
+    "method": "ACH",
+    "id": "ch_369285XYZ",
+    "tenant_name": "Hassan Ali"
+  },
+  {
+    "date": "July 02, 2024",
+    "amount": "$961.00",
+    "status": "Unpaid",
+    "method": "Card",
+    "id": "ch_337525XYZ",
+    "tenant_name": "Brian Smith"
+  },
+  {
+    "date": "October 17, 2024",
+    "amount": "$1156.00",
+    "status": "Unpaid",
+    "method": "Card",
+    "id": "ch_546637XYZ",
+    "tenant_name": "Isla Morgan"
+  },
+  {
+    "date": "May 15, 2023",
+    "amount": "$1058.00",
+    "status": "Unpaid",
+    "method": "Card",
+    "id": "ch_496501XYZ",
+    "tenant_name": "Carmen Diaz"
+  },
+  {
+    "date": "August 22, 2024",
+    "amount": "$1181.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_275816XYZ",
+    "tenant_name": "Frank Wilson"
+  },
+  {
+    "date": "April 20, 2025",
+    "amount": "$1119.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_444103XYZ",
+    "tenant_name": "Jack Nguyen"
+  },
+  {
+    "date": "October 16, 2024",
+    "amount": "$1021.00",
+    "status": "Unpaid",
+    "method": "Card",
+    "id": "ch_337179XYZ",
+    "tenant_name": "Emily Tran"
+  },
+  {
+    "date": "February 16, 2025",
+    "amount": "$813.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_417746XYZ",
+    "tenant_name": "Alice Johnson"
+  },
+  {
+    "date": "August 07, 2024",
+    "amount": "$836.00",
+    "status": "Refunded",
+    "method": "Card",
+    "id": "ch_284400XYZ",
+    "tenant_name": "Carmen Diaz"
+  },
+  {
+    "date": "May 14, 2024",
+    "amount": "$1105.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_811534XYZ",
+    "tenant_name": "Derek Lee"
+  },
+  {
+    "date": "February 05, 2024",
+    "amount": "$1189.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_692857XYZ",
+    "tenant_name": "Jack Nguyen"
+  },
+  {
+    "date": "November 14, 2024",
+    "amount": "$832.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_242171XYZ",
+    "tenant_name": "Emily Tran"
+  },
+  {
+    "date": "January 23, 2023",
+    "amount": "$910.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_611145XYZ",
+    "tenant_name": "Derek Lee"
+  },
+  {
+    "date": "April 01, 2025",
+    "amount": "$965.00",
+    "status": "Refunded",
+    "method": "ACH",
+    "id": "ch_879599XYZ",
+    "tenant_name": "Grace Kim"
+  },
+  {
+    "date": "May 07, 2025",
+    "amount": "$1015.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_762344XYZ",
+    "tenant_name": "Alice Johnson"
+  },
+  {
+    "date": "November 19, 2023",
+    "amount": "$1083.00",
+    "status": "Paid",
+    "method": "Card",
+    "id": "ch_572197XYZ",
+    "tenant_name": "Jack Nguyen"
+  },
+  {
+    "date": "January 23, 2025",
+    "amount": "$1153.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_212468XYZ",
+    "tenant_name": "Derek Lee"
+  },
+  {
+    "date": "May 03, 2025",
+    "amount": "$1013.00",
+    "status": "Refunded",
+    "method": "ACH",
+    "id": "ch_275539XYZ",
+    "tenant_name": "Hassan Ali"
+  },
+  {
+    "date": "June 26, 2023",
+    "amount": "$891.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_751543XYZ",
+    "tenant_name": "Hassan Ali"
+  },
+  {
+    "date": "April 17, 2025",
+    "amount": "$870.00",
+    "status": "Unpaid",
+    "method": "ACH",
+    "id": "ch_205340XYZ",
+    "tenant_name": "Emily Tran"
+  },
+  {
+    "date": "August 06, 2024",
+    "amount": "$973.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_449421XYZ",
+    "tenant_name": "Derek Lee"
+  },
+  {
+    "date": "December 22, 2024",
+    "amount": "$825.00",
+    "status": "Paid",
+    "method": "ACH",
+    "id": "ch_585767XYZ",
+    "tenant_name": "Jack Nguyen"
+  }
+]

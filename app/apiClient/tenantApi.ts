@@ -1,0 +1,145 @@
+"use server";
+
+import { API_BASE_URL } from "@/constants/ApiEndpointsConstants";
+
+import {
+  CreateRes,
+  CreateServiceRequestDto,
+} from "@/types/tenantServiceRequest.types";
+// import { ListRes } from "../../types/serviceRequest.types";
+import { IPaymentSummary } from "@/types/payment.types";
+import { IServiceRequest } from "@/types/serviceRequest.types";
+import { IPaymentLinkResponse } from "@/types/stripe.types";
+import { api } from "./api";
+
+// TENANTS API CALLS
+
+/** Fetches the list of service requests and returns -------**/
+
+export async function getAllTenantServiceRequests() {
+  const res = await api<IServiceRequest>(`${API_BASE_URL}/service-requests`, {
+    method: "GET",
+    requireToken: true,
+  });
+  // unwrap the array and hand it back
+  return res;
+}
+
+export async function createTenantServiceRequest(dto: CreateServiceRequestDto) {
+  const res = await api<CreateRes>(`${API_BASE_URL}/service-requests`, {
+    method: "POST",
+    requireToken: true,
+    body: JSON.stringify(dto),
+  });
+  return res.data;
+}
+
+export async function getPaymentsHistory(tenantId: string) {
+  const res = await api<{
+    payments: Array<{
+      id: string;
+      datePaid: string;
+      amount: number;
+      status: string;
+      method: string;
+      confirmationId: string;
+      propertyName: string;
+      description: string;
+      receiptNumber: string;
+      source: string;
+    }>;
+    summary: {
+      totalPaid: number;
+      totalPayments: number;
+      successRate: number;
+      overdueAmount: number;
+    };
+  }>(`${API_BASE_URL}/payments/tenants/${tenantId}/payment-history`, {
+    method: "GET",
+    requireToken: true,
+  });
+
+  // Return the response data directly since the api function already unwraps the JSON
+  return res;
+}
+
+export async function getRentSummary() {
+  const res = await api<IPaymentSummary>(
+    `${API_BASE_URL}/payments/rent-summary`,
+    {
+      method: "GET",
+      requireToken: true,
+    }
+  );
+  return res.data;
+}
+
+export async function createPaymentLink(paymentData: {
+  tenantId: string;
+  currentDate: string;
+}) {
+  return api<IPaymentLinkResponse>(
+    `${API_BASE_URL}/payments/create-payment-link`,
+    {
+      method: "POST",
+      requireToken: true,
+      body: JSON.stringify(paymentData),
+    }
+  );
+}
+
+// Updated interface for the actual receipt response structure
+interface PaymentReceiptResponse {
+  id: string;
+  receiptNumber: string;
+  amount: number;
+  totalAmount: number;
+  lateFeeAmount: number;
+  type: string;
+  status: string;
+  dueDate: string;
+  paidDate: string;
+  description: string;
+  paymentMethod: string;
+  transactionId: string;
+  stripeTransactionId: string;
+  stripePaymentLinkId: string;
+  stripeSessionId: string;
+  stripePaymentIntentId: string;
+  tenant: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
+  property: {
+    id: string;
+    name: string;
+    address: string;
+    propertyType: string;
+    lotNumber: string;
+    unitNumber: string;
+  };
+  spot: {
+    id: string;
+    spotNumber: string;
+    spotType: string;
+  };
+  stripeAccount: {
+    id: string;
+    name: string;
+    stripeAccountId: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getPaymentBySessionId(sessionId: string) {
+  return api<PaymentReceiptResponse>(
+    `${API_BASE_URL}/payments/receipt/session/${sessionId}`,
+    {
+      method: "GET",
+      requireToken: true,
+    }
+  );
+}

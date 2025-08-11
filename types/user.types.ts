@@ -1,0 +1,14 @@
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+  token: string;
+  userData?: Record<string, unknown>;
+}
+
+export interface ISetTenantPassword {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}

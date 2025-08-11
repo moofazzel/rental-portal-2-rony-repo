@@ -1,0 +1,308 @@
+[
+  {
+    "id": "aa016587-2cd1-4d66-8230-851a57aedc7f",
+    "title": "Water Supply Maintenance",
+    "content": "Water Supply Maintenance will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-25T00:00:00Z",
+    "valid_from": "2025-06-25T00:00:00Z",
+    "valid_to": "2025-07-05T00:00:00Z",
+    "priority": "low",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "water_supply_maintenance.pdf",
+        "url": "https://yourwebsite.com/notices/files/water_supply_maintenance.pdf"
+      }
+    ]
+  },
+  {
+    "id": "584bf0f5-b257-4566-b103-1f032b7c800f",
+    "title": "Power Outage in Building C",
+    "content": "Power Outage in Building C will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-24T00:00:00Z",
+    "valid_from": "2025-06-24T00:00:00Z",
+    "valid_to": "2025-07-04T00:00:00Z",
+    "priority": "medium",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "power_outage_in_building_c.pdf",
+        "url": "https://yourwebsite.com/notices/files/power_outage_in_building_c.pdf"
+      }
+    ]
+  },
+  {
+    "id": "dbd16035-5b9a-4cf2-a30b-81c88246ad06",
+    "title": "Annual Fire Drill Notice",
+    "content": "Annual Fire Drill Notice will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-23T00:00:00Z",
+    "valid_from": "2025-06-23T00:00:00Z",
+    "valid_to": "2025-07-03T00:00:00Z",
+    "priority": "high",
+    "category": "Events",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "annual_fire_drill_notice.pdf",
+        "url": "https://yourwebsite.com/notices/files/annual_fire_drill_notice.pdf"
+      }
+    ]
+  },
+  {
+    "id": "7d8305a1-94d1-402d-9e40-ec04f58c2e10",
+    "title": "New Parking Regulations",
+    "content": "New Parking Regulations will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-22T00:00:00Z",
+    "valid_from": "2025-06-22T00:00:00Z",
+    "valid_to": "2025-07-02T00:00:00Z",
+    "priority": "low",
+    "category": "Maintenance",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "new_parking_regulations.pdf",
+        "url": "https://yourwebsite.com/notices/files/new_parking_regulations.pdf"
+      }
+    ]
+  },
+  {
+    "id": "a9a4092f-9c83-4e26-9531-86cd783dd3f2",
+    "title": "Elevator Maintenance Schedule",
+    "content": "Elevator Maintenance Schedule will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-21T00:00:00Z",
+    "valid_from": "2025-06-21T00:00:00Z",
+    "valid_to": "2025-07-01T00:00:00Z",
+    "priority": "high",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "elevator_maintenance_schedule.pdf",
+        "url": "https://yourwebsite.com/notices/files/elevator_maintenance_schedule.pdf"
+      }
+    ]
+  },
+  {
+    "id": "dc42ffa7-b57d-4447-872b-d7eaeb989ca8",
+    "title": "Community BBQ Event",
+    "content": "Community BBQ Event will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-20T00:00:00Z",
+    "valid_from": "2025-06-20T00:00:00Z",
+    "valid_to": "2025-06-30T00:00:00Z",
+    "priority": "high",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "community_bbq_event.pdf",
+        "url": "https://yourwebsite.com/notices/files/community_bbq_event.pdf"
+      }
+    ]
+  },
+  {
+    "id": "e7c91b2b-b84c-412f-87df-562dc6e4e70c",
+    "title": "Recycling Guidelines Update",
+    "content": "Recycling Guidelines Update will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-19T00:00:00Z",
+    "valid_from": "2025-06-19T00:00:00Z",
+    "valid_to": "2025-06-29T00:00:00Z",
+    "priority": "low",
+    "category": "Maintenance",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "recycling_guidelines_update.pdf",
+        "url": "https://yourwebsite.com/notices/files/recycling_guidelines_update.pdf"
+      }
+    ]
+  },
+  {
+    "id": "7d423c0c-8b46-4e07-bef4-8d4f6e3c2a1f",
+    "title": "Security Patrol Changes",
+    "content": "Security Patrol Changes will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-18T00:00:00Z",
+    "valid_from": "2025-06-18T00:00:00Z",
+    "valid_to": "2025-06-28T00:00:00Z",
+    "priority": "medium",
+    "category": "Policy",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "security_patrol_changes.pdf",
+        "url": "https://yourwebsite.com/notices/files/security_patrol_changes.pdf"
+      }
+    ]
+  },
+  {
+    "id": "f260da3e-52e8-414d-8005-0a4ba9d6abb9",
+    "title": "Noise Policy Reminder",
+    "content": "Noise Policy Reminder will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-17T00:00:00Z",
+    "valid_from": "2025-06-17T00:00:00Z",
+    "valid_to": "2025-06-27T00:00:00Z",
+    "priority": "medium",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "noise_policy_reminder.pdf",
+        "url": "https://yourwebsite.com/notices/files/noise_policy_reminder.pdf"
+      }
+    ]
+  },
+  {
+    "id": "49a27612-9c5c-4f6f-9de1-9517d7e7c828",
+    "title": "Swimming Pool Maintenance",
+    "content": "Swimming Pool Maintenance will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-16T00:00:00Z",
+    "valid_from": "2025-06-16T00:00:00Z",
+    "valid_to": "2025-06-26T00:00:00Z",
+    "priority": "high",
+    "category": "Utilities",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "swimming_pool_maintenance.pdf",
+        "url": "https://yourwebsite.com/notices/files/swimming_pool_maintenance.pdf"
+      }
+    ]
+  },
+  {
+    "id": "a3b41d23-94bc-4810-acfb-f087539cb459",
+    "title": "Winter Heating Instructions",
+    "content": "Winter Heating Instructions will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-15T00:00:00Z",
+    "valid_from": "2025-06-15T00:00:00Z",
+    "valid_to": "2025-06-25T00:00:00Z",
+    "priority": "low",
+    "category": "Policy",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "winter_heating_instructions.pdf",
+        "url": "https://yourwebsite.com/notices/files/winter_heating_instructions.pdf"
+      }
+    ]
+  },
+  {
+    "id": "832af782-44ed-44ab-95bb-8839012a16cf",
+    "title": "Smoke Detector Inspection",
+    "content": "Smoke Detector Inspection will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-14T00:00:00Z",
+    "valid_from": "2025-06-14T00:00:00Z",
+    "valid_to": "2025-06-24T00:00:00Z",
+    "priority": "high",
+    "category": "Policy",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "smoke_detector_inspection.pdf",
+        "url": "https://yourwebsite.com/notices/files/smoke_detector_inspection.pdf"
+      }
+    ]
+  },
+  {
+    "id": "1b79b77e-5356-4f13-9086-1e51920a305d",
+    "title": "Landscaping Work Notification",
+    "content": "Landscaping Work Notification will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-13T00:00:00Z",
+    "valid_from": "2025-06-13T00:00:00Z",
+    "valid_to": "2025-06-23T00:00:00Z",
+    "priority": "low",
+    "category": "Maintenance",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "landscaping_work_notification.pdf",
+        "url": "https://yourwebsite.com/notices/files/landscaping_work_notification.pdf"
+      }
+    ]
+  },
+  {
+    "id": "731db165-1e8b-492c-8ebf-037853c481ce",
+    "title": "Laundry Room Upgrade",
+    "content": "Laundry Room Upgrade will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-12T00:00:00Z",
+    "valid_from": "2025-06-12T00:00:00Z",
+    "valid_to": "2025-06-22T00:00:00Z",
+    "priority": "medium",
+    "category": "Policy",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "laundry_room_upgrade.pdf",
+        "url": "https://yourwebsite.com/notices/files/laundry_room_upgrade.pdf"
+      }
+    ]
+  },
+  {
+    "id": "7fab511c-16ed-4d64-a228-375a74c35ed7",
+    "title": "Internet Outage Expected",
+    "content": "Internet Outage Expected will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-11T00:00:00Z",
+    "valid_from": "2025-06-11T00:00:00Z",
+    "valid_to": "2025-06-21T00:00:00Z",
+    "priority": "low",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "internet_outage_expected.pdf",
+        "url": "https://yourwebsite.com/notices/files/internet_outage_expected.pdf"
+      }
+    ]
+  },
+  {
+    "id": "81597b16-82fe-4cf5-8b61-a2965c8ac208",
+    "title": "Garage Cleaning Schedule",
+    "content": "Garage Cleaning Schedule will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-10T00:00:00Z",
+    "valid_from": "2025-06-10T00:00:00Z",
+    "valid_to": "2025-06-20T00:00:00Z",
+    "priority": "medium",
+    "category": "Maintenance",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "garage_cleaning_schedule.pdf",
+        "url": "https://yourwebsite.com/notices/files/garage_cleaning_schedule.pdf"
+      }
+    ]
+  },
+  {
+    "id": "1e962584-3a2c-4aa7-b448-f964ed71aa16",
+    "title": "Holiday Office Closure",
+    "content": "Holiday Office Closure will take place as scheduled. Please make necessary arrangements. Thank you for your cooperation.",
+    "date_published": "2025-06-09T00:00:00Z",
+    "valid_from": "2025-06-09T00:00:00Z",
+    "valid_to": "2025-06-19T00:00:00Z",
+    "priority": "low",
+    "category": "Security",
+    "author": "Admin",
+    "is_active": true,
+    "attachments": [
+      {
+        "file_name": "holiday_office_closure.pdf",
+        "url": "https://yourwebsite.com/notices/files/holiday_office_closure.pdf"
+      }
+    ]
+  }
+]
