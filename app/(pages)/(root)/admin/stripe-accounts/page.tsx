@@ -5,6 +5,9 @@ import { Suspense } from "react";
 import StripeAccountsClient from "./(components)/StripeAccountsClient";
 import StripeAccountsSkeleton from "./(components)/StripeAccountsSkeleton";
 
+// Force dynamic rendering to prevent build errors with auth
+export const dynamic = "force-dynamic";
+
 export default async function StripeAccountsPage() {
   const result = await getStripeAccountsData();
 

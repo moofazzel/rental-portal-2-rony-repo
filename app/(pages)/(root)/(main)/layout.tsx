@@ -1,4 +1,3 @@
-import { BackendStatus } from "@/components/shared/BackendStatus";
 import Navbar from "@/components/shared/Navbar";
 import { isAuthenticated } from "@/lib/utils";
 import Providers from "@/providers/Providers";
@@ -8,6 +7,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "../../globals.css";
 import SideNav from "./(components)/SideNav";
+
+// Force dynamic rendering for main pages to prevent auth issues during build
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,7 +62,6 @@ export default async function RootLayout({
           </SessionProvider>
         </Providers>
         <Toaster richColors position="top-right" />
-        <BackendStatus />
       </body>
     </html>
   );

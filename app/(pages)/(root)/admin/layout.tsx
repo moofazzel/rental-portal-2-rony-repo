@@ -8,6 +8,9 @@ import { Toaster } from "sonner";
 import SideNav from "../(main)/(components)/SideNav";
 import "../../globals.css";
 
+// Force dynamic rendering for admin pages to prevent auth issues during build
+export const dynamic = "force-dynamic";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
