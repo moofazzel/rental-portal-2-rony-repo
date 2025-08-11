@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertCircle,
+  AlertTriangle,
   Calendar,
   DollarSign,
   FileText,
@@ -11,6 +12,7 @@ import {
   Mail,
   MapPin,
   Phone,
+  RefreshCw,
   Settings,
   Shield,
   Star,
@@ -25,8 +27,159 @@ import { OpenEditProfileTrigger } from "./components/OpenEditProfileTrigger";
 export default async function MyInfo() {
   // two‐step, null‐safe
   const res = await getTenant(); // res: ApiResponse<ITenantApiResponse>
+
+  // Handle API errors gracefully
+  if (!res.success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header Section */}
+          <div className="text-center space-y-6">
+            <div className="w-24 h-24 bg-gradient-to-br from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto shadow-xl">
+              <AlertTriangle className="w-12 h-12 text-white" />
+            </div>
+            <div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
+                Information Unavailable
+              </h1>
+              <p className="text-slate-600 mt-3 text-lg max-w-2xl mx-auto">
+                We're experiencing technical difficulties loading your
+                information
+              </p>
+            </div>
+          </div>
+
+          {/* Error Information Card */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader className="pb-4 border-b border-gray-100">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-slate-600" />
+                  </div>
+                  What Happened?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl border border-slate-200">
+                    <h3 className="font-semibold text-slate-900 mb-3">
+                      Technical Issue
+                    </h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {res.error === "NETWORK_ERROR"
+                        ? "The connection to our servers was interrupted. This is usually temporary."
+                        : "We encountered an unexpected error while retrieving your data."}
+                    </p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                    <h3 className="font-semibold text-blue-900 mb-3">
+                      What You Can Do
+                    </h3>
+                    <ul className="text-sm text-blue-700 space-y-2">
+                      <li>• Check your internet connection</li>
+                      <li>• Try refreshing the page</li>
+                      <li>• Contact support if the issue persists</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-center gap-4">
+                  <Link href="/my-info">
+                    <Button className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 shadow-lg text-white">
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Try Again
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Contact Support
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!res.data?.user) {
-    throw new Error("Failed to load tenant");
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header Section */}
+          <div className="text-center space-y-6">
+            <div className="w-24 h-24 bg-gradient-to-br from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto shadow-xl">
+              <User className="w-12 h-12 text-white" />
+            </div>
+            <div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent">
+                Account Not Found
+              </h1>
+              <p className="text-slate-600 mt-3 text-lg max-w-2xl mx-auto">
+                We couldn't locate your account information
+              </p>
+            </div>
+          </div>
+
+          {/* Account Status Card */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader className="pb-4 border-b border-gray-100">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                    <User className="w-5 h-5 text-slate-600" />
+                  </div>
+                  Account Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl border border-slate-200">
+                    <h3 className="font-semibold text-slate-900 mb-3">
+                      Possible Reasons
+                    </h3>
+                    <ul className="text-sm text-slate-600 space-y-2">
+                      <li>• Your session may have expired</li>
+                      <li>• Account might need verification</li>
+                      <li>• You may need to log in again</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                    <h3 className="font-semibold text-blue-900 mb-3">
+                      Next Steps
+                    </h3>
+                    <ul className="text-sm text-blue-700 space-y-2">
+                      <li>• Try refreshing the page</li>
+                      <li>• Log out and log back in</li>
+                      <li>• Contact the office for assistance</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-center gap-4">
+                  <Link href="/my-info">
+                    <Button className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 shadow-lg text-white">
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Refresh Page
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Contact Office
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const tenantData = res.data.user; // ITenant

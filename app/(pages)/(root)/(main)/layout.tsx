@@ -1,3 +1,4 @@
+import { BackendStatus } from "@/components/shared/BackendStatus";
 import Navbar from "@/components/shared/Navbar";
 import { isAuthenticated } from "@/lib/utils";
 import Providers from "@/providers/Providers";
@@ -59,6 +60,7 @@ export default async function RootLayout({
           </SessionProvider>
         </Providers>
         <Toaster richColors position="top-right" />
+        <BackendStatus />
       </body>
     </html>
   );

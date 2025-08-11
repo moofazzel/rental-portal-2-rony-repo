@@ -163,7 +163,24 @@ async function getDashboardData(): Promise<DashboardData> {
     };
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
-    throw new Error("Failed to load dashboard data");
+    // Return empty data instead of throwing error
+    return {
+      properties: [],
+      tenants: [],
+      serviceRequests: [],
+      notices: [],
+      stats: {
+        totalProperties: 0,
+        totalSpots: 0,
+        occupiedSpots: 0,
+        availableSpots: 0,
+        activeTenants: 0,
+        pendingApprovals: 0,
+        openRequests: 0,
+        totalRevenue: 0,
+        occupancyRate: 0,
+      },
+    };
   }
 }
 
