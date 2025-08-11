@@ -1,0 +1,65 @@
+import Navbar from "@/components/shared/Navbar";
+import { isAuthenticated } from "@/lib/utils";
+import Providers from "@/providers/Providers";
+import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import "../../globals.css";
+import SideNav from "./(components)/SideNav";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Beck Row",
+  description: "Rental Portal",
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  await isAuthenticated();
+
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>
+          <SessionProvider>
+            <div className="flex h-screen">
+              <div className="flex-1 bg-gray-50 overflow-y-auto shadow-[0_4px_6px_-4px_rgba(0,0,0,0.1)]">
+                <Navbar />
+
+                <div
+                  style={{
+                    height: "calc(100vh - 50px)",
+                    // width: "calc(100vw - 70px)",
+                  }}
+                  className="flex overflow-hidden"
+                >
+                  <SideNav />
+
+                  <main className="flex-1 rounded-lg overflow-auto">
+                    {children}
+                  </main>
+                </div>
+              </div>
+            </div>
+          </SessionProvider>
+        </Providers>
+        <Toaster richColors position="top-right" />
+      </body>
+    </html>
+  );
+}
