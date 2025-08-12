@@ -27,6 +27,7 @@ import { OpenEditProfileTrigger } from "./components/OpenEditProfileTrigger";
 export default async function MyInfo() {
   // two‐step, null‐safe
   const res = await getTenant(); // res: ApiResponse<ITenantApiResponse>
+  console.log("🚀 ~ res:", res);
 
   // Handle API errors gracefully
   if (!res.success) {
@@ -407,7 +408,8 @@ export default async function MyInfo() {
                         Street Address
                       </p>
                       <p className="font-bold text-gray-900 text-lg">
-                        {propertyData?.address || "Not provided"}
+                        {(propertyData?.address as any)?.street ||
+                          "Not provided"}
                       </p>
                     </div>
                   </div>
@@ -421,7 +423,7 @@ export default async function MyInfo() {
                         variant="secondary"
                         className="font-bold text-lg px-3 py-1"
                       >
-                        {propertyData?.address ? "Available" : "Not provided"}
+                        {(propertyData?.address as any)?.zip || "Not provided"}
                       </Badge>
                     </div>
                   </div>
@@ -430,7 +432,11 @@ export default async function MyInfo() {
                       Full Address
                     </p>
                     <p className="font-semibold text-blue-900 text-lg leading-relaxed">
-                      {propertyData?.address || "Not provided"}
+                      {(propertyData?.address as any)?.street || "Not provided"}
+                      <br />
+                      {(propertyData?.address as any)?.city ||
+                        "Not provided"},{" "}
+                      {(propertyData?.address as any)?.state || "Not provided"}
                     </p>
                   </div>
                 </div>
