@@ -89,7 +89,7 @@ export async function createPaymentLink(paymentData: {
 }
 
 // Updated interface for the actual receipt response structure
-interface PaymentReceiptResponse {
+export interface PaymentReceiptResponse {
   id: string;
   receiptNumber: string;
   amount: number;
@@ -101,7 +101,7 @@ interface PaymentReceiptResponse {
   paidDate: string;
   description: string;
   paymentMethod: string;
-  transactionId: string;
+
   stripeTransactionId: string;
   stripePaymentLinkId: string;
   stripeSessionId: string;
@@ -110,36 +110,53 @@ interface PaymentReceiptResponse {
     id: string;
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
   };
   property: {
     id: string;
     name: string;
-    address: string;
-    propertyType: string;
-    lotNumber: string;
-    unitNumber: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      zip: string;
+    };
+    propertyType?: string;
+    lotNumber?: string;
+    unitNumber?: string;
   };
   spot: {
     id: string;
     spotNumber: string;
-    spotType: string;
+    spotType?: string;
   };
   stripeAccount: {
     id: string;
     name: string;
-    stripeAccountId: string;
+    stripeAccountId?: string;
   };
   createdAt: string;
   updatedAt: string;
 }
 
-export async function getPaymentBySessionId(sessionId: string) {
-  return api<PaymentReceiptResponse>(
-    `${API_BASE_URL}/payments/receipt/session/${sessionId}`,
-    {
-      method: "GET",
-      requireToken: true,
-    }
-  );
+export async function getPaymentBySessionId(
+  sessionId: string,
+  accountId: string
+) {
+  const url = `${API_BASE_URL}/payments/receipt/by-session?session_id=${encodeURIComponent(
+    sessionId
+  )}&accountId=${encodeURIComponent(accountId)}`;
+
+  return api<PaymentReceiptResponse>(url, {
+    method: "GET",
+    requireToken: true,
+  });
 }
+
+// export async function getPropertyById({ propertyId }: { propertyId: string }) {
+//   const url = `${API_BASE_URL}/admin/properties/${propertyId}`;
+//   return api<IPropertyFull>(url, {
+//     method: "GET",
+//     requireToken: true,
+//   });
+// }

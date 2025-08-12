@@ -1,6 +1,9 @@
 "use client";
 
-import { getPaymentBySessionId } from "@/app/apiClient/tenantApi";
+import {
+  getPaymentBySessionId,
+  type PaymentReceiptResponse,
+} from "@/app/apiClient/tenantApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,52 +22,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-// Updated interface matching the new API response structure
-interface PaymentReceiptResponse {
-  id: string;
-  receiptNumber: string;
-  amount: number;
-  totalAmount: number;
-  lateFeeAmount: number;
-  type: string;
-  status: string;
-  dueDate: string;
-  paidDate: string;
-  description: string;
-  paymentMethod: string;
-  transactionId: string;
-  stripeTransactionId: string;
-  stripePaymentLinkId: string;
-  stripeSessionId: string;
-  stripePaymentIntentId: string;
-  tenant: {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-  };
-  property: {
-    id: string;
-    name: string;
-    address: string;
-    propertyType: string;
-    lotNumber: string;
-    unitNumber: string;
-  };
-  spot: {
-    id: string;
-    spotNumber: string;
-    spotType: string;
-  };
-  stripeAccount: {
-    id: string;
-    name: string;
-    stripeAccountId: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
 
 // Loading Skeleton Component
 function ReceiptSkeleton() {
@@ -240,8 +197,10 @@ function ReceiptSkeleton() {
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const accountId = searchParams.get("accountId");
   const [receipt, setReceipt] = useState<PaymentReceiptResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -252,8 +211,15 @@ export default function PaymentSuccessPage() {
         return;
       }
 
+      if (!accountId) {
+        setError("No account ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await getPaymentBySessionId(sessionId);
+        const response = await getPaymentBySessionId(sessionId, accountId);
+
         console.log("🚀 ~ response:", response);
 
         if (!response.success) {
@@ -271,7 +237,7 @@ export default function PaymentSuccessPage() {
     };
 
     fetchReceipt();
-  }, [sessionId]);
+  }, [sessionId, accountId]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -415,15 +381,20 @@ export default function PaymentSuccessPage() {
                     {receipt.property.name}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {receipt.property.address}
+                    {receipt.property.address.street as string},{" "}
+                    {receipt.property.address.city},{" "}
+                    {receipt.property.address.state}{" "}
+                    {receipt.property.address.zip}
                   </p>
                   <div className="flex gap-4 mt-1">
                     <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                      {receipt.property.propertyType}
+                      Property
                     </span>
-                    <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
-                      Lot: {receipt.property.lotNumber}
-                    </span>
+                    {receipt.property.lotNumber && (
+                      <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
+                        Lot: {receipt.property.lotNumber}
+                      </span>
+                    )}
                     {receipt.property.unitNumber && (
                       <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
                         Unit: {receipt.property.unitNumber}
@@ -439,9 +410,11 @@ export default function PaymentSuccessPage() {
                   <p className="text-lg text-gray-900">
                     {receipt.spot.spotNumber}
                   </p>
-                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-                    {receipt.spot.spotType}
-                  </span>
+                  {receipt.spot.spotType && (
+                    <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                      {receipt.spot.spotType}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-600 flex items-center gap-2 mb-2">
@@ -530,7 +503,7 @@ export default function PaymentSuccessPage() {
                       Transaction ID
                     </label>
                     <p className="text-sm text-gray-900 font-mono">
-                      {receipt.transactionId}
+                      {receipt.stripeTransactionId}
                     </p>
                   </div>
                   {receipt.stripeAccount && (
@@ -595,7 +568,7 @@ export default function PaymentSuccessPage() {
                   <div>
                     <span className="text-blue-700">Transaction ID:</span>
                     <p className="font-mono text-blue-900 text-xs break-all">
-                      {receipt.transactionId}
+                      {receipt.stripeTransactionId}
                     </p>
                   </div>
                   <div>
