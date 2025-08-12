@@ -9,23 +9,32 @@ interface TenantProps {
 }
 
 export default function DashboardStats({ tenantRes }: TenantProps) {
-  const payment = tenantRes?.payments;
+  const rent = tenantRes?.rent;
+  const payments = tenantRes?.payments;
+  const lease = tenantRes?.lease;
+  const recentPayment = payments?.recent?.[0]; // Get most recent payment
 
   const getRentStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "paid":
         return "bg-green-400 text-green-900";
       case "unpaid":
         return "bg-yellow-400 text-yellow-900";
       case "overdue":
         return "bg-red-400 text-red-900";
+      case "pending":
+        return "bg-blue-400 text-blue-900";
+      case "current_month_overdue":
+        return "bg-red-400 text-red-900";
+      case "payment_limit_reached":
+        return "bg-yellow-400 text-yellow-900";
       default:
         return "bg-gray-400 text-gray-900";
     }
   };
 
   const getRentStatusText = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "paid":
         return "Paid";
       case "unpaid":
@@ -33,9 +42,50 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
       case "overdue":
         return "Overdue";
       case "pending":
+        return "Pending";
+      case "current_month_overdue":
+        return "Overdue";
+      case "payment_limit_reached":
+        return "Paid One Month Ahead";
       default:
         return "Unknown";
     }
+  };
+
+  const getLeaseStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "active":
+        return "bg-green-400 text-green-900";
+      case "expired":
+        return "bg-red-400 text-red-900";
+      case "pending":
+        return "bg-yellow-400 text-yellow-900";
+      default:
+        return "bg-gray-400 text-gray-900";
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString || dateString === "N/A" || dateString === "Invalid Date")
+      return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "N/A";
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch (error) {
+      return "N/A";
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
   };
 
   return (
@@ -48,16 +98,32 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
           </CardTitle>
           <Badge
             variant="secondary"
-            className={getRentStatusColor(payment?.rentStatus || "")}
+            className={getRentStatusColor(
+              rent?.summary?.paymentAction || recentPayment?.status || ""
+            )}
           >
-            {getRentStatusText(payment?.rentStatus || "")}
+            {getRentStatusText(
+              rent?.summary?.paymentAction || recentPayment?.status || ""
+            )}
           </Badge>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">${payment?.rentAmount || 0}</div>
+          <div className="text-3xl font-bold">
+            {rent?.currentRentAmount && formatCurrency(rent?.currentRentAmount)}
+          </div>
           <p className="text-xs text-green-200 mt-1">
-            Due on {payment?.rentDueDate || "N/A"}
+            {rent?.summary?.hasOverduePayments
+              ? `${rent.summary.overdueCount} overdue payments`
+              : `Due on ${formatDate(
+                  rent?.dueDates?.currentMonthDueDate || ""
+                )}`}
           </p>
+          {rent?.summary?.totalOverdueAmount &&
+            rent.summary.totalOverdueAmount > 0 && (
+              <p className="text-xs text-red-200 mt-1">
+                Overdue: {formatCurrency(rent.summary.totalOverdueAmount)}
+              </p>
+            )}
         </CardContent>
       </Card>
 
@@ -70,9 +136,16 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold">
-            {tenantRes?.serviceRequests?.count}
+            {tenantRes?.serviceRequests?.count || 0}
           </div>
-          <p className="text-xs text-blue-200 mt-1">1 open, 1 resolved</p>
+          <p className="text-xs text-blue-200 mt-1">
+            {tenantRes?.serviceRequests?.recent?.length || 0} recent requests
+          </p>
+          {tenantRes?.serviceRequests?.recent?.[0] && (
+            <p className="text-xs text-blue-200">
+              Latest: {tenantRes.serviceRequests.recent[0].title}
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -85,25 +158,13 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold">
-            <p>
-              {tenantRes?.spot &&
-              typeof tenantRes.spot === "object" &&
-              "spotNumber" in tenantRes.spot ? (
-                tenantRes.spot.spotNumber
-              ) : (
-                <span className="text-white text-3xl ">No spot assigned</span>
-              )}
-            </p>
+            {tenantRes?.spot?.spotNumber || "No spot assigned"}
           </div>
           <p className="text-xs text-purple-200 mt-1">
-            {" "}
-            <p>
-              {tenantRes?.property &&
-              typeof tenantRes.property === "object" &&
-              "name" in tenantRes.property
-                ? tenantRes.property.name
-                : "No property assigned"}
-            </p>
+            {tenantRes?.spot?.spotIdentifier || ""}
+          </p>
+          <p className="text-xs text-purple-200">
+            {tenantRes?.property?.name || "No property assigned"}
           </p>
         </CardContent>
       </Card>
@@ -116,8 +177,29 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">{"Active"}</div>
-          <p className="text-xs text-amber-200 mt-1">Since {"March, 2024"}</p>
+          <div className="text-3xl font-bold">
+            <Badge
+              variant="secondary"
+              className={getLeaseStatusColor(lease?.leaseStatus || "")}
+            >
+              {lease?.leaseStatus || "Unknown"}
+            </Badge>
+          </div>
+          <p className="text-xs text-amber-200 mt-1">
+            Since {formatDate(lease?.leaseStart || "")}
+          </p>
+
+          {lease?.rvInfo && (
+            <p className="text-xs text-amber-200">
+              {lease.rvInfo.year} {lease.rvInfo.make} {lease.rvInfo.model}
+            </p>
+          )}
+          {tenantRes?.announcements?.unreadCount &&
+            tenantRes.announcements.unreadCount > 0 && (
+              <p className="text-xs text-amber-200">
+                {tenantRes.announcements.unreadCount} unread announcements
+              </p>
+            )}
         </CardContent>
       </Card>
     </div>

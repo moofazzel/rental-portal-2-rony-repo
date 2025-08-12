@@ -124,51 +124,129 @@ export interface ITenantApiResponse {
     _id: string;
     name: string;
     description: string;
+    address: string;
     amenities: string[];
-    rules: string;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      zip: string;
-      country?: string;
-    };
+    images: string[];
+    rules: string[];
   };
   payments?: {
-    pending: [];
-    recent: [];
-    rentAmount: number;
-    rentDueDate: string;
-    rentStatus: string;
-    rentPaymentMethod: string;
-    rentPaymentDate: string;
-    rentPaymentAmount: number;
-    rentPaymentStatus: string;
+    pending: Array<{
+      _id: string;
+      amount: number;
+      status: string;
+      dueDate: string;
+      description: string;
+    }>;
+    recent: Array<{
+      _id: string;
+      amount: number;
+      status: string;
+      dueDate: string;
+      paidDate: string;
+      description: string;
+      receiptNumber: string;
+    }>;
+    summary: {
+      totalPendingAmount: number;
+      overdueCount: number;
+      totalOverdueAmount: number;
+      hasActivePaymentLinks: boolean;
+      nextPaymentDue: {
+        dueDate: string;
+        amount: number;
+        description: string;
+      } | null;
+    };
   };
   spot: {
     _id: string;
-    lotNumber: string;
-    description: string;
-    status: string;
-    amenities: string[];
-    size: {
-      length: number;
-      width: number;
-    };
-    price: {
-      daily: number;
-      weekly: number;
-      monthly: number;
-    };
-    spotIdentifier: string;
     spotNumber: string;
+    spotIdentifier: string;
+    status: string;
+    size: string;
+    amenities: string[];
+    price: number;
+    description: string;
+    images: string[];
+  };
+  lease?: {
+    _id: string;
+    leaseStart: string;
+    leaseEnd: string;
+    rentAmount: number;
+    depositAmount: number;
+    leaseStatus: string;
+    occupants: number;
+    rvInfo: {
+      make: string;
+      model: string;
+      year: number;
+      length: number;
+      licensePlate: string;
+    };
+  };
+  rent?: {
+    currentRentAmount: number;
+    depositAmount: number;
+    dueDates: {
+      currentMonthDueDate: string;
+      nextMonthDueDate: string;
+      earliestOverdueDate: string;
+      overdueDueDates: string[];
+      nextPaymentDueDate: string;
+    };
+    summary: {
+      hasActiveLease: boolean;
+      isFirstTimePayment: boolean;
+      currentMonthAmount: number;
+      currentMonthDescription: string;
+      totalOverdueAmount: number;
+      totalDue: number;
+      currentMonthDueDate: string;
+      nextMonthDueDate: string;
+      overduePaymentsDetails: Array<{
+        dueDate: string;
+        amount: number;
+        description: string;
+        daysOverdue: number;
+      }>;
+      paymentAction: string;
+      canPayNextMonth: boolean;
+      warningMessage: string;
+      hasOverduePayments: boolean;
+      overdueCount: number;
+      leaseExpirationWarning: string | null;
+    };
+    paymentOptions: Array<{
+      type: string;
+      amount: number;
+      description: string;
+      dueDate: string;
+    }>;
+    isProRated: boolean;
+    proRatedDays: number;
+    proRatedRentAmount: number;
+    fullMonthRentAmount: number;
   };
   serviceRequests?: {
+    recent: Array<{
+      _id: string;
+      title: string;
+      status: string;
+      createdAt: string;
+    }>;
     count: number;
-    recent: [];
-    // open: number;
-    // resolved: number;
   };
+  announcements?: {
+    unread: Array<{
+      _id: string;
+      title: string;
+      content: string;
+      createdAt: string;
+    }>;
+    unreadCount: number;
+  };
+  assignmentHistory: any[];
 }
 
 export interface ITenantUpdatePayload {

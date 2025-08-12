@@ -46,6 +46,7 @@ export default async function TenantDashboard() {
   //fetch tenant data
   const tenantData = await getTenant();
   const tenantRes = tenantData?.data;
+  console.log("🚀 ~ tenantRes:", tenantRes);
 
   const session = await auth();
 
@@ -102,7 +103,18 @@ export default async function TenantDashboard() {
           {/* Right Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <ServiceRequests requests={serviceRequests} />
-            <PaymentHistory payments={tenantRes?.payments?.recent || []} />
+            <PaymentHistory
+              payments={
+                tenantRes?.payments?.recent?.map((payment) => ({
+                  id: payment._id,
+                  date: payment.paidDate || payment.dueDate,
+                  method: payment.status === "PAID" ? "Online" : "Pending",
+                  amount: payment.amount,
+                  description: payment.description,
+                  receiptNumber: payment.receiptNumber,
+                })) || []
+              }
+            />
           </div>
         </section>
 

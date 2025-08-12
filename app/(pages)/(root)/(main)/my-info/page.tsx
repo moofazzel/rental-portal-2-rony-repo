@@ -185,9 +185,20 @@ export default async function MyInfo() {
   const tenantData = res.data.user; // ITenant
   const propertyData = res.data.property;
   const spotData = res.data.spot;
-  const { length, width } = spotData.size;
 
-  const { daily, weekly, monthly } = spotData.price;
+  // Handle size as string (e.g., "40x80") or object
+  const sizeData =
+    typeof spotData.size === "string"
+      ? { length: 0, width: 0 } // Default values for string size
+      : spotData.size;
+  const { length, width } = sizeData;
+
+  // Handle price as number or object
+  const priceData =
+    typeof spotData.price === "number"
+      ? { daily: 0, weekly: 0, monthly: spotData.price }
+      : spotData.price;
+  const { daily, weekly, monthly } = priceData;
 
   console.log("data", spotData, propertyData);
 
@@ -396,7 +407,7 @@ export default async function MyInfo() {
                         Street Address
                       </p>
                       <p className="font-bold text-gray-900 text-lg">
-                        {propertyData?.address?.street}
+                        {propertyData?.address || "Not provided"}
                       </p>
                     </div>
                   </div>
@@ -410,7 +421,7 @@ export default async function MyInfo() {
                         variant="secondary"
                         className="font-bold text-lg px-3 py-1"
                       >
-                        {propertyData?.address?.zip || "Not provided"}
+                        {propertyData?.address ? "Available" : "Not provided"}
                       </Badge>
                     </div>
                   </div>
@@ -419,10 +430,7 @@ export default async function MyInfo() {
                       Full Address
                     </p>
                     <p className="font-semibold text-blue-900 text-lg leading-relaxed">
-                      {propertyData?.address?.street || "Not provided"}
-                      <br />
-                      {propertyData?.address?.city || "Not provided"},{" "}
-                      {propertyData?.address?.state || "Not provided"}
+                      {propertyData?.address || "Not provided"}
                     </p>
                   </div>
                 </div>
