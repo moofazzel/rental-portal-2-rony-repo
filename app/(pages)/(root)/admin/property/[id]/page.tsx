@@ -7,6 +7,9 @@ import Link from "next/link";
 import LotDetails from "../(components)/LotDetails";
 import PropertyDetailsCard from "../(components)/PropertyDetailsCard";
 
+// Force dynamic rendering to prevent build errors with auth
+export const dynamic = "force-dynamic";
+
 export default async function PropertyDetailPage({
   params,
 }: {

@@ -3,6 +3,9 @@ import { Suspense } from "react";
 import { RequestedServices } from "./(components)/RequestedServices";
 import { IServiceRequest } from "./types/service-request";
 
+// Force dynamic rendering to prevent build errors with auth
+export const dynamic = "force-dynamic";
+
 type GetAllServiceRequestsResponse = {
   serviceRequests: IServiceRequest[];
 };
