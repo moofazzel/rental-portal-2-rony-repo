@@ -13,7 +13,7 @@ export async function uploadDocument(documentData: ICreateDocument) {
       throw new Error(result.message || "Failed to upload document");
     }
 
-    revalidatePath("/admin/documents");
+    revalidatePath("/admin/admin-documents");
 
     return { success: true, data: result.data };
   } catch (error) {
