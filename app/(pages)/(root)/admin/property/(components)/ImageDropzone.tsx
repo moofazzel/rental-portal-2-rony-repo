@@ -1,41 +1,60 @@
 "use client";
 
 import { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type FileRejection } from "react-dropzone";
+import { toast } from "sonner";
 
 interface ImageDropzoneProps {
   images: File[];
   setImages: (files: File[]) => void;
+  disabled?: boolean;
 }
 
 export default function ImageDropzone({
   images,
   setImages,
+  disabled = false,
 }: ImageDropzoneProps) {
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      setImages([...images, ...acceptedFiles]);
+    (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+      // Notify about rejected files
+      if (fileRejections.length > 0) {
+        fileRejections.forEach(({ file, errors }) => {
+          const reason = errors.map((e) => e.message).join(", ");
+          toast.error(
+            `${file.name}: ${reason || "Unsupported file. Only JPG up to 2MB."}`
+          );
+        });
+      }
+
+      if (acceptedFiles.length > 0) {
+        setImages([...images, ...acceptedFiles]);
+      }
     },
     [images, setImages]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: { "image/jpeg": [".jpg", ".jpeg"] },
     multiple: true,
+    maxSize: 2 * 1024 * 1024, // 2MB
   });
 
   return (
     <div
       {...getRootProps()}
-      className="w-full p-4 border-2 border-dashed border-gray-300 rounded-md cursor-pointer text-center"
+      aria-disabled={disabled}
+      className={`w-full p-4 border-2 border-dashed border-gray-300 rounded-md text-center ${
+        disabled ? "opacity-60 pointer-events-none" : "cursor-pointer"
+      }`}
     >
       <input {...getInputProps()} />
       {isDragActive ? (
         <p className="text-sm text-gray-500">Drop the images here...</p>
       ) : (
         <p className="text-sm text-gray-500">
-          Drag & drop images here, or click to select
+          Drag & drop JPG images here (max 2MB), or click to select
         </p>
       )}
 

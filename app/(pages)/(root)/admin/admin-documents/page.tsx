@@ -1,17 +1,26 @@
-import AdminDocumentUploadForm from "./components/AdminDocumentUploadForm";
+import { getAllDocuments, getAllProperties } from "@/app/apiClient/adminApi";
+import AdminDocumentsClient from "./components/AdminDocumentsClient";
 
-const AdminDocuments = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-md p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Upload Your Document
-        </h2>
+export const dynamic = "force-dynamic";
 
-        <AdminDocumentUploadForm />
-      </div>
-    </div>
-  );
-};
+export default async function AdminDocuments() {
+  // Fetch properties and documents in parallel
+  const [propertiesResult, documentsResult] = await Promise.all([
+    getAllProperties(),
+    getAllDocuments(),
+  ]);
 
-export default AdminDocuments;
+  // Extract data from results
+  const properties =
+    propertiesResult.success && propertiesResult.data
+      ? propertiesResult.data
+          .map((prop) => ({ id: prop.id || prop._id, name: prop.name }))
+          .filter((prop): prop is { id: string; name: string } =>
+            Boolean(prop.id)
+          )
+      : [];
+
+  const documents = documentsResult.success ? documentsResult.data || [] : [];
+
+  return <AdminDocumentsClient properties={properties} documents={documents} />;
+}

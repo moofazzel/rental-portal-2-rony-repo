@@ -1,6 +1,7 @@
 "use server";
 
 import { API_BASE_URL, API_ENDPOINTS } from "@/constants/ApiEndpointsConstants";
+import { ICreateDocument, IDocument } from "@/types/document.types";
 import {
   ICreateNotice,
   INotice,
@@ -440,5 +441,55 @@ export async function getAllPayments() {
   return api<IAdminPaymentResponse>(`${API_BASE_URL}/admin/payments`, {
     method: "GET",
     requireToken: true,
+  });
+}
+
+// Document Management Functions
+export async function getAllDocuments() {
+  return api<IDocument[]>(`${API_BASE_URL}/documents`, {
+    method: "GET",
+    requireToken: true,
+  });
+}
+
+export async function getDocumentById(documentId: string) {
+  return api<IDocument>(`${API_BASE_URL}/documents/${documentId}`, {
+    method: "GET",
+    requireToken: true,
+  });
+}
+
+export async function createDocument(documentData: ICreateDocument) {
+  return api<IDocument>(`${API_BASE_URL}/documents`, {
+    method: "POST",
+    requireToken: true,
+    body: JSON.stringify(documentData),
+    revalidate: {
+      queryKeys: [["admin", "documents"]],
+    },
+  });
+}
+
+export async function updateDocument(
+  documentId: string,
+  updateData: Partial<ICreateDocument>
+) {
+  return api<IDocument>(`${API_BASE_URL}/documents/${documentId}`, {
+    method: "PATCH",
+    requireToken: true,
+    body: JSON.stringify(updateData),
+    revalidate: {
+      queryKeys: [["admin", "documents"]],
+    },
+  });
+}
+
+export async function deleteDocument(documentId: string) {
+  return api(`${API_BASE_URL}/documents/${documentId}`, {
+    method: "DELETE",
+    requireToken: true,
+    revalidate: {
+      queryKeys: [["admin", "documents"]],
+    },
   });
 }

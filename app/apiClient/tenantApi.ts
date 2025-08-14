@@ -7,6 +7,8 @@ import {
   CreateServiceRequestDto,
 } from "@/types/tenantServiceRequest.types";
 // import { ListRes } from "../../types/serviceRequest.types";
+import { IDocument } from "@/types/document.types";
+import { INotice } from "@/types/notices.types";
 import { IPaymentSummary } from "@/types/payment.types";
 import { IServiceRequest } from "@/types/serviceRequest.types";
 import { IPaymentLinkResponse } from "@/types/stripe.types";
@@ -160,3 +162,22 @@ export async function getPaymentBySessionId(
 //     requireToken: true,
 //   });
 // }
+
+export async function getTenantDocuments(tenantId: string) {
+  const res = await api<IDocument[]>(
+    `${API_BASE_URL}/documents/tenant/${tenantId}`,
+    {
+      method: "GET",
+      requireToken: true,
+    }
+  );
+  return res;
+}
+
+export async function getUnreadAnnouncementsForTenant() {
+  const url = `${API_BASE_URL}/announcements/tenant`;
+  return api<INotice[]>(url, {
+    method: "GET",
+    requireToken: true,
+  });
+}

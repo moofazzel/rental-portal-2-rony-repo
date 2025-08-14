@@ -14,15 +14,16 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -30,19 +31,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ISpot, UpdateSpotInput } from "@/types/properties.type";
 import {
   AlertTriangle,
   CheckCircle,
   DollarSign,
+  Droplets,
   Info,
   Loader2,
   MapPin,
+  PawPrint,
   Ruler,
   Save,
+  Shield,
+  Toilet,
   Trash2,
+  Wifi,
+  Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -71,8 +77,6 @@ export default function EditLotModal({
   identifierType,
   availableAmenities,
 }: Props) {
-  console.log("🚀 ~ spot:", spot);
-
   const [form, setForm] = useState<UpdateSpotInput & { lotType: LotType }>({
     spotNumber: spot.spotNumber,
     status: spot.status,
@@ -88,6 +92,23 @@ export default function EditLotModal({
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const router = useRouter();
+
+  // Amenity icon mapping
+  const getAmenityIcon = (amenity: string) => {
+    const iconMap: Record<
+      string,
+      React.ComponentType<{ className?: string }>
+    > = {
+      "30 AMP": Zap,
+      "50 AMP": Zap,
+      WiFi: Wifi,
+      "Water Hookup": Droplets,
+      "Sewer Hookup": Toilet,
+      "Pet Friendly": PawPrint,
+      Security: Shield,
+    };
+    return iconMap[amenity] || CheckCircle;
+  };
 
   // DELETE handler
   const handleDelete = async () => {
@@ -171,380 +192,384 @@ export default function EditLotModal({
   return (
     <>
       <Dialog open onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MapPin className="w-5 h-5 text-blue-600" />
+        <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">
+          <form className="flex h-full min-h-0 flex-col" onSubmit={handleSave}>
+            <DialogHeader className="sticky top-0 z-10 px-6 py-4 border-b bg-background">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <MapPin className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-xl font-semibold">
+                      Edit Lot Details
+                    </DialogTitle>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className="text-sm text-muted-foreground">
+                        Spot #{spot.spotNumber}
+                      </span>
+                      <Badge variant={getStatusVariant(spot.status)}>
+                        {spot.status}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <DialogTitle className="text-2xl">Edit Lot Details</DialogTitle>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className="text-sm text-muted-foreground">
-                    Spot #{spot.spotNumber}
-                  </span>
-                  <Badge variant={getStatusVariant(spot.status)}>
-                    {spot.status}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          </DialogHeader>
+            </DialogHeader>
 
-          <form className="space-y-4" onSubmit={handleSave}>
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="p-1 bg-blue-100 rounded">
-                    <Info className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <span>Basic Information</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="spotNumber">Spot Number</Label>
-                    <Input
-                      id="spotNumber"
-                      value={form.spotNumber ?? ""}
-                      onChange={(e) =>
-                        setForm((f) => ({ ...f, spotNumber: e.target.value }))
-                      }
-                      placeholder={
-                        identifierType === "lotNumber"
-                          ? "e.g., A1, B2, C3"
-                          : "e.g., 33031, 33032, 33033"
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={form.status}
-                      onValueChange={(value) =>
-                        setForm((f) => ({
-                          ...f,
-                          status: value as ISpot["status"],
-                        }))
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["AVAILABLE", "MAINTENANCE", "RESERVED"].map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="lotType">
-                    Lot Type <span className="text-red-500">*</span>
-                  </Label>
-                  <select
-                    id="lotType"
-                    value={form.lotType}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        lotType: e.target.value as LotType,
-                      }))
-                    }
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="RV Lot">RV Lot</option>
-                    <option value="MH - Single">MH - Single</option>
-                    <option value="MH - Double">MH - Double</option>
-                    <option value="Storage">Storage</option>
-                  </select>
-                </div>
-
-                {/* Property Address Display */}
-                <div className="p-3 bg-gray-50 rounded-lg border">
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                    Property Address
-                  </Label>
-                  <div className="text-gray-800">
-                    <div className="font-medium">{propertyAddress.street}</div>
-                    <div>
-                      {propertyAddress.city}, {propertyAddress.state}{" "}
-                      {propertyAddress.zip}
-                    </div>
-                    <div className="text-gray-600">
-                      {propertyAddress.country}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lot Address Preview */}
-                {form.spotNumber && (
-                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <Label className="text-sm font-medium text-blue-700 mb-2 block">
-                      Lot Address Preview
-                    </Label>
-                    <div className="text-blue-800 font-mono text-sm">
-                      {identifierType === "roadNumber" ? (
-                        <>
-                          <div className="font-medium">
-                            {form.spotNumber} {propertyAddress.street}
-                          </div>
-                          <div>
-                            {propertyAddress.city}, {propertyAddress.state}{" "}
-                            {propertyAddress.zip}
-                          </div>
-                          <div className="text-blue-600">
-                            {propertyAddress.country}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="font-medium">
-                            {propertyAddress.street} {form.spotNumber}
-                          </div>
-                          <div>
-                            {propertyAddress.city}, {propertyAddress.state}{" "}
-                            {propertyAddress.zip}
-                          </div>
-                          <div className="text-blue-600">
-                            {propertyAddress.country}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Lot Identifier Display */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    Lot Identification Type
-                  </Label>
-                  <div className="text-sm text-gray-600 p-2 bg-gray-50 rounded border">
-                    <strong>Type:</strong>{" "}
-                    {identifierType === "lotNumber"
-                      ? "Lot Number"
-                      : "Road Number"}
-                    <br />
-                    <strong>Example:</strong>{" "}
-                    {identifierType === "lotNumber"
-                      ? "1, 2, 3, A1, B2"
-                      : "33031, 33032, 33033"}
-                    <br />
-                    <strong>Address Format:</strong>{" "}
-                    {identifierType === "lotNumber"
-                      ? "Lot number after street name"
-                      : "Number as part of street address"}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Amenities */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="p-1 bg-orange-100 rounded">
-                    <CheckCircle className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <span>Amenities</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {availableAmenities.map((amenity) => (
-                    <div key={amenity} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={amenity}
-                        checked={form.amenities?.includes(amenity) || false}
-                        onCheckedChange={(checked) => {
-                          const currentAmenities = form.amenities || [];
-                          if (checked) {
+            <ScrollArea className="flex-1 min-h-0 px-6 py-6">
+              <div className="space-y-6">
+                {/* Basic Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-1 bg-blue-100 rounded">
+                        <Info className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <span>Basic Information</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="spotNumber">Spot Number</Label>
+                        <Input
+                          id="spotNumber"
+                          value={form.spotNumber ?? ""}
+                          onChange={(e) =>
                             setForm((f) => ({
                               ...f,
-                              amenities: [...currentAmenities, amenity],
-                            }));
-                          } else {
-                            setForm((f) => ({
-                              ...f,
-                              amenities: currentAmenities.filter(
-                                (a) => a !== amenity
-                              ),
-                            }));
+                              spotNumber: e.target.value,
+                            }))
                           }
-                        }}
-                      />
-                      <label
-                        htmlFor={amenity}
-                        className="text-sm font-medium cursor-pointer"
-                      >
-                        {amenity}
-                      </label>
+                          placeholder={
+                            identifierType === "lotNumber"
+                              ? "e.g., A1, B2, C3"
+                              : "e.g., 33031, 33032, 33033"
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="status">Status</Label>
+                        <Select
+                          value={form.status}
+                          onValueChange={(value) =>
+                            setForm((f) => ({
+                              ...f,
+                              status: value as ISpot["status"],
+                            }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["AVAILABLE", "MAINTENANCE", "RESERVED"].map(
+                              (s) => (
+                                <SelectItem key={s} value={s}>
+                                  {s}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Dimensions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="p-1 bg-green-100 rounded">
-                    <Ruler className="w-4 h-4 text-green-600" />
-                  </div>
-                  <span>Dimensions</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="length">Length (ft)</Label>
-                    <Input
-                      id="length"
-                      type="number"
-                      value={form.size?.length?.toString() ?? ""}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          size: { ...f.size!, length: +e.target.value },
-                        }))
-                      }
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="width">Width (ft)</Label>
-                    <Input
-                      id="width"
-                      type="number"
-                      value={form.size?.width?.toString() ?? ""}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          size: { ...f.size!, width: +e.target.value },
-                        }))
-                      }
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-                {form.size && form.size.length > 0 && form.size.width > 0 && (
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                    Total Area: {form.size.length * form.size.width} sq ft
-                  </Badge>
-                )}
-              </CardContent>
-            </Card>
+                    <div className="space-y-2">
+                      <Label htmlFor="lotType">
+                        Lot Type <span className="text-red-500">*</span>
+                      </Label>
+                      <select
+                        id="lotType"
+                        value={form.lotType}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            lotType: e.target.value as LotType,
+                          }))
+                        }
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="RV Lot">RV Lot</option>
+                        <option value="MH - Single">MH - Single</option>
+                        <option value="MH - Double">MH - Double</option>
+                        <option value="Storage">Storage</option>
+                      </select>
+                    </div>
 
-            {/* Pricing */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="p-1 bg-yellow-100 rounded">
-                    <DollarSign className="w-4 h-4 text-yellow-600" />
-                  </div>
-                  <span>Pricing</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Input
-                    id="price"
-                    type="number"
-                    value={(() => {
-                      if (form.price?.daily && form.price.daily > 0)
-                        return form.price.daily.toString();
-                      if (form.price?.weekly && form.price.weekly > 0)
-                        return form.price.weekly.toString();
-                      if (form.price?.monthly && form.price.monthly > 0)
-                        return form.price.monthly.toString();
-                      return "";
-                    })()}
-                    onChange={(e) => {
-                      const value = +e.target.value;
-                      const period =
-                        (
-                          document.getElementById(
-                            "pricePeriod"
-                          ) as HTMLSelectElement
-                        )?.value || "monthly";
-                      setForm((f) => ({
-                        ...f,
-                        price: {
-                          daily: period === "daily" ? value : 0,
-                          weekly: period === "weekly" ? value : 0,
-                          monthly: period === "monthly" ? value : 0,
-                        },
-                      }));
-                    }}
-                    placeholder="Enter Price e.g. 100"
-                    min="0"
-                    className="flex-1"
-                  />
-                  <select
-                    id="pricePeriod"
-                    className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    defaultValue="monthly"
-                    onChange={(e) => {
-                      const value = parseFloat(
-                        (document.getElementById("price") as HTMLInputElement)
-                          ?.value || "0"
-                      );
-                      setForm((f) => ({
-                        ...f,
-                        price: {
-                          daily: e.target.value === "daily" ? value : 0,
-                          weekly: e.target.value === "weekly" ? value : 0,
-                          monthly: e.target.value === "monthly" ? value : 0,
-                        },
-                      }));
-                    }}
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-              </CardContent>
-            </Card>
+                    {/* Lot Address Preview */}
+                    {form.spotNumber && (
+                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <label className="text-sm font-medium text-blue-700 mb-2 block">
+                          Lot Address Preview
+                        </label>
+                        <div className="text-blue-800 font-mono text-sm">
+                          {identifierType === "roadNumber" ? (
+                            <>
+                              <div className="font-medium">
+                                {form.spotNumber} {propertyAddress.street}
+                              </div>
+                              <div>
+                                {propertyAddress.city}, {propertyAddress.state}{" "}
+                                {propertyAddress.zip}
+                              </div>
+                              <div className="text-blue-600">
+                                {propertyAddress.country}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="font-medium">
+                                {propertyAddress.street} {form.spotNumber}
+                              </div>
+                              <div>
+                                {propertyAddress.city}, {propertyAddress.state}{" "}
+                                {propertyAddress.zip}
+                              </div>
+                              <div className="text-blue-600">
+                                {propertyAddress.country}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
-            {/* Description */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <div className="p-1 bg-indigo-100 rounded">
-                    <Info className="w-4 h-4 text-indigo-600" />
-                  </div>
-                  <span>Description</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Lot Description</Label>
-                  <Textarea
-                    id="description"
-                    value={form.description ?? ""}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, description: e.target.value }))
-                    }
-                    placeholder="Enter detailed description of the lot..."
-                    className="min-h-[100px]"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                {/* Amenities */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-1 bg-orange-100 rounded">
+                        <CheckCircle className="w-4 h-4 text-orange-600" />
+                      </div>
+                      <span>Amenities</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {availableAmenities.map((amenity) => {
+                        const isSelected =
+                          form.amenities?.includes(amenity) || false;
+                        const AmenityIcon = getAmenityIcon(amenity);
+                        return (
+                          <button
+                            key={amenity}
+                            type="button"
+                            onClick={() => {
+                              const currentAmenities = form.amenities || [];
+                              if (isSelected) {
+                                setForm((f) => ({
+                                  ...f,
+                                  amenities: currentAmenities.filter(
+                                    (a) => a !== amenity
+                                  ),
+                                }));
+                              } else {
+                                setForm((f) => ({
+                                  ...f,
+                                  amenities: [...currentAmenities, amenity],
+                                }));
+                              }
+                            }}
+                            className={`flex items-center space-x-3 p-3 rounded-lg border-2 font-medium transition-all text-left ${
+                              isSelected
+                                ? "border-blue-500 bg-blue-50 text-blue-700"
+                                : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            <AmenityIcon
+                              className={`h-5 w-5 ${
+                                isSelected ? "text-blue-600" : "text-gray-500"
+                              }`}
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">
+                                {amenity}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
 
-            <Separator />
+                {/* Dimensions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-1 bg-green-100 rounded">
+                        <Ruler className="w-4 h-4 text-green-600" />
+                      </div>
+                      <span>Dimensions</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label htmlFor="length" className="block font-medium">
+                          Length (ft)
+                        </label>
+                        <Input
+                          id="length"
+                          type="number"
+                          value={form.size?.length?.toString() ?? ""}
+                          onChange={(e) =>
+                            setForm((f) => ({
+                              ...f,
+                              size: { ...f.size!, length: +e.target.value },
+                            }))
+                          }
+                          placeholder="0"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="width" className="block font-medium">
+                          Width (ft)
+                        </label>
+                        <Input
+                          id="width"
+                          type="number"
+                          value={form.size?.width?.toString() ?? ""}
+                          onChange={(e) =>
+                            setForm((f) => ({
+                              ...f,
+                              size: { ...f.size!, width: +e.target.value },
+                            }))
+                          }
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    {form.size &&
+                      form.size.length > 0 &&
+                      form.size.width > 0 && (
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700"
+                        >
+                          Total Area: {form.size.length * form.size.width} sq ft
+                        </Badge>
+                      )}
+                  </CardContent>
+                </Card>
 
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between">
+                {/* Pricing */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-1 bg-yellow-100 rounded">
+                        <DollarSign className="w-4 h-4 text-yellow-600" />
+                      </div>
+                      <span>Pricing</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="price"
+                        type="number"
+                        value={(() => {
+                          if (form.price?.daily && form.price.daily > 0)
+                            return form.price.daily.toString();
+                          if (form.price?.weekly && form.price.weekly > 0)
+                            return form.price.weekly.toString();
+                          if (form.price?.monthly && form.price.monthly > 0)
+                            return form.price.monthly.toString();
+                          return "";
+                        })()}
+                        onChange={(e) => {
+                          const value = +e.target.value;
+                          const period =
+                            (
+                              document.getElementById(
+                                "pricePeriod"
+                              ) as HTMLSelectElement
+                            )?.value || "monthly";
+                          setForm((f) => ({
+                            ...f,
+                            price: {
+                              daily: period === "daily" ? value : 0,
+                              weekly: period === "weekly" ? value : 0,
+                              monthly: period === "monthly" ? value : 0,
+                            },
+                          }));
+                        }}
+                        placeholder="Enter Price e.g. 100"
+                        min="0"
+                        className="flex-1"
+                      />
+                      <select
+                        id="pricePeriod"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        defaultValue="monthly"
+                        onChange={(e) => {
+                          const value = parseFloat(
+                            (
+                              document.getElementById(
+                                "price"
+                              ) as HTMLInputElement
+                            )?.value || "0"
+                          );
+                          setForm((f) => ({
+                            ...f,
+                            price: {
+                              daily: e.target.value === "daily" ? value : 0,
+                              weekly: e.target.value === "weekly" ? value : 0,
+                              monthly: e.target.value === "monthly" ? value : 0,
+                            },
+                          }));
+                        }}
+                      >
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                      </select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Description */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg">
+                      <div className="p-1 bg-indigo-100 rounded">
+                        <Info className="w-4 h-4 text-indigo-600" />
+                      </div>
+                      <span>Description</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="description"
+                        className="block font-medium"
+                      >
+                        Lot Description
+                      </label>
+                      <Textarea
+                        id="description"
+                        value={form.description ?? ""}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            description: e.target.value,
+                          }))
+                        }
+                        placeholder="Enter detailed description of the lot..."
+                        className="min-h-[100px]"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </ScrollArea>
+
+            {/* Actions */}
+            <DialogFooter className="sticky bottom-0 z-10 gap-3 px-6 py-4 border-t bg-background sm:flex-row sm:justify-between">
               <Button
                 size="sm"
                 variant="outline"
@@ -578,7 +603,7 @@ export default function EditLotModal({
                   {saving ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>

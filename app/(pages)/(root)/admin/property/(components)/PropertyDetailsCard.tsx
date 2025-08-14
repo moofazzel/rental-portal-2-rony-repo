@@ -6,6 +6,7 @@ import { IPropertyFull } from "@/types/properties.type";
 import {
   Calendar,
   CheckCircle2,
+  Hash,
   Home,
   MapPin,
   Star,
@@ -31,6 +32,7 @@ export default function PropertyDetailsCard({
     availableLots,
     isActive,
     address,
+    identifierType,
     createdAt,
     updatedAt,
   } = propertyDetails;
@@ -59,6 +61,10 @@ export default function PropertyDetailsCard({
     if (rate >= 75) return "text-orange-600 bg-orange-50";
     if (rate >= 50) return "text-yellow-600 bg-yellow-50";
     return "text-green-600 bg-green-50";
+  };
+
+  const getIdentifierTypeDisplay = (type: string) => {
+    return type === "lotNumber" ? "Lot Number" : "Road Number";
   };
 
   return (
@@ -254,6 +260,26 @@ export default function PropertyDetailsCard({
             </p>
             <p>{address.country}</p>
           </div>
+        </div>
+      </div>
+
+      {/* Lot Identification Type */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+          <Hash className="h-4 w-4 text-indigo-500" />
+          Lot Identification
+        </h2>
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="outline"
+            className="bg-indigo-50 text-indigo-700 border-indigo-200"
+          >
+            {getIdentifierTypeDisplay(identifierType || "lotNumber")}
+          </Badge>
+          <span className="text-sm text-gray-600">
+            Lots are identified by{" "}
+            {identifierType === "roadNumber" ? "road numbers" : "lot numbers"}
+          </span>
         </div>
       </div>
 

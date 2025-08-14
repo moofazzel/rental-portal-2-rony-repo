@@ -124,7 +124,13 @@ export interface ITenantApiResponse {
     _id: string;
     name: string;
     description: string;
-    address: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      zip: string;
+      country?: string;
+    };
     amenities: string[];
     images: string[];
     rules: string[];
@@ -163,16 +169,27 @@ export interface ITenantApiResponse {
     spotNumber: string;
     spotIdentifier: string;
     status: string;
-    size: string;
+    size:
+      | {
+          length: number;
+          width: number;
+        }
+      | string;
     amenities: string[];
-    price: number;
+    price:
+      | {
+          daily: number;
+          weekly: number;
+          monthly: number;
+        }
+      | number;
     description: string;
     images: string[];
   };
   lease?: {
     _id: string;
     leaseStart: string;
-    leaseEnd: string;
+    leaseEnd?: string;
     rentAmount: number;
     depositAmount: number;
     leaseStatus: string;
@@ -184,6 +201,20 @@ export interface ITenantApiResponse {
       length: number;
       licensePlate: string;
     };
+    isLeaseActive?: boolean;
+    durationDays?: number;
+    emergencyContact?: {
+      name: string;
+      phone: string;
+      relationship?: string;
+    };
+    specialRequests?: string[];
+    documents?: Array<{
+      name: string;
+      url: string;
+      uploadedAt?: string;
+    }>;
+    notes?: string;
   };
   rent?: {
     currentRentAmount: number;

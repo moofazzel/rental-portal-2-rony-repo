@@ -11,6 +11,7 @@ export const updatePropertySchema = z.object({
     zip: z.string().min(1, "ZIP code is required"),
     country: z.string().min(1, "Country is required"),
   }),
+  identifierType: z.enum(["lotNumber", "roadNumber"]).optional(),
   //   amenities: z.array(z.string()).min(1, "At least one amenity is required"),
   amenities: z.array(z.string()).optional(),
   rules: z.array(z.string()).optional(),

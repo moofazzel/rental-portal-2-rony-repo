@@ -621,6 +621,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                               <span className="text-xs text-green-600 font-medium">
                                 $
                                 {tenant.lease?.rentAmount ||
+                                  tenant.lotPrice?.monthly ||
                                   tenant.rent ||
                                   "N/A"}
                               </span>
