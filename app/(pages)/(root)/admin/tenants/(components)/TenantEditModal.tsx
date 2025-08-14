@@ -1,21 +1,34 @@
 "use client";
 
+import { uploadToCloudinaryAction } from "@/app/actions/cloudinary-upload";
 import { updateUserById } from "@/app/apiClient/adminApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ITenant } from "@/types/tenant.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Car, File, FileText, MapPin, Upload, User, X } from "lucide-react";
+import {
+  AlertCircle,
+  Car,
+  CheckCircle,
+  File,
+  FileText,
+  MapPin,
+  Upload,
+  User,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -81,9 +94,7 @@ const formSchema = z.object({
   depositAmount: z.string().min(1, "Security deposit is required"),
   occupants: z.string().min(1, "Number of occupants is required"),
   pets: z.string().optional(),
-  emergencyContactName: z.string().optional(),
-  emergencyContactPhone: z.string().optional(),
-  emergencyContactRelationship: z.string().optional(),
+
   specialRequests: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -128,16 +139,16 @@ export default function TenantEditModal({
         : tenant?.leaseEnd
         ? new Date(tenant.leaseEnd).toISOString().split("T")[0]
         : "",
-      rentAmount: tenant?.lease?.rentAmount?.toString() || tenant?.rent || "",
+      rentAmount:
+        tenant?.lease?.rentAmount?.toString() ||
+        tenant?.lotPrice?.monthly?.toString() ||
+        "",
       depositAmount:
         tenant?.lease?.depositAmount?.toString() || tenant?.deposit || "",
       occupants:
         tenant?.lease?.occupants?.toString() || tenant?.occupants || "",
       pets: tenant?.lease?.pets?.petDetails?.join(", ") || tenant?.pets || "",
-      emergencyContactName: tenant?.lease?.emergencyContact?.name || "",
-      emergencyContactPhone: tenant?.lease?.emergencyContact?.phone || "",
-      emergencyContactRelationship:
-        tenant?.lease?.emergencyContact?.relationship || "",
+
       specialRequests: tenant?.lease?.specialRequests?.join(", ") || "",
       notes: tenant?.lease?.notes || "",
     },
@@ -146,6 +157,12 @@ export default function TenantEditModal({
   // Add these new states
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string>("");
 
   // File upload handlers
   const handleFileUpload = (file: File) => {
@@ -159,6 +176,9 @@ export default function TenantEditModal({
       return;
     }
     setUploadedFile(file);
+    setUploadProgress(0);
+    setUploadStatus("idle");
+    setUploadedFileUrl("");
   };
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -189,6 +209,54 @@ export default function TenantEditModal({
 
   const removeFile = () => {
     setUploadedFile(null);
+    setUploadProgress(0);
+    setUploadStatus("idle");
+    setUploadedFileUrl("");
+  };
+
+  const handleFileUploadWithProgress = async (file: File) => {
+    if (!file) return null;
+
+    setUploadStatus("uploading");
+    setUploadProgress(0);
+
+    // Simulate upload progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(progressInterval);
+          return 90;
+        }
+        return prev + 10;
+      });
+    }, 200);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResult = await uploadToCloudinaryAction(formData);
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (uploadResult.success) {
+        setUploadStatus("success");
+        setUploadedFileUrl(uploadResult.data.secureUrl);
+        toast.success("Lease agreement uploaded successfully!");
+        return uploadResult.data.secureUrl;
+      } else {
+        setUploadStatus("error");
+        toast.error("Failed to upload lease agreement. Please try again.");
+        return null;
+      }
+    } catch (error) {
+      clearInterval(progressInterval);
+      setUploadStatus("error");
+      setUploadProgress(0);
+      toast.error("Upload failed. Please try again.");
+      return null;
+    }
   };
 
   const handleLeaseTypeChange = (value: "monthly" | "fixed") => {
@@ -206,6 +274,21 @@ export default function TenantEditModal({
 
   const onSubmit = async (data: FormData) => {
     try {
+      // Upload file if present
+      let finalUploadedFileUrl = "";
+      if (uploadedFile && uploadStatus !== "success") {
+        setIsUploading(true);
+        const uploadedUrl = await handleFileUploadWithProgress(uploadedFile);
+        if (!uploadedUrl) {
+          setIsUploading(false);
+          return;
+        }
+        finalUploadedFileUrl = uploadedUrl;
+        setIsUploading(false);
+      } else if (uploadStatus === "success") {
+        finalUploadedFileUrl = uploadedFileUrl;
+      }
+
       const payload: IUpdateTenantData = {
         user: {
           name: data.name,
@@ -245,11 +328,7 @@ export default function TenantEditModal({
                   }))
               : [],
           },
-          emergencyContact: {
-            name: data.emergencyContactName || "",
-            phone: data.emergencyContactPhone || "",
-            relationship: data.emergencyContactRelationship || "",
-          },
+          documents: finalUploadedFileUrl ? [finalUploadedFileUrl] : [],
           specialRequests: data.specialRequests
             ? data.specialRequests.split(", ").filter((s) => s.trim())
             : [],
@@ -267,9 +346,8 @@ export default function TenantEditModal({
         toast.error(res.message);
         return;
       }
-      onOpenChange(false);
-      toast.success("User Updated successfully!");
 
+      toast.success("Tenant Updated successfully!");
       onOpenChange(false);
       router.refresh();
     } catch (error) {
@@ -281,471 +359,504 @@ export default function TenantEditModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl w-full max-h-[90vh] flex flex-col">
-          <DialogHeader className=" top-0 bg-white z-50 px-6 py-4 flex items-center justify-between overflow-visible relative">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <User className="h-5 w-5 text-blue-600" />
-              Update Tenant: {tenant.name}
-            </DialogTitle>
-
-            {/* Custom Close Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className="absolute -top-2 -right-2 h-8 w-8 p-0 bg-gray-100 hover:bg-gray-200 border border-gray-500 rounded-full z-[60]"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogHeader>
-
+        <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">
           <form
+            className="flex h-full min-h-0 flex-col"
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex-1 overflow-y-auto pt-6 pb-6 px-6 space-y-6"
           >
-            {/* Personal Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    className="cursor-not-allowed"
-                    id="email"
-                    {...form.register("email")}
-                    placeholder="Enter email address"
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    {...form.register("name")}
-                    placeholder="Enter full name"
-                  />
-                  {form.formState.errors.name && (
-                    <p className="text-sm text-red-500">
-                      {form.formState.errors.name.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
-                  <Input
-                    id="phoneNumber"
-                    {...form.register("phoneNumber")}
-                    placeholder="Enter phone number"
-                  />
-                  {form.formState.errors.phoneNumber && (
-                    <p className="text-sm text-red-500">
-                      {form.formState.errors.phoneNumber.message}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <DialogHeader className="sticky top-0 z-10 px-6 py-4 border-b bg-background">
+              <DialogTitle className="text-xl font-semibold">
+                Update Tenant: {tenant.name}
+              </DialogTitle>
+            </DialogHeader>
 
-            {/* RV Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="h-4 w-4 text-orange-600" />
-                  RV Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="rvMake">RV Make</Label>
-                  <Input
-                    id="rvMake"
-                    {...form.register("rvMake")}
-                    placeholder="Enter RV make"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="rvModel">RV Model</Label>
-                  <Input
-                    id="rvModel"
-                    {...form.register("rvModel")}
-                    placeholder="Enter RV model"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="rvYear">RV Year</Label>
-                  <Input
-                    id="rvYear"
-                    {...form.register("rvYear")}
-                    type="number"
-                    placeholder="Enter RV year"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="rvLength">RV Length (ft)</Label>
-                  <Input
-                    id="rvLength"
-                    {...form.register("rvLength")}
-                    type="number"
-                    placeholder="Enter RV length in feet"
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="rvLicensePlate">License Plate</Label>
-                  <Input
-                    id="rvLicensePlate"
-                    {...form.register("rvLicensePlate")}
-                    placeholder="Enter license plate number"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Site Address */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-green-600" />
-                  Site Address
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="propertyName">Property Name</Label>
-                  <Input
-                    className="cursor-not-allowed"
-                    id="propertyName"
-                    value={
-                      typeof tenant.property === "object"
-                        ? tenant.property.name
-                        : "No data"
-                    }
-                    placeholder="Enter property name"
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lotNumber">Lot Number</Label>
-                  <Input
-                    className="cursor-not-allowed"
-                    id="lotNumber"
-                    value={tenant?.lotNumber}
-                    placeholder="Enter lot number"
-                    readOnly
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Lease Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-purple-600" />
-                  Lease Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Lease Type Selection */}
-                <div className="space-y-2">
-                  <Label htmlFor="leaseType">Lease Type</Label>
-                  <RadioGroup
-                    value={form.watch("leaseType")}
-                    onValueChange={handleLeaseTypeChange}
-                    className="flex gap-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="monthly"
-                        id="monthly"
-                        className="sr-only"
+            <ScrollArea className="flex-1 min-h-0 px-6 py-6">
+              <div className="space-y-6">
+                {/* Personal Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-blue-600" />
+                      Personal Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        className="cursor-not-allowed"
+                        id="email"
+                        {...form.register("email")}
+                        placeholder="Enter email address"
+                        readOnly
                       />
-                      <Label
-                        htmlFor="monthly"
-                        className={`px-4 py-2 border rounded-md cursor-pointer transition-colors ${
-                          form.watch("leaseType") === "monthly"
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
-                        }`}
-                      >
-                        Monthly
-                      </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="fixed"
-                        id="fixed"
-                        className="sr-only"
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        {...form.register("name")}
+                        placeholder="Enter full name"
                       />
-                      <Label
-                        htmlFor="fixed"
-                        className={`px-4 py-2 border rounded-md cursor-pointer transition-colors ${
-                          form.watch("leaseType") === "fixed"
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
-                        }`}
-                      >
-                        Fixed Term
-                      </Label>
+                      {form.formState.errors.name && (
+                        <p className="text-sm text-red-500">
+                          {form.formState.errors.name.message}
+                        </p>
+                      )}
                     </div>
-                  </RadioGroup>
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                      <Input
+                        id="phoneNumber"
+                        {...form.register("phoneNumber")}
+                        placeholder="Enter phone number"
+                      />
+                      {form.formState.errors.phoneNumber && (
+                        <p className="text-sm text-red-500">
+                          {form.formState.errors.phoneNumber.message}
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
-                {/* Lease Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="rentAmount">Rent Amount *</Label>
-                    <Input
-                      id="rentAmount"
-                      {...form.register("rentAmount")}
-                      type="number"
-                      placeholder="Enter monthly rent amount"
-                      required
-                    />
-                    {form.formState.errors.rentAmount && (
-                      <p className="text-sm text-red-500">
-                        {form.formState.errors.rentAmount.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="depositAmount">Security Deposit *</Label>
-                    <Input
-                      id="depositAmount"
-                      {...form.register("depositAmount")}
-                      type="number"
-                      placeholder="Enter security deposit amount"
-                      required
-                    />
-                    {form.formState.errors.depositAmount && (
-                      <p className="text-sm text-red-500">
-                        {form.formState.errors.depositAmount.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="occupants">Number of Occupants *</Label>
-                    <Input
-                      id="occupants"
-                      {...form.register("occupants")}
-                      type="number"
-                      placeholder="Enter number of occupants"
-                      min="1"
-                      required
-                    />
-                    {form.formState.errors.occupants && (
-                      <p className="text-sm text-red-500">
-                        {form.formState.errors.occupants.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pets">Pets</Label>
-                    <Input
-                      id="pets"
-                      {...form.register("pets")}
-                      placeholder="Enter pet information (optional)"
-                    />
-                  </div>
+                {/* RV Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Car className="h-4 w-4 text-orange-600" />
+                      RV Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rvMake">RV Make</Label>
+                      <Input
+                        id="rvMake"
+                        {...form.register("rvMake")}
+                        placeholder="Enter RV make"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvModel">RV Model</Label>
+                      <Input
+                        id="rvModel"
+                        {...form.register("rvModel")}
+                        placeholder="Enter RV model"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvYear">RV Year</Label>
+                      <Input
+                        id="rvYear"
+                        {...form.register("rvYear")}
+                        type="number"
+                        placeholder="Enter RV year"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvLength">RV Length (ft)</Label>
+                      <Input
+                        id="rvLength"
+                        {...form.register("rvLength")}
+                        type="number"
+                        placeholder="Enter RV length in feet"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="rvLicensePlate">License Plate</Label>
+                      <Input
+                        id="rvLicensePlate"
+                        {...form.register("rvLicensePlate")}
+                        placeholder="Enter license plate number"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  {/* Conditional Date Fields */}
-                  {form.watch("leaseType") === "fixed" && (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="leaseStart">Lease Start Date *</Label>
-                        <Input
-                          id="leaseStart"
-                          {...form.register("leaseStart")}
-                          type="date"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="leaseEnd">Lease End Date *</Label>
-                        <Input
-                          id="leaseEnd"
-                          {...form.register("leaseEnd")}
-                          type="date"
-                          required
-                        />
-                      </div>
-                    </>
-                  )}
+                {/* Site Address */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-green-600" />
+                      Site Address
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="propertyName">Property Name</Label>
+                      <Input
+                        className="cursor-not-allowed"
+                        id="propertyName"
+                        value={
+                          typeof tenant.property === "object"
+                            ? tenant.property.name
+                            : "No data"
+                        }
+                        placeholder="Enter property name"
+                        readOnly
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lotNumber">Lot Number</Label>
+                      <Input
+                        className="cursor-not-allowed"
+                        id="lotNumber"
+                        value={tenant?.lotNumber}
+                        placeholder="Enter lot number"
+                        readOnly
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  {form.watch("leaseType") === "monthly" && (
-                    <>
-                      <div className="space-y-2">
-                        <Label htmlFor="leaseStart">Lease Start Date *</Label>
-                        <Input
-                          id="leaseStart"
-                          {...form.register("leaseStart")}
-                          type="date"
-                          required
-                        />
+                {/* Lease Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-purple-600" />
+                      Lease Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Lease Type Selection */}
+                    <div className="space-y-2">
+                      <label htmlFor="leaseType" className="block font-medium">
+                        Lease Type <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleLeaseTypeChange("monthly")}
+                          className={`flex-1 px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                            form.watch("leaseType") === "monthly"
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="font-medium">Monthly</div>
+                          <div className="text-xs text-gray-500">
+                            Renewable monthly
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleLeaseTypeChange("fixed")}
+                          className={`flex-1 px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                            form.watch("leaseType") === "fixed"
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="font-medium">Fixed Term</div>
+                          <div className="text-xs text-gray-500">
+                            Specific duration
+                          </div>
+                        </button>
                       </div>
+                    </div>
+
+                    {/* Lease Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="leaseEnd">Lease End Date</Label>
+                        <Label htmlFor="rentAmount">Rent Amount *</Label>
                         <Input
-                          id="leaseEnd"
-                          value="Ongoing"
-                          className="bg-gray-50"
+                          id="rentAmount"
+                          {...form.register("rentAmount")}
+                          type="number"
+                          placeholder="Enter monthly rent amount"
                           readOnly
-                          disabled
+                          required
+                          className="cursor-not-allowed"
+                        />
+                        {form.formState.errors.rentAmount && (
+                          <p className="text-sm text-red-500">
+                            {form.formState.errors.rentAmount.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="depositAmount">
+                          Security Deposit *
+                        </Label>
+                        <Input
+                          id="depositAmount"
+                          {...form.register("depositAmount")}
+                          type="number"
+                          placeholder="Enter security deposit amount"
+                          required
+                        />
+                        {form.formState.errors.depositAmount && (
+                          <p className="text-sm text-red-500">
+                            {form.formState.errors.depositAmount.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="occupants">Number of Occupants *</Label>
+                        <Input
+                          id="occupants"
+                          {...form.register("occupants")}
+                          type="number"
+                          placeholder="Enter number of occupants"
+                          min="1"
+                          required
+                        />
+                        {form.formState.errors.occupants && (
+                          <p className="text-sm text-red-500">
+                            {form.formState.errors.occupants.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pets">Pets</Label>
+                        <Input
+                          id="pets"
+                          {...form.register("pets")}
+                          placeholder="Enter pet information (optional)"
                         />
                       </div>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Emergency Contact */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-red-600" />
-                  Emergency Contact
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContactName">Contact Name</Label>
-                  <Input
-                    id="emergencyContactName"
-                    {...form.register("emergencyContactName")}
-                    placeholder="Enter emergency contact name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContactPhone">Contact Phone</Label>
-                  <Input
-                    id="emergencyContactPhone"
-                    {...form.register("emergencyContactPhone")}
-                    placeholder="Enter emergency contact phone"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContactRelationship">
-                    Relationship
-                  </Label>
-                  <Input
-                    id="emergencyContactRelationship"
-                    {...form.register("emergencyContactRelationship")}
-                    placeholder="Enter relationship"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                      {/* Conditional Date Fields */}
+                      {form.watch("leaseType") === "fixed" && (
+                        <>
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseStart">
+                              Lease Start Date *
+                            </Label>
+                            <Input
+                              id="leaseStart"
+                              {...form.register("leaseStart")}
+                              type="date"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseEnd">Lease End Date *</Label>
+                            <Input
+                              id="leaseEnd"
+                              {...form.register("leaseEnd")}
+                              type="date"
+                              required
+                            />
+                          </div>
+                        </>
+                      )}
 
-            {/* Additional Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-purple-600" />
-                  Additional Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="specialRequests">Special Requests</Label>
-                  <Input
-                    id="specialRequests"
-                    {...form.register("specialRequests")}
-                    placeholder="Enter special requests (comma separated)"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Notes</Label>
-                  <Input
-                    id="notes"
-                    {...form.register("notes")}
-                    placeholder="Enter additional notes"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* File Upload Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="h-4 w-4 text-orange-600" />
-                  Lease Agreement
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!uploadedFile ? (
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                      isDragOver
-                        ? "border-blue-400 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400"
-                    }`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                  >
-                    <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-sm text-gray-600 mb-2">
-                      <span className="font-medium">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500 mb-4">
-                      PDF files only (Max 10MB)
-                    </p>
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                      id="fileInput"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        document.getElementById("fileInput")?.click()
-                      }
-                    >
-                      Select File
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <File className="h-8 w-8 text-red-500" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {uploadedFile.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={removeFile}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      {form.watch("leaseType") === "monthly" && (
+                        <>
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseStart">
+                              Lease Start Date *
+                            </Label>
+                            <Input
+                              id="leaseStart"
+                              {...form.register("leaseStart")}
+                              type="date"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseEnd">Lease End Date</Label>
+                            <Input
+                              id="leaseEnd"
+                              value="Ongoing"
+                              className="bg-gray-50"
+                              readOnly
+                              disabled
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+
+                {/* Additional Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-purple-600" />
+                      Additional Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="specialRequests">Special Requests</Label>
+                      <Input
+                        id="specialRequests"
+                        {...form.register("specialRequests")}
+                        placeholder="Enter special requests (comma separated)"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notes">Notes</Label>
+                      <Input
+                        id="notes"
+                        {...form.register("notes")}
+                        placeholder="Enter additional notes"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* File Upload Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Upload className="h-4 w-4 text-orange-600" />
+                      Lease Agreement
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {!uploadedFile ? (
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                          isDragOver
+                            ? "border-blue-400 bg-blue-50"
+                            : "border-gray-300 hover:border-gray-400"
+                        }`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                      >
+                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                        <p className="text-sm text-gray-600 mb-2">
+                          <span className="font-medium">Click to upload</span>{" "}
+                          or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500 mb-4">
+                          PDF files only (Max 10MB)
+                        </p>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleFileSelect}
+                          className="hidden"
+                          id="fileInput"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            document.getElementById("fileInput")?.click()
+                          }
+                        >
+                          Select File
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <File className="h-8 w-8 text-red-500" />
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">
+                                  {uploadedFile.name}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {(uploadedFile.size / (1024 * 1024)).toFixed(
+                                    2
+                                  )}{" "}
+                                  MB
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={removeFile}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Upload Progress */}
+                        {uploadStatus === "uploading" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600">
+                                Uploading...
+                              </span>
+                              <span className="text-gray-500">
+                                {uploadProgress}%
+                              </span>
+                            </div>
+                            <Progress value={uploadProgress} className="h-2" />
+                          </div>
+                        )}
+
+                        {/* Upload Success */}
+                        {uploadStatus === "success" && (
+                          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <div>
+                              <p className="text-sm font-medium text-green-800">
+                                Upload Successful
+                              </p>
+                              <p className="text-xs text-green-600">
+                                File is ready to be saved with tenant
+                                information
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Upload Error */}
+                        {uploadStatus === "error" && (
+                          <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <AlertCircle className="h-5 w-5 text-red-600" />
+                            <div>
+                              <p className="text-sm font-medium text-red-800">
+                                Upload Failed
+                              </p>
+                              <p className="text-xs text-red-600">
+                                Please try uploading again
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Upload Button */}
+                        {uploadedFile && uploadStatus === "idle" && (
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              handleFileUploadWithProgress(uploadedFile)
+                            }
+                            className="w-full"
+                          >
+                            Upload Lease Agreement
+                          </Button>
+                        )}
+
+                        {/* Retry Button */}
+                        {uploadStatus === "error" && (
+                          <Button
+                            type="button"
+                            onClick={() =>
+                              handleFileUploadWithProgress(uploadedFile)
+                            }
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Retry Upload
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </ScrollArea>
 
             {/* Actions */}
-            <div className="flex justify-between items-center gap-5 pt-4 border-t">
+            <DialogFooter className="sticky bottom-0 z-10 gap-3 px-6 py-4 border-t bg-background sm:flex-row sm:justify-between">
               <DeleteTenantDialog tenant={tenant} />
               <div className="flex gap-3">
                 <Button
@@ -757,13 +868,17 @@ export default function TenantEditModal({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isUploading}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  {isSubmitting ? "Updating..." : "Update Tenant"}
+                  {isUploading
+                    ? "Uploading..."
+                    : isSubmitting
+                    ? "Updating..."
+                    : "Update Tenant"}
                 </Button>
               </div>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
