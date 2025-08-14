@@ -321,7 +321,8 @@ export default function EditLotModal({
                           ) : (
                             <>
                               <div className="font-medium">
-                                {propertyAddress.street} {form.spotNumber}
+                                {propertyAddress.street} <br />{" "}
+                                {form.spotNumber}
                               </div>
                               <div>
                                 {propertyAddress.city}, {propertyAddress.state}{" "}
