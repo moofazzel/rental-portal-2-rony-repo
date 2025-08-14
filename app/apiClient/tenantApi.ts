@@ -8,6 +8,7 @@ import {
 } from "@/types/tenantServiceRequest.types";
 // import { ListRes } from "../../types/serviceRequest.types";
 import { IDocument } from "@/types/document.types";
+import { INotice } from "@/types/notices.types";
 import { IPaymentSummary } from "@/types/payment.types";
 import { IServiceRequest } from "@/types/serviceRequest.types";
 import { IPaymentLinkResponse } from "@/types/stripe.types";
@@ -173,17 +174,9 @@ export async function getTenantDocuments(tenantId: string) {
   return res;
 }
 
-export interface IAnnouncement {
-  id: string;
-  title: string;
-  message: string;
-  createdAt: string;
-  read: boolean;
-}
-
-export async function getUnreadAnnouncementsForTenant(userId: string) {
-  const url = `${API_BASE_URL}/unread/${encodeURIComponent(userId)}`;
-  return api<IAnnouncement[]>(url, {
+export async function getUnreadAnnouncementsForTenant() {
+  const url = `${API_BASE_URL}/announcements/tenant`;
+  return api<INotice[]>(url, {
     method: "GET",
     requireToken: true,
   });
