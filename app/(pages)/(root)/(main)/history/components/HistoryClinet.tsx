@@ -75,7 +75,9 @@ export default function HistoryClient({ payments, error }: HistoryClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Transform API data to match the component's expected format
-  const transformPayments = (payments: HistoryClientProps['payments']): Payment[] => {
+  const transformPayments = (
+    payments: HistoryClientProps["payments"]
+  ): Payment[] => {
     if (!payments || !payments.payments || !Array.isArray(payments.payments)) {
       return [];
     }
@@ -200,7 +202,10 @@ export default function HistoryClient({ payments, error }: HistoryClientProps) {
               View your complete payment history and download receipts.
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg text-white">
+          <Button
+            size="sm"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg text-white"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export History
           </Button>
@@ -271,7 +276,9 @@ export default function HistoryClient({ payments, error }: HistoryClientProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100 text-sm">Overdue Amount</p>
-                  <p className="text-2xl font-bold">${overdueAmount.toFixed(2)}</p>
+                  <p className="text-2xl font-bold">
+                    ${overdueAmount.toFixed(2)}
+                  </p>
                 </div>
                 <AlertCircle className="w-8 h-8 text-orange-200" />
               </div>
@@ -382,7 +389,9 @@ export default function HistoryClient({ payments, error }: HistoryClientProps) {
                         </Badge>
                       </TableCell>
                       <TableCell>{item.method}</TableCell>
-                      <TableCell className="text-sm">{item.propertyName}</TableCell>
+                      <TableCell className="text-sm">
+                        {item.propertyName}
+                      </TableCell>
                       <TableCell className="text-sm max-w-xs truncate">
                         {item.description}
                       </TableCell>

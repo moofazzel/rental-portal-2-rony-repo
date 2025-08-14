@@ -10,12 +10,12 @@ import { ITenant } from "@/types/tenant.types"; // :contentReference[oaicite:0]{
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -125,7 +125,11 @@ export default function EditProfileModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2 !px-8">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 !px-8 text-black"
+        >
           <Pencil className="w-4 h-4" />
           Edit Profile
         </Button>

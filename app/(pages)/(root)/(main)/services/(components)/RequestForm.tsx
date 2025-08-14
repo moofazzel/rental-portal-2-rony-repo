@@ -3,7 +3,7 @@
 
 import { createTenantServiceRequest } from "@/app/apiClient/tenantApi";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +13,6 @@ import {
   ServiceRequestType,
 } from "@/types/tenantServiceRequest.types";
 import { AlertTriangle, Clock, Plus, Zap } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
@@ -93,10 +92,11 @@ const URGENCY_STYLES: Record<
   },
 };
 
-export default function RequestForm() {
-  const router = useRouter();
-  const pathname = usePathname();
+interface RequestFormProps {
+  onSuccess?: () => void;
+}
 
+export default function RequestForm({ onSuccess }: RequestFormProps) {
   const [title, setTitle] = useState("");
   const [type, setType] = useState<ServiceRequestType>("MAINTENANCE");
   const [report, setReport] = useState("");
@@ -118,8 +118,12 @@ export default function RequestForm() {
       const res = await createTenantServiceRequest(dto);
       console.log("🚀 ~ handleSubmit ~ res:", res);
       toast.success("Service request submitted successfully");
+      setSubmitted(false);
 
-      router.push(`${pathname}?tab=history`);
+      // Call the success callback to close modal
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit request");
@@ -128,21 +132,14 @@ export default function RequestForm() {
   }
 
   return (
-    <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-      <CardHeader className="pb-6 border-b border-gray-100">
-        <CardTitle className="flex items-center gap-3 text-2xl">
-          <Plus className="w-10 h-10 p-2 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl text-white" />
-          New Service Request
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="pt-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+    <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm w-full">
+      <CardContent className="p-4 sm:p-6 w-full">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8 w-full">
           {/* Request Title */}
-          <div>
+          <div className="w-full">
             <Label
               htmlFor="title"
-              className="text-sm font-semibold text-gray-700 mb-3 block"
+              className="text-sm font-semibold text-gray-700 mb-2 sm:mb-3 block"
             >
               Request Title *
             </Label>
@@ -152,32 +149,35 @@ export default function RequestForm() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Brief description of the issue (e.g., 'Leaky kitchen faucet')"
               required
-              className="h-12 text-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+              className="w-full h-12 text-base sm:text-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
             />
           </div>
 
           {/* Service Type Selection */}
-          <div>
-            <Label className="text-sm font-semibold text-gray-700 mb-4 block">
+          <div className="w-full">
+            <Label className="text-sm font-semibold text-gray-700 mb-3 sm:mb-4 block">
               Service Type *
             </Label>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
               {SERVICE_TYPES.map((service) => (
                 <Button
                   key={service.name}
                   type="button"
+                  size="sm"
                   variant={type === service.name ? "default" : "outline"}
-                  className={`justify-start h-auto p-4 border-2 transition-all ${
+                  className={`justify-start h-auto p-3 sm:p-4 border-2 transition-all text-sm sm:text-base ${
                     type === service.name
                       ? "bg-gradient-to-r from-orange-500 to-red-600 text-white border-orange-500 shadow-lg"
                       : "hover:border-orange-300 hover:bg-orange-50"
                   }`}
                   onClick={() => setType(service.name)}
                 >
-                  <span className="text-2xl mr-3">{service.icon}</span>
-                  <div className="text-left">
-                    <div className="font-semibold">{service.name}</div>
-                    <div className="text-xs opacity-80 mt-1">
+                  <span className="text-xl sm:text-2xl mr-2 sm:mr-3">
+                    {service.icon}
+                  </span>
+                  <div className="text-left min-w-0 flex-1">
+                    <div className="font-semibold truncate">{service.name}</div>
+                    <div className="text-xs opacity-80 mt-1 hidden sm:block">
                       {service.description}
                     </div>
                   </div>
@@ -187,10 +187,10 @@ export default function RequestForm() {
           </div>
 
           {/* Detailed Description */}
-          <div>
+          <div className="w-full">
             <Label
               htmlFor="report"
-              className="text-sm font-semibold text-gray-700 mb-3 block"
+              className="text-sm font-semibold text-gray-700 mb-2 sm:mb-3 block"
             >
               Detailed Description *
             </Label>
@@ -198,19 +198,19 @@ export default function RequestForm() {
               id="report"
               value={report}
               onChange={(e) => setReport(e.target.value)}
-              rows={5}
+              rows={4}
               placeholder="Please describe the issue in detail. Include any relevant information such as when the problem started, specific locations, and any previous attempts to fix it..."
               required
-              className="border-gray-300 focus:border-orange-500 focus:ring-orange-500 resize-none"
+              className="w-full min-w-0 border-gray-300 focus:border-orange-500 focus:ring-orange-500 resize-none text-sm sm:text-base"
             />
           </div>
 
-          {/* Urgency Level - FIXED SECTION */}
-          <div>
+          {/* Urgency Level */}
+          <div className="w-full">
             <Label className="text-sm font-semibold text-gray-700 mb-3 block">
               Urgency Level
             </Label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
               {URGENCY_OPTIONS.map((option) => {
                 const isSelected = priority === option.value;
                 const styles = URGENCY_STYLES[option.value];
@@ -220,23 +220,25 @@ export default function RequestForm() {
                     key={option.value}
                     type="button"
                     variant="outline"
-                    className={`justify-start h-auto p-4 border-2 transition-all ${
+                    className={`justify-start h-auto p-3 sm:p-4 border-2 transition-all text-sm sm:text-base ${
                       isSelected ? styles.active : styles.inactive
                     }`}
                     onClick={() => setPriority(option.value)}
                   >
                     <span
-                      className={`w-5 h-5 mr-3 ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 ${
                         isSelected ? styles.iconActive : styles.iconInactive
                       }`}
                     >
                       {option.icon}
                     </span>
-                    <div className="text-left">
-                      <div className="font-semibold">{option.label}</div>
-                      {/* <div className="text-xs opacity-80 mt-1">
+                    <div className="text-left min-w-0 flex-1">
+                      <div className="font-semibold truncate">
+                        {option.label}
+                      </div>
+                      <div className="text-xs opacity-80 mt-1 hidden sm:block">
                         {option.desc}
-                      </div> */}
+                      </div>
                     </div>
                   </Button>
                 );
@@ -247,18 +249,20 @@ export default function RequestForm() {
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-lg text-white h-14 text-lg font-semibold"
+            className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-lg text-white h-12 sm:h-14 text-base sm:text-lg font-semibold"
             disabled={submitted}
           >
             {submitted ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                Submitting Request...
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2 sm:mr-3" />
+                <span className="hidden sm:inline">Submitting Request...</span>
+                <span className="sm:hidden">Submitting...</span>
               </>
             ) : (
               <>
-                <Plus className="w-5 h-5 mr-3" />
-                Submit Service Request
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                <span className="hidden sm:inline">Submit Service Request</span>
+                <span className="sm:hidden">Submit Request</span>
               </>
             )}
           </Button>

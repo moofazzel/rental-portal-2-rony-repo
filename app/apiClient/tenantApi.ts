@@ -172,3 +172,19 @@ export async function getTenantDocuments(tenantId: string) {
   );
   return res;
 }
+
+export interface IAnnouncement {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+}
+
+export async function getUnreadAnnouncementsForTenant(userId: string) {
+  const url = `${API_BASE_URL}/unread/${encodeURIComponent(userId)}`;
+  return api<IAnnouncement[]>(url, {
+    method: "GET",
+    requireToken: true,
+  });
+}
