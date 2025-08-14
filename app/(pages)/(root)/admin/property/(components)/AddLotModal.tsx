@@ -278,7 +278,7 @@ export default function AddLotModal({
                         ) : (
                           <>
                             <div className="font-medium">
-                              {address.street} {form.spotNumber}
+                              {address.street} <br /> {form.spotNumber}
                             </div>
                             <div>
                               {address.city}, {address.state} {address.zip}
