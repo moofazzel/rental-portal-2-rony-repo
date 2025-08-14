@@ -3,8 +3,10 @@ import {
   getTenantNotices,
   getTenantServiceRequests,
 } from "@/app/apiClient/adminApi";
+import { getTenantDocuments } from "@/app/apiClient/tenantApi";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { IDocument } from "@/types/document.types";
 import { INotice } from "@/types/notices.types";
 import { IServiceRequest } from "@/types/serviceRequest.types";
 import Link from "next/link";
@@ -20,6 +22,8 @@ type GetAllServiceRequestsResponse = {
 };
 export default async function TenantDashboard() {
   //fetch notices data
+
+  const session = await auth();
 
   const result = await getTenantNotices();
 
@@ -46,9 +50,15 @@ export default async function TenantDashboard() {
   //fetch tenant data
   const tenantData = await getTenant();
   const tenantRes = tenantData?.data;
-  console.log("🚀 ~ tenantRes:", tenantRes);
 
-  const session = await auth();
+  const documentsResponse = await getTenantDocuments(session?.user?._id || "");
+  const documentLoadError =
+    documentsResponse?.success === false
+      ? documentsResponse.message || "Failed to load documents"
+      : null;
+  const documents: IDocument[] = Array.isArray(documentsResponse?.data)
+    ? (documentsResponse.data as IDocument[])
+    : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -118,10 +128,12 @@ export default async function TenantDashboard() {
           </div>
         </section>
 
-        {/* all document section */}
-
-        <section>
-          <DocumentTable />
+        {/* Documents section */}
+        <section className="space-y-3">
+          {documentLoadError && (
+            <div className="text-sm text-red-600">{documentLoadError}</div>
+          )}
+          <DocumentTable documents={documents} />
         </section>
 
         {/* Footer */}

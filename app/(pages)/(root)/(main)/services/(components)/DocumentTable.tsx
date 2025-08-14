@@ -25,6 +25,72 @@ export function DocumentTable({
   onDownload,
   onDelete,
 }: DocumentTableProps) {
+  const sanitizeFileName = (name?: string, fallbackExt?: string) => {
+    const base = (name || "document").replace(/[^a-zA-Z0-9._-]/g, "_");
+    if (base.includes(".")) return base;
+    return fallbackExt ? `${base}.${fallbackExt}` : base;
+  };
+
+  const getCloudinaryAttachmentUrl = (url: string, filename?: string) => {
+    const safeName = sanitizeFileName(
+      filename,
+      url.toLowerCase().includes("/raw/") ? "pdf" : undefined
+    );
+    // Insert fl_attachment (optionally with filename) into the transformation segment
+    const injection = `fl_attachment${safeName ? `:${safeName}` : ""}`;
+    return url.replace("/upload/", `/upload/${injection}/`);
+  };
+
+  const handleDownload = (doc: IDocument) => {
+    if (onDownload) {
+      onDownload(doc);
+      return;
+    }
+    if (!doc.fileUrl) return;
+    const isCloudinary =
+      doc.fileUrl.includes("res.cloudinary.com") &&
+      doc.fileUrl.includes("/upload/");
+
+    if (isCloudinary) {
+      const url = getCloudinaryAttachmentUrl(doc.fileUrl, doc.fileName);
+      window.open(url, "_blank");
+      return;
+    }
+
+    // Fallback: try programmatic download via blob
+    const fileName = sanitizeFileName(
+      doc.fileName,
+      doc.fileType === "PDF" ? "pdf" : undefined
+    );
+    fetch(doc.fileUrl)
+      .then(async (res) => {
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = window.document.createElement("a");
+        a.href = objectUrl;
+        a.download = fileName;
+        window.document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(objectUrl);
+      })
+      .catch(() => {
+        // As a last resort, open in a new tab
+        window.open(doc.fileUrl, "_blank");
+      });
+  };
+
+  const handleView = (document: IDocument) => {
+    if (!document.fileUrl) return;
+    if (document.fileType === "PDF") {
+      const inlineUrl = document.fileUrl.includes("/upload/")
+        ? document.fileUrl.replace("/upload/", "/upload/fl_inline/")
+        : document.fileUrl;
+      window.open(inlineUrl, "_blank");
+      return;
+    }
+    window.open(document.fileUrl, "_blank");
+  };
   const getFileTypeIcon = (fileType: string) => {
     switch (fileType) {
       case "PDF":
@@ -101,7 +167,7 @@ export function DocumentTable({
   };
 
   return (
-    <CardContent className="p-0">
+    <CardContent className="p-0 shadow-md ">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
@@ -127,6 +193,16 @@ export function DocumentTable({
             </tr>
           </thead>
           <tbody className="cursor-pointer">
+            {documents.length === 0 && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-4 py-8 text-center text-sm text-gray-500"
+                >
+                  No documents available yet.
+                </td>
+              </tr>
+            )}
             {documents.map((document, index) => (
               <tr
                 key={document._id}
@@ -134,7 +210,7 @@ export function DocumentTable({
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } hover:bg-blue-50 transition-colors duration-200`}
               >
-                <td className="px-4 py-3">
+                <td className="px-4 py-3" onClick={() => handleView(document)}>
                   <div>
                     <div className="font-medium text-gray-900">
                       {document.title}
@@ -145,7 +221,7 @@ export function DocumentTable({
                     <div className="flex items-center gap-2 mt-1">
                       <Building className="w-3 h-3 text-gray-400" />
                       <span className="text-xs text-gray-500">
-                        {document.propertyId.name}
+                        {document.propertyId?.name || "Unknown property"}
                       </span>
                       {document.formattedFileSize && (
                         <>
@@ -200,7 +276,7 @@ export function DocumentTable({
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => onDownload?.(document)}
+                      onClick={() => handleDownload(document)}
                       className="gap-1"
                     >
                       <Download className="w-4 h-4" />

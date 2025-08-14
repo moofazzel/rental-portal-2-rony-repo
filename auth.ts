@@ -9,6 +9,7 @@ import { SignInSchema } from "./zod/auth.validation";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
+      _id?: string;
       id: string;
       name: string;
       email: string;
