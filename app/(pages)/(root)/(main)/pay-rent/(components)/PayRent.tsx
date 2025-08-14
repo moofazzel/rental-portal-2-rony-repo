@@ -86,7 +86,6 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
     setIsLoading(true);
     try {
       const paymentData = {
-        // @ts-expect-error - _id is not defined in the session type
         tenantId: session?.user?._id || "",
         currentDate: new Date().toISOString(),
       };
@@ -538,8 +537,8 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
                   </div>
                 )}
 
-                {/* Show deposit if it exists */}
-                {rentInfo.depositAmount > 0 && (
+                {/* Show deposit if it exists and it's the first payment */}
+                {rentInfo.isFirstTimePayment && rentInfo.depositAmount > 0 && (
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">
                       Security Deposit
