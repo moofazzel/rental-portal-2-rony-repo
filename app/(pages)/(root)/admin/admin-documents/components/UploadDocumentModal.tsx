@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -28,7 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ICreateDocument } from "@/types/document.types";
 import { AlertCircle, CheckCircle, FileText, Upload, X } from "lucide-react";
@@ -494,287 +494,299 @@ export function UploadDocumentModal({
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+          <Button
+            size="sm"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          >
             <Upload className="h-4 w-4 mr-2" />
             Upload Document
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-600" />
-            Upload New Document
-          </DialogTitle>
-          <DialogDescription>
-            Fill out the form below to upload a new document to the system.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">
+        <form className="flex h-full min-h-0 flex-col" onSubmit={handleSubmit}>
+          <DialogHeader className="sticky top-0 z-10 px-6 py-4 border-b bg-background">
+            <DialogTitle className="flex items-center gap-3 text-xl font-semibold">
+              <FileText className="h-5 w-5 text-blue-600" />
+              Upload New Document
+            </DialogTitle>
+            <DialogDescription>
+              Fill out the form below to upload a new document to the system.
+            </DialogDescription>
+          </DialogHeader>
 
-        {/* General Error Display */}
-        {getFieldError("general") && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{getFieldError("general")}</AlertDescription>
-          </Alert>
-        )}
+          <ScrollArea className="flex-1 min-h-0 px-6 py-6">
+            <div className="space-y-6">
+              {/* General Error Display */}
+              {getFieldError("general") && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {getFieldError("general")}
+                  </AlertDescription>
+                </Alert>
+              )}
 
-        {/* Success Display */}
-        {isSuccess && (
-          <Alert className="border-green-200 bg-green-50 text-green-800">
-            <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              Document uploaded successfully! The modal will close shortly.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div className="space-y-2">
-            <Label htmlFor="title">Document Title *</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => handleTitleChange(e.target.value)}
-              placeholder="Enter document title..."
-              required
-              maxLength={100}
-              className={getFieldError("title") ? "border-red-500" : ""}
-            />
-            {getFieldError("title") && (
-              <Alert variant="destructive" className="py-2">
-                <AlertCircle className="h-3 w-3" />
-                <AlertDescription className="text-sm">
-                  {getFieldError("title")}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-              placeholder="Write a brief description..."
-              rows={3}
-              maxLength={500}
-            />
-            <p className="text-xs text-gray-500 text-right">
-              {formData.description.length}/500 characters
-            </p>
-          </div>
-
-          {/* Community Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="community">Community *</Label>
-            <Select
-              value={formData.community}
-              onValueChange={handleCommunityChange}
-              required
-            >
-              <SelectTrigger
-                className={getFieldError("community") ? "border-red-500" : ""}
-              >
-                <SelectValue placeholder="Choose Community" />
-              </SelectTrigger>
-              <SelectContent>
-                {properties.length === 0 ? (
-                  <SelectItem value="" disabled>
-                    No communities available
-                  </SelectItem>
-                ) : (
-                  properties.map((prop) => (
-                    <SelectItem key={prop.id} value={prop.id}>
-                      {prop.name}
-                    </SelectItem>
-                  ))
+              {/* Success Display */}
+              {isSuccess && (
+                <Alert className="border-green-200 bg-green-50 text-green-800">
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Document uploaded successfully! The modal will close
+                    shortly.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">Document Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  placeholder="Enter document title..."
+                  required
+                  maxLength={100}
+                  className={getFieldError("title") ? "border-red-500" : ""}
+                />
+                {getFieldError("title") && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-3 w-3" />
+                    <AlertDescription className="text-sm">
+                      {getFieldError("title")}
+                    </AlertDescription>
+                  </Alert>
                 )}
-              </SelectContent>
-            </Select>
-            {getFieldError("community") && (
-              <Alert variant="destructive" className="py-2">
-                <AlertCircle className="h-3 w-3" />
-                <AlertDescription className="text-sm">
-                  {getFieldError("community")}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+              </div>
 
-          {/* File Upload */}
-          <div className="space-y-2">
-            <Label>Upload Document *</Label>
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                getFieldError("file")
-                  ? "border-red-300 bg-red-50"
-                  : selectedFile
-                  ? "border-green-300 bg-green-50"
-                  : "border-gray-300 hover:border-blue-400"
-              }`}
-            >
-              {!selectedFile ? (
-                <div className="space-y-4">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto" />
-                  <div>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Step 1: Select a file to upload
-                    </p>
-                    <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx,.jpg,.jpeg"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="file-upload"
-                    />
-                    <Label
-                      htmlFor="file-upload"
-                      className="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Choose File
-                    </Label>
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  placeholder="Write a brief description..."
+                  rows={3}
+                  maxLength={500}
+                />
+                <p className="text-xs text-gray-500 text-right">
+                  {formData.description.length}/500 characters
+                </p>
+              </div>
 
-                    <div className="mt-3">
-                      <p className="text-xs text-gray-500 mb-2">
-                        Supported file types:
-                      </p>
-                      <div className="flex flex-wrap justify-center gap-2 mb-3">
-                        <Badge variant="destructive">PDF</Badge>
-                        <Badge variant="default">DOC</Badge>
-                        <Badge variant="default">DOCX</Badge>
-                        <Badge variant="secondary">JPG</Badge>
-                        <Badge variant="secondary">JPEG</Badge>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        Maximum file size: 2MB
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
+              {/* Community Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="community">Community *</Label>
+                <Select
+                  value={formData.community}
+                  onValueChange={handleCommunityChange}
+                  required
+                >
+                  <SelectTrigger
+                    className={
+                      getFieldError("community") ? "border-red-500" : ""
+                    }
+                  >
+                    <SelectValue placeholder="Choose Community" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {properties.length === 0 ? (
+                      <SelectItem value="" disabled>
+                        No communities available
+                      </SelectItem>
+                    ) : (
+                      properties.map((prop) => (
+                        <SelectItem key={prop.id} value={prop.id}>
+                          {prop.name}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+                {getFieldError("community") && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-3 w-3" />
+                    <AlertDescription className="text-sm">
+                      {getFieldError("community")}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
 
-                  {/* Display uploaded image if it's an image file */}
-                  {cloudinaryResult &&
-                    formData.fileType === "IMAGE" &&
-                    formData.cloudinaryPublicId && (
-                      <div className="flex justify-center">
-                        <div className="relative">
-                          <CldImage
-                            src={formData.cloudinaryPublicId}
-                            width={200}
-                            height={150}
-                            alt={selectedFile?.name || "Uploaded image"}
-                            className="rounded-lg border border-gray-200"
-                            crop="thumb"
-                            gravity="auto"
-                            onError={(error) => {
-                              console.log("Image preview error:", error);
-                            }}
-                          />
+              {/* File Upload */}
+              <div className="space-y-2">
+                <Label>Upload Document *</Label>
+                <div
+                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                    getFieldError("file")
+                      ? "border-red-300 bg-red-50"
+                      : selectedFile
+                      ? "border-green-300 bg-green-50"
+                      : "border-gray-300 hover:border-blue-400"
+                  }`}
+                >
+                  {!selectedFile ? (
+                    <div className="space-y-4">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto" />
+                      <div>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Step 1: Select a file to upload
+                        </p>
+                        <Input
+                          type="file"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg"
+                          onChange={handleFileChange}
+                          className="hidden"
+                          id="file-upload"
+                        />
+                        <Label
+                          htmlFor="file-upload"
+                          className="cursor-pointer inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Choose File
+                        </Label>
+
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-500 mb-2">
+                            Supported file types:
+                          </p>
+                          <div className="flex flex-wrap justify-center gap-2 mb-3">
+                            <Badge variant="destructive">PDF</Badge>
+                            <Badge variant="default">DOC</Badge>
+                            <Badge variant="default">DOCX</Badge>
+                            <Badge variant="secondary">JPG</Badge>
+                            <Badge variant="secondary">JPEG</Badge>
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            Maximum file size: 2MB
+                          </p>
                         </div>
                       </div>
-                    )}
-
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {selectedFile.name}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {formatFileSize(selectedFile.size)}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge
-                        variant={getFileTypeBadgeVariant(formData.fileType)}
-                      >
-                        {formData.fileType}
-                      </Badge>
-                      <Badge variant="outline" className="text-green-600">
-                        ✓ Selected
-                      </Badge>
-                      {cloudinaryResult && (
-                        <Badge variant="outline" className="text-purple-600">
-                          ✓ Uploaded
-                        </Badge>
-                      )}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
 
-                  {/* Upload Progress */}
-                  {isUploadingToCloudinary && (
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-blue-700 font-medium">
-                          Uploading to Cloud Storage...
+                      {/* Display uploaded image if it's an image file */}
+                      {cloudinaryResult &&
+                        formData.fileType === "IMAGE" &&
+                        formData.cloudinaryPublicId && (
+                          <div className="flex justify-center">
+                            <div className="relative">
+                              <CldImage
+                                src={formData.cloudinaryPublicId}
+                                width={200}
+                                height={150}
+                                alt={selectedFile?.name || "Uploaded image"}
+                                className="rounded-lg border border-gray-200"
+                                crop="thumb"
+                                gravity="auto"
+                                onError={(error) => {
+                                  console.log("Image preview error:", error);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {selectedFile.name}
                         </p>
-                        <span className="text-sm text-blue-600 font-medium">
-                          {uploadProgress}%
-                        </span>
+                        <p className="text-sm text-gray-600">
+                          {formatFileSize(selectedFile.size)}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge
+                            variant={getFileTypeBadgeVariant(formData.fileType)}
+                          >
+                            {formData.fileType}
+                          </Badge>
+                          <Badge variant="outline" className="text-green-600">
+                            ✓ Selected
+                          </Badge>
+                          {cloudinaryResult && (
+                            <Badge
+                              variant="outline"
+                              className="text-purple-600"
+                            >
+                              ✓ Uploaded
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                      <Progress value={uploadProgress} className="h-2" />
-                      <p className="text-xs text-blue-600 mt-2">
-                        Please wait while we upload your file securely
-                      </p>
-                    </div>
-                  )}
 
-                  {/* Manual Upload Button (fallback) */}
-                  {!cloudinaryResult && !isUploadingToCloudinary && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-xs text-blue-700 mb-2 font-medium">
-                        Upload to Cloud Storage
-                      </p>
-                      <CloudinaryUpload
-                        onUpload={handleCloudinaryUpload}
-                        onError={handleCloudinaryError}
-                        folder="documents"
-                        resourceType="raw"
-                        maxFileSize={MAX_FILE_SIZE}
-                        disabled={isUploadingToCloudinary}
-                        className="w-full"
+                      {/* Upload Progress */}
+                      {isUploadingToCloudinary && (
+                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm text-blue-700 font-medium">
+                              Uploading to Cloud Storage...
+                            </p>
+                            <span className="text-sm text-blue-600 font-medium">
+                              {uploadProgress}%
+                            </span>
+                          </div>
+                          <Progress value={uploadProgress} className="h-2" />
+                          <p className="text-xs text-blue-600 mt-2">
+                            Please wait while we upload your file securely
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Manual Upload Button (fallback) */}
+                      {!cloudinaryResult && !isUploadingToCloudinary && (
+                        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <p className="text-xs text-blue-700 mb-2 font-medium">
+                            Upload to Cloud Storage
+                          </p>
+                          <CloudinaryUpload
+                            onUpload={handleCloudinaryUpload}
+                            onError={handleCloudinaryError}
+                            folder="documents"
+                            resourceType="raw"
+                            maxFileSize={MAX_FILE_SIZE}
+                            disabled={isUploadingToCloudinary}
+                            className="w-full"
+                          >
+                            Upload to Cloud Storage
+                          </CloudinaryUpload>
+                        </div>
+                      )}
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removeFile}
+                        className="text-red-600 hover:text-red-700"
                       >
-                        Upload to Cloud Storage
-                      </CloudinaryUpload>
+                        <X className="h-4 w-4 mr-1" />
+                        Remove
+                      </Button>
                     </div>
                   )}
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={removeFile}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Remove
-                  </Button>
                 </div>
-              )}
+                {getFieldError("file") && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-3 w-3" />
+                    <AlertDescription className="text-sm">
+                      {getFieldError("file")}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
             </div>
-            {getFieldError("file") && (
-              <Alert variant="destructive" className="py-2">
-                <AlertCircle className="h-3 w-3" />
-                <AlertDescription className="text-sm">
-                  {getFieldError("file")}
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+          </ScrollArea>
 
-          <Separator />
-
-          <DialogFooter>
+          <DialogFooter className="sticky bottom-0 z-10 gap-3 px-6 py-4 border-t bg-background sm:flex-row sm:justify-between">
             <Button
               type="button"
               variant="outline"
