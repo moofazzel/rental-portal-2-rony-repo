@@ -4,20 +4,33 @@ import { createSpot } from "@/app/apiClient/adminApi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ICreateSpot, ISpot } from "@/types/properties.type";
-import { CheckCircle, DollarSign, Home, Plus, Ruler } from "lucide-react";
+import {
+  CheckCircle,
+  DollarSign,
+  Droplets,
+  Home,
+  PawPrint,
+  Plus,
+  Ruler,
+  Shield,
+  Toilet,
+  Wifi,
+  Zap,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -46,6 +59,23 @@ export default function AddLotModal({
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+
+  // Amenity icon mapping
+  const getAmenityIcon = (amenity: string) => {
+    const iconMap: Record<
+      string,
+      React.ComponentType<{ className?: string }>
+    > = {
+      "30 AMP": Zap,
+      "50 AMP": Zap,
+      WiFi: Wifi,
+      "Water Hookup": Droplets,
+      "Sewer Hookup": Toilet,
+      "Pet Friendly": PawPrint,
+      Security: Shield,
+    };
+    return iconMap[amenity] || CheckCircle;
+  };
 
   // Seed initial form with parent amenities
   const getInitialForm = (): ICreateSpot & { lotType: LotType } => ({
@@ -138,343 +168,356 @@ export default function AddLotModal({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Home className="h-5 w-5 text-green-600" />
-            Add New Lot
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">
+        <form className="flex h-full min-h-0 flex-col">
+          <DialogHeader className="sticky top-0 z-10 px-6 py-4 border-b bg-background">
+            <DialogTitle className="text-xl font-semibold">
+              Add New Lot
+            </DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Home className="h-4 w-4 text-blue-600" />
-                Basic Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="spotNumber">
-                    Lot Number <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="spotNumber"
-                    value={form.spotNumber}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, spotNumber: e.target.value }))
-                    }
-                    placeholder={
-                      identifierType === "lotNumber"
-                        ? "e.g., A1, B2, C3"
-                        : "e.g., 33031, 33032, 33033"
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">
-                    Status <span className="text-red-500">*</span>
-                  </Label>
-                  <select
-                    id="status"
-                    value={currentStatus}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        status: e.target.value as ISpot["status"],
-                      }))
-                    }
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {["AVAILABLE", "MAINTENANCE"].map((s) => (
-                      <option key={s} value={s}>
-                        {s.charAt(0) + s.slice(1).toLowerCase()}
-                      </option>
-                    ))}
-                  </select>
-                  <Badge className={getStatusColor(currentStatus)}>
-                    {currentStatus.charAt(0) +
-                      currentStatus.slice(1).toLowerCase()}
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lotType">
-                  Lot Type <span className="text-red-500">*</span>
-                </Label>
-                <select
-                  id="lotType"
-                  value={form.lotType}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      lotType: e.target.value as LotType,
-                    }))
-                  }
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="RV Lot">RV Lot</option>
-                  <option value="MH - Single">MH - Single</option>
-                  <option value="MH - Double">MH - Double</option>
-                  <option value="Storage">Storage</option>
-                </select>
-              </div>
-
-              {/* Lot Address Preview */}
-              {form.spotNumber && (
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <Label className="text-sm font-medium text-blue-700 mb-2 block">
-                    Lot Address Preview
-                  </Label>
-                  <div className="text-blue-800 font-mono text-sm">
-                    {identifierType === "roadNumber" ? (
-                      <>
-                        <div className="font-medium">
-                          {form.spotNumber} {address.street}
-                        </div>
-                        <div>
-                          {address.city}, {address.state} {address.zip}
-                        </div>
-                        <div className="text-blue-600">{address.country}</div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="font-medium">
-                          {address.street} {form.spotNumber}
-                        </div>
-                        <div>
-                          {address.city}, {address.state} {address.zip}
-                        </div>
-                        <div className="text-blue-600">{address.country}</div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Lot Identifier Display */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Lot Identification Type
-                </Label>
-                <div className="text-sm text-gray-600 p-2 bg-gray-50 rounded border">
-                  <strong>Type:</strong>{" "}
-                  {identifierType === "lotNumber"
-                    ? "Lot Number"
-                    : "Road Number"}
-                  <br />
-                  <strong>Example:</strong>{" "}
-                  {identifierType === "lotNumber"
-                    ? "1, 2, 3, A1, B2"
-                    : "33031, 33032, 33033"}
-                  <br />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Amenities */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <CheckCircle className="h-4 w-4 text-orange-600" />
-                Amenities
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {amenities.map((amenity) => (
-                  <div key={amenity} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={amenity}
-                      checked={form.amenities.includes(amenity)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setForm((f) => ({
-                            ...f,
-                            amenities: [...f.amenities, amenity],
-                          }));
-                        } else {
-                          setForm((f) => ({
-                            ...f,
-                            amenities: f.amenities.filter((a) => a !== amenity),
-                          }));
+          <ScrollArea className="flex-1 min-h-0 px-6 py-6">
+            <div className="space-y-6">
+              {/* Basic Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Home className="h-4 w-4 text-blue-600" />
+                    Basic Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="spotNumber" className="block font-medium">
+                        Lot Number <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        id="spotNumber"
+                        value={form.spotNumber}
+                        onChange={(e) =>
+                          setForm((f) => ({ ...f, spotNumber: e.target.value }))
                         }
-                      }}
-                    />
-                    <label
-                      htmlFor={amenity}
-                      className="text-sm font-medium cursor-pointer"
-                    >
-                      {amenity}
-                    </label>
+                        placeholder={
+                          identifierType === "lotNumber"
+                            ? "e.g., A1, B2, C3"
+                            : "e.g., 33031, 33032, 33033"
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="status">
+                        Status <span className="text-red-500">*</span>
+                      </Label>
+                      <select
+                        id="status"
+                        value={currentStatus}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            status: e.target.value as ISpot["status"],
+                          }))
+                        }
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        {["AVAILABLE", "MAINTENANCE"].map((s) => (
+                          <option key={s} value={s}>
+                            {s.charAt(0) + s.slice(1).toLowerCase()}
+                          </option>
+                        ))}
+                      </select>
+                      <Badge className={getStatusColor(currentStatus)}>
+                        {currentStatus.charAt(0) +
+                          currentStatus.slice(1).toLowerCase()}
+                      </Badge>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Size & Pricing */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Ruler className="h-4 w-4 text-purple-600" />
-                Size & Pricing
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Size */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="length">Length (ft)</Label>
-                  <Input
-                    id="length"
-                    type="number"
-                    value={form.size?.length?.toString() || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        size: {
-                          ...f.size,
-                          length: +e.target.value,
-                        },
-                      }))
-                    }
-                    placeholder="0"
-                    min="0"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="width">Width (ft)</Label>
-                  <Input
-                    id="width"
-                    type="number"
-                    value={form.size?.width?.toString() || ""}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        size: {
-                          ...f.size,
-                          width: +e.target.value,
-                        },
-                      }))
-                    }
-                    placeholder="0"
-                    min="0"
-                  />
-                </div>
-              </div>
-              {form.size && form.size.length > 0 && form.size.width > 0 && (
-                <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                  Total Area: {form.size.length * form.size.width} sq ft
-                </Badge>
-              )}
+                  <div className="space-y-2">
+                    <Label htmlFor="lotType">
+                      Lot Type <span className="text-red-500">*</span>
+                    </Label>
+                    <select
+                      id="lotType"
+                      value={form.lotType}
+                      onChange={(e) =>
+                        setForm((f) => ({
+                          ...f,
+                          lotType: e.target.value as LotType,
+                        }))
+                      }
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="RV Lot">RV Lot</option>
+                      <option value="MH - Single">MH - Single</option>
+                      <option value="MH - Double">MH - Double</option>
+                      <option value="Storage">Storage</option>
+                    </select>
+                  </div>
 
-              <Separator />
+                  {/* Lot Address Preview */}
+                  {form.spotNumber && (
+                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <label className="text-sm font-medium text-blue-700 mb-2 block">
+                        Lot Address Preview
+                      </label>
+                      <div className="text-blue-800 font-mono text-sm">
+                        {identifierType === "roadNumber" ? (
+                          <>
+                            <div className="font-medium">
+                              {form.spotNumber} {address.street}
+                            </div>
+                            <div>
+                              {address.city}, {address.state} {address.zip}
+                            </div>
+                            <div className="text-blue-600">
+                              {address.country}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="font-medium">
+                              {address.street} {form.spotNumber}
+                            </div>
+                            <div>
+                              {address.city}, {address.state} {address.zip}
+                            </div>
+                            <div className="text-blue-600">
+                              {address.country}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-              {/* Pricing */}
-              <div className="space-y-3">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-green-600" />
-                  Price <span className="text-red-500">*</span>
-                </Label>
-                <div className="flex items-center gap-3">
-                  <Input
-                    id="price"
-                    type="number"
-                    value={(() => {
-                      if (form.price?.daily && form.price.daily > 0)
-                        return form.price.daily.toString();
-                      if (form.price?.weekly && form.price.weekly > 0)
-                        return form.price.weekly.toString();
-                      if (form.price?.monthly && form.price.monthly > 0)
-                        return form.price.monthly.toString();
-                      return "";
-                    })()}
-                    onChange={(e) => {
-                      const value = +e.target.value;
-                      const period =
-                        (
-                          document.getElementById(
-                            "pricePeriod"
-                          ) as HTMLSelectElement
-                        )?.value || "monthly";
-                      setForm((f) => ({
-                        ...f,
-                        price: {
-                          daily: period === "daily" ? value : 0,
-                          weekly: period === "weekly" ? value : 0,
-                          monthly: period === "monthly" ? value : 0,
-                        },
-                      }));
-                    }}
-                    placeholder="Enter Price e.g. 100"
-                    min="0"
-                    className="flex-1"
-                  />
-                  <select
-                    id="pricePeriod"
-                    className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    defaultValue="monthly"
-                    onChange={(e) => {
-                      const value = parseFloat(
-                        (document.getElementById("price") as HTMLInputElement)
-                          ?.value || "0"
+              {/* Amenities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-lg">
+                    <div className="p-1 bg-orange-100 rounded">
+                      <CheckCircle className="w-4 h-4 text-orange-600" />
+                    </div>
+                    <span>Amenities</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {amenities.map((amenity) => {
+                      const isSelected = form.amenities.includes(amenity);
+                      const AmenityIcon = getAmenityIcon(amenity);
+                      return (
+                        <button
+                          key={amenity}
+                          type="button"
+                          onClick={() => {
+                            if (isSelected) {
+                              setForm((f) => ({
+                                ...f,
+                                amenities: f.amenities.filter(
+                                  (a) => a !== amenity
+                                ),
+                              }));
+                            } else {
+                              setForm((f) => ({
+                                ...f,
+                                amenities: [...f.amenities, amenity],
+                              }));
+                            }
+                          }}
+                          className={`flex items-center space-x-3 p-3 rounded-lg border-2 font-medium transition-all text-left ${
+                            isSelected
+                              ? "border-blue-500 bg-blue-50 text-blue-700"
+                              : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          <AmenityIcon
+                            className={`h-5 w-5 ${
+                              isSelected ? "text-blue-600" : "text-gray-500"
+                            }`}
+                          />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium">{amenity}</div>
+                          </div>
+                        </button>
                       );
-                      setForm((f) => ({
-                        ...f,
-                        price: {
-                          daily: e.target.value === "daily" ? value : 0,
-                          weekly: e.target.value === "weekly" ? value : 0,
-                          monthly: e.target.value === "monthly" ? value : 0,
-                        },
-                      }));
-                    }}
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
 
-          {/* Description */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                Additional Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="description">
-                  Description <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="description"
-                  value={form.description}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, description: e.target.value }))
-                  }
-                  placeholder="Describe the lot, its features, and any special considerations..."
-                  rows={3}
-                />
-              </div>
-            </CardContent>
-          </Card>
+              {/* Size & Pricing */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Ruler className="h-4 w-4 text-purple-600" />
+                    Size & Pricing
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Size */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="length" className="block font-medium">
+                        Length (ft)
+                      </label>
+                      <Input
+                        id="length"
+                        type="number"
+                        value={form.size?.length?.toString() || ""}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            size: {
+                              ...f.size,
+                              length: +e.target.value,
+                            },
+                          }))
+                        }
+                        placeholder="0"
+                        min="0"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="width" className="block font-medium">
+                        Width (ft)
+                      </label>
+                      <Input
+                        id="width"
+                        type="number"
+                        value={form.size?.width?.toString() || ""}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            size: {
+                              ...f.size,
+                              width: +e.target.value,
+                            },
+                          }))
+                        }
+                        placeholder="0"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  {form.size && form.size.length > 0 && form.size.width > 0 && (
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-50 text-blue-700"
+                    >
+                      Total Area: {form.size.length * form.size.width} sq ft
+                    </Badge>
+                  )}
+
+                  <Separator />
+
+                  {/* Pricing */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-green-600" />
+                      Price <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="price"
+                        type="number"
+                        value={(() => {
+                          if (form.price?.daily && form.price.daily > 0)
+                            return form.price.daily.toString();
+                          if (form.price?.weekly && form.price.weekly > 0)
+                            return form.price.weekly.toString();
+                          if (form.price?.monthly && form.price.monthly > 0)
+                            return form.price.monthly.toString();
+                          return "";
+                        })()}
+                        onChange={(e) => {
+                          const value = +e.target.value;
+                          const period =
+                            (
+                              document.getElementById(
+                                "pricePeriod"
+                              ) as HTMLSelectElement
+                            )?.value || "monthly";
+                          setForm((f) => ({
+                            ...f,
+                            price: {
+                              daily: period === "daily" ? value : 0,
+                              weekly: period === "weekly" ? value : 0,
+                              monthly: period === "monthly" ? value : 0,
+                            },
+                          }));
+                        }}
+                        placeholder="Enter Price e.g. 100"
+                        min="0"
+                        className="flex-1"
+                      />
+                      <select
+                        id="pricePeriod"
+                        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        defaultValue="monthly"
+                        onChange={(e) => {
+                          const value = parseFloat(
+                            (
+                              document.getElementById(
+                                "price"
+                              ) as HTMLInputElement
+                            )?.value || "0"
+                          );
+                          setForm((f) => ({
+                            ...f,
+                            price: {
+                              daily: e.target.value === "daily" ? value : 0,
+                              weekly: e.target.value === "weekly" ? value : 0,
+                              monthly: e.target.value === "monthly" ? value : 0,
+                            },
+                          }));
+                        }}
+                      >
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Description */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Additional Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="description" className="block font-medium">
+                      Description <span className="text-red-500">*</span>
+                    </label>
+                    <Textarea
+                      id="description"
+                      value={form.description}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, description: e.target.value }))
+                      }
+                      placeholder="Describe the lot, its features, and any special considerations..."
+                      rows={3}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </ScrollArea>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <DialogFooter className="sticky bottom-0 z-10 gap-3 px-6 py-4 border-t bg-background sm:flex-row sm:justify-end">
             <Button
               variant="outline"
+              type="button"
               onClick={() => {
                 setOpen(false);
                 setForm(getInitialForm());
@@ -484,14 +527,15 @@ export default function AddLotModal({
               Cancel
             </Button>
             <Button
+              type="button"
               onClick={handleSave}
               disabled={saving}
               className="bg-green-600 hover:bg-green-700"
             >
               {saving ? "Adding Lot..." : "Add Lot"}
             </Button>
-          </div>
-        </div>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
