@@ -49,21 +49,6 @@ export default function ClientLotTable({
     }
   };
 
-  const getRowBackgroundColor = (status: ISpot["status"]) => {
-    switch (status) {
-      case "AVAILABLE":
-        return "bg-yellow-50 hover:bg-yellow-100"; // Yellow for potential opportunity
-      case "BOOKED":
-        return "bg-emerald-50 hover:bg-emerald-100"; // Green for revenue-generating
-      case "MAINTENANCE":
-        return "bg-red-50 hover:bg-red-100";
-      case "RESERVED":
-        return "bg-blue-50 hover:bg-blue-100";
-      default:
-        return "bg-white hover:bg-gray-50";
-    }
-  };
-
   // Helper function to get electric amenities
   const getElectricAmenities = (amenities: string[]) => {
     const electricAmenities = amenities.filter(
@@ -92,9 +77,7 @@ export default function ClientLotTable({
               return (
                 <TableRow
                   key={s.id}
-                  className={`border-t cursor-pointer ${getRowBackgroundColor(
-                    s.status
-                  )}`}
+                  className={`border-t cursor-pointer `}
                   onClick={() => setSelectedId(s.id)}
                 >
                   <TableCell className="p-2">{s.spotNumber}</TableCell>

@@ -100,7 +100,6 @@ export default function InviteTenantModal({
     setIsSubmitting(true);
     try {
       const response = await inviteTenant(data);
-      console.log("🚀 ~ response:", response);
 
       // if (response?.data?.data?.autoFillUrl) {
       //   console.log(response.data?.data?.autoFillUrl);
@@ -116,7 +115,6 @@ export default function InviteTenantModal({
       toast.success("Tenant invited successfully!");
       resetModal();
       router.refresh(); // Revalidate the page
-      console.log("🚀 ~ response:", response);
 
       setOpen(false);
     } catch {

@@ -4,6 +4,7 @@ import { uploadToCloudinaryAction } from "@/app/actions/cloudinary-upload";
 import { updateUserById } from "@/app/apiClient/adminApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +56,7 @@ export interface IUpdateTenantData {
     leaseStart?: Date;
     leaseEnd?: Date;
     rentAmount?: number;
+    additionalRentAmount?: number;
     depositAmount?: number;
     occupants?: number;
     pets?: {
@@ -91,6 +93,7 @@ const formSchema = z.object({
   leaseStart: z.string().optional(),
   leaseEnd: z.string().optional(),
   rentAmount: z.string().min(1, "Rent amount is required"),
+  additionalRentAmount: z.string().optional(),
   depositAmount: z.string().min(1, "Security deposit is required"),
   occupants: z.string().min(1, "Number of occupants is required"),
   pets: z.string().optional(),
@@ -112,7 +115,6 @@ export default function TenantEditModal({
   open,
   onOpenChange,
 }: TenantEditModalProps) {
-  console.log("🚀 ~ tenant:", tenant);
   const router = useRouter();
 
   const form = useForm<FormData>({
@@ -143,6 +145,8 @@ export default function TenantEditModal({
         tenant?.lease?.rentAmount?.toString() ||
         tenant?.lotPrice?.monthly?.toString() ||
         "",
+      additionalRentAmount:
+        tenant?.lease?.additionalRentAmount?.toString() || "",
       depositAmount:
         tenant?.lease?.depositAmount?.toString() || tenant?.deposit || "",
       occupants:
@@ -163,6 +167,12 @@ export default function TenantEditModal({
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>("");
+  const [showAdditionalRent, setShowAdditionalRent] = useState(
+    !!(
+      tenant?.lease?.additionalRentAmount &&
+      tenant.lease.additionalRentAmount > 0
+    )
+  );
 
   // File upload handlers
   const handleFileUpload = (file: File) => {
@@ -312,6 +322,9 @@ export default function TenantEditModal({
               ? new Date(data.leaseEnd)
               : undefined,
           rentAmount: parseFloat(data.rentAmount) || 0,
+          additionalRentAmount: showAdditionalRent
+            ? parseFloat(data.additionalRentAmount || "0") || 0
+            : 0,
           depositAmount: parseFloat(data.depositAmount) || 0,
           occupants: parseInt(data.occupants) || 0,
           pets: {
@@ -340,7 +353,6 @@ export default function TenantEditModal({
         userId: tenant._id!,
         data: payload,
       });
-      console.log("update tenant data response", res);
 
       if (!res.success) {
         toast.error(res.message);
@@ -667,6 +679,36 @@ export default function TenantEditModal({
                             />
                           </div>
                         </>
+                      )}
+                    </div>
+
+                    {/* Additional Rent Amount Section */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="additionalRentCheckbox"
+                          checked={showAdditionalRent}
+                          onCheckedChange={(checked) =>
+                            setShowAdditionalRent(checked as boolean)
+                          }
+                        />
+                        <Label
+                          htmlFor="additionalRentCheckbox"
+                          className="text-sm font-medium"
+                        >
+                          Additional Rent Amount
+                        </Label>
+                      </div>
+                      {showAdditionalRent && (
+                        <div className="pl-6">
+                          <Input
+                            id="additionalRentAmount"
+                            {...form.register("additionalRentAmount")}
+                            type="number"
+                            placeholder="Enter additional rent amount"
+                            className="max-w-xs"
+                          />
+                        </div>
                       )}
                     </div>
                   </CardContent>

@@ -9,6 +9,7 @@ export interface ITenant {
   isVerified?: boolean;
   profileImage?: string;
   role?: "TENANT";
+  tenantStatus?: boolean; // true if all required data is filled, false otherwise
 
   // RV Information
   rvInfo?: {
@@ -95,6 +96,8 @@ export interface ITenant {
     leaseStart?: string;
     leaseEnd?: string;
     rentAmount: number;
+    additionalRentAmount?: number;
+    totalRentAmount?: number;
     depositAmount: number;
     leaseStatus?: string;
     occupants?: number;

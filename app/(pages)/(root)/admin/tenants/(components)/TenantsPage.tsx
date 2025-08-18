@@ -63,65 +63,9 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
     "all" | "verified" | "unverified"
   >("all");
 
-  // Function to check if tenant profile is complete/verified
+  // Use the tenantStatus from API instead of calculating locally
   const isTenantProfileComplete = (tenant: ITenant): boolean => {
-    // Required basic information (Personal Information section)
-    const hasBasicInfo = Boolean(
-      tenant.name && tenant.email && tenant.phoneNumber
-    );
-
-    // Required RV information (RV Information section)
-    const hasRVInfo = Boolean(
-      tenant.rvInfo &&
-        tenant.rvInfo.make &&
-        tenant.rvInfo.model &&
-        tenant.rvInfo.year &&
-        tenant.rvInfo.length &&
-        tenant.rvInfo.licensePlate
-    );
-
-    // Required site/lot information (Site Address section)
-    const hasLotInfo = Boolean(
-      tenant.lotNumber ||
-        (tenant.spot &&
-          typeof tenant.spot === "object" &&
-          tenant.spot.spotNumber)
-    );
-
-    // Required property information
-    const hasPropertyInfo = Boolean(
-      tenant.property &&
-        (typeof tenant.property === "object" ? tenant.property.name : true)
-    );
-
-    // Required lease information (Lease Details section)
-    const hasLeaseInfo = Boolean(
-      tenant.lease &&
-        tenant.lease.leaseType &&
-        tenant.lease.leaseStart &&
-        tenant.lease.rentAmount &&
-        tenant.lease.depositAmount &&
-        tenant.lease.occupants
-    );
-
-    // Check lease end date based on lease type
-    const hasValidLeaseDates = Boolean(
-      tenant.lease &&
-        tenant.lease.leaseStart &&
-        (tenant.lease.leaseType?.toLowerCase() === "monthly" ||
-          (tenant.lease.leaseType?.toLowerCase() === "fixed" &&
-            tenant.lease.leaseEnd))
-    );
-
-    // All required sections must be complete
-    return (
-      hasBasicInfo &&
-      hasRVInfo &&
-      hasLotInfo &&
-      hasPropertyInfo &&
-      hasLeaseInfo &&
-      hasValidLeaseDates
-    );
+    return tenant.tenantStatus === true;
   };
 
   // Function to get tenant verification status
@@ -131,7 +75,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
     return isTenantProfileComplete(tenant) ? "verified" : "unverified";
   };
 
-  // Function to get missing fields for debugging
+  // Function to get missing fields for debugging (simplified since we use API tenantStatus)
   const getMissingFields = (tenant: ITenant): string[] => {
     const missingFields: string[] = [];
 
@@ -410,8 +354,8 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
             : b.name.localeCompare(a.name);
         }
         if (sortBy === "status") {
-          const aStatus = a.isVerified ? 1 : 0;
-          const bStatus = b.isVerified ? 1 : 0;
+          const aStatus = a.tenantStatus ? 1 : 0;
+          const bStatus = b.tenantStatus ? 1 : 0;
           return sortOrder === "asc" ? aStatus - bStatus : bStatus - aStatus;
         }
         return 0;
@@ -790,7 +734,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                               >
                                 {tenant.isVerified ? "Verified" : "Pending"}
                               </Badge>
-                              {!tenant.isVerified && (
+                              {!tenant.tenantStatus && (
                                 <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-2 w-64 z-10">
                                   <div className="font-medium mb-1">
                                     Missing Fields:

@@ -271,7 +271,10 @@ export default async function ServicesRequestsPage({
                   </p>
                   <ServiceRequestModal
                     trigger={
-                      <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Submit Your First Request
                       </Button>
