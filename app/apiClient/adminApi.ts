@@ -34,7 +34,7 @@ export async function createProperty(data: IPropertyFull) {
     requireToken: true,
     body: JSON.stringify(data),
     revalidate: {
-      queryKeys: [["admin", "property"]],
+      queryKeys: [["admin", "property", "tenants"], ["properties"]],
     },
   });
 }
@@ -68,6 +68,9 @@ export async function updateProperty({
     method: "PATCH",
     requireToken: true,
     body: JSON.stringify(data),
+    revalidate: {
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
+    },
   });
 }
 
@@ -78,7 +81,7 @@ export async function deleteProperty(propertyId: string) {
     method: "DELETE",
     requireToken: true,
     revalidate: {
-      queryKeys: [["admin", "properties"], ["properties"]],
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
     },
   });
 }
@@ -118,7 +121,7 @@ export async function createSpot(data: ICreateSpot) {
     requireToken: true,
     body: JSON.stringify(data),
     revalidate: {
-      queryKeys: [["admin", "properties"], ["properties"]],
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
     },
   });
 }
@@ -130,6 +133,9 @@ export async function updateSpotById(id: string, data: Partial<ISpot>) {
     method: "PATCH",
     requireToken: true,
     body: JSON.stringify(data),
+    revalidate: {
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
+    },
   });
 }
 
@@ -140,7 +146,7 @@ export async function deleteSpotById(id: string) {
     method: "DELETE",
     requireToken: true,
     revalidate: {
-      queryKeys: [["admin", "properties"], ["properties"]],
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
     },
   });
 }
@@ -219,7 +225,7 @@ export async function deleteUserById({ userId }: { userId: string }) {
     method: "DELETE",
     requireToken: true,
     revalidate: {
-      queryKeys: [["admin", "properties"], ["properties"], ["tenants"]],
+      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
     },
   });
 }

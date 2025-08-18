@@ -62,6 +62,141 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   const [statusFilter, setStatusFilter] = useState<
     "all" | "verified" | "unverified"
   >("all");
+
+  // Function to check if tenant profile is complete/verified
+  const isTenantProfileComplete = (tenant: ITenant): boolean => {
+    // Required basic information (Personal Information section)
+    const hasBasicInfo = Boolean(
+      tenant.name && tenant.email && tenant.phoneNumber
+    );
+
+    // Required RV information (RV Information section)
+    const hasRVInfo = Boolean(
+      tenant.rvInfo &&
+        tenant.rvInfo.make &&
+        tenant.rvInfo.model &&
+        tenant.rvInfo.year &&
+        tenant.rvInfo.length &&
+        tenant.rvInfo.licensePlate
+    );
+
+    // Required site/lot information (Site Address section)
+    const hasLotInfo = Boolean(
+      tenant.lotNumber ||
+        (tenant.spot &&
+          typeof tenant.spot === "object" &&
+          tenant.spot.spotNumber)
+    );
+
+    // Required property information
+    const hasPropertyInfo = Boolean(
+      tenant.property &&
+        (typeof tenant.property === "object" ? tenant.property.name : true)
+    );
+
+    // Required lease information (Lease Details section)
+    const hasLeaseInfo = Boolean(
+      tenant.lease &&
+        tenant.lease.leaseType &&
+        tenant.lease.leaseStart &&
+        tenant.lease.rentAmount &&
+        tenant.lease.depositAmount &&
+        tenant.lease.occupants
+    );
+
+    // Check lease end date based on lease type
+    const hasValidLeaseDates = Boolean(
+      tenant.lease &&
+        tenant.lease.leaseStart &&
+        (tenant.lease.leaseType?.toLowerCase() === "monthly" ||
+          (tenant.lease.leaseType?.toLowerCase() === "fixed" &&
+            tenant.lease.leaseEnd))
+    );
+
+    // All required sections must be complete
+    return (
+      hasBasicInfo &&
+      hasRVInfo &&
+      hasLotInfo &&
+      hasPropertyInfo &&
+      hasLeaseInfo &&
+      hasValidLeaseDates
+    );
+  };
+
+  // Function to get tenant verification status
+  const getTenantVerificationStatus = (
+    tenant: ITenant
+  ): "verified" | "unverified" => {
+    return isTenantProfileComplete(tenant) ? "verified" : "unverified";
+  };
+
+  // Function to get missing fields for debugging
+  const getMissingFields = (tenant: ITenant): string[] => {
+    const missingFields: string[] = [];
+
+    // Check basic information
+    if (!tenant.name) missingFields.push("Name");
+    if (!tenant.email) missingFields.push("Email");
+    if (!tenant.phoneNumber) missingFields.push("Phone Number");
+
+    // Check RV information
+    if (!tenant.rvInfo?.make) missingFields.push("RV Make");
+    if (!tenant.rvInfo?.model) missingFields.push("RV Model");
+    if (!tenant.rvInfo?.year) missingFields.push("RV Year");
+    if (!tenant.rvInfo?.length) missingFields.push("RV Length");
+    if (!tenant.rvInfo?.licensePlate) missingFields.push("RV License Plate");
+
+    // Check lot information
+    if (
+      !tenant.lotNumber &&
+      !(
+        tenant.spot &&
+        typeof tenant.spot === "object" &&
+        tenant.spot.spotNumber
+      )
+    ) {
+      missingFields.push("Lot/Spot Number");
+    }
+
+    // Check property information
+    if (
+      !tenant.property ||
+      (typeof tenant.property === "object" && !tenant.property.name)
+    ) {
+      missingFields.push("Property Assignment");
+    }
+
+    // Check lease information
+    if (!tenant.lease?.leaseType) missingFields.push("Lease Type");
+    if (!tenant.lease?.leaseStart) missingFields.push("Lease Start Date");
+    if (!tenant.lease?.rentAmount) missingFields.push("Rent Amount");
+    if (!tenant.lease?.depositAmount) missingFields.push("Security Deposit");
+    if (!tenant.lease?.occupants) missingFields.push("Number of Occupants");
+
+    // Check lease end date for fixed term leases
+    if (
+      tenant.lease?.leaseType?.toLowerCase() === "fixed" &&
+      !tenant.lease?.leaseEnd
+    ) {
+      missingFields.push("Lease End Date");
+    }
+
+    return missingFields;
+  };
+
+  // Function to get row background color based on verification status
+  const getRowBackgroundColor = (tenant: ITenant, index: number): string => {
+    const isVerified = isTenantProfileComplete(tenant);
+
+    if (isVerified) {
+      return "bg-green-50 hover:bg-green-100"; // Green for verified tenants
+    } else {
+      return index % 2 === 0
+        ? "bg-yellow-50 hover:bg-yellow-100"
+        : "bg-yellow-100 hover:bg-yellow-200"; // Yellow for unverified tenants
+    }
+  };
   const [leaseFilter, setLeaseFilter] = useState<"all" | "monthly" | "fixed">(
     "all"
   );
@@ -226,8 +361,10 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
       filtered = Object.keys(filtered).reduce((acc, propertyId) => {
         const property = filtered[propertyId];
         const filteredTenants = property.tenants.filter((tenant) => {
-          if (statusFilter === "verified") return tenant.isVerified;
-          if (statusFilter === "unverified") return !tenant.isVerified;
+          if (statusFilter === "verified")
+            return isTenantProfileComplete(tenant);
+          if (statusFilter === "unverified")
+            return !isTenantProfileComplete(tenant);
           return true;
         });
 
@@ -312,12 +449,12 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   );
   const verifiedTenants = Object.values(filteredData).reduce(
     (acc, property) =>
-      acc + property.tenants.filter((t) => t.isVerified).length,
+      acc + property.tenants.filter((t) => isTenantProfileComplete(t)).length,
     0
   );
   const unverifiedTenants = Object.values(filteredData).reduce(
     (acc, property) =>
-      acc + property.tenants.filter((t) => !t.isVerified).length,
+      acc + property.tenants.filter((t) => !isTenantProfileComplete(t)).length,
     0
   );
 
@@ -326,9 +463,12 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
       id: propertyId,
       name: propertyData.property.name,
       totalTenants: propertyData.tenants.length,
-      verifiedTenants: propertyData.tenants.filter((t) => t.isVerified).length,
-      unverifiedTenants: propertyData.tenants.filter((t) => !t.isVerified)
-        .length,
+      verifiedTenants: propertyData.tenants.filter((t) =>
+        isTenantProfileComplete(t)
+      ).length,
+      unverifiedTenants: propertyData.tenants.filter(
+        (t) => !isTenantProfileComplete(t)
+      ).length,
     })
   );
 
@@ -568,9 +708,10 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                     {propertyData.tenants.map((tenant, index) => (
                       <tr
                         key={tenant._id}
-                        className={`${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                        } hover:bg-blue-50 transition-colors duration-200 cursor-pointer`}
+                        className={`${getRowBackgroundColor(
+                          tenant,
+                          index
+                        )} transition-colors duration-200 cursor-pointer`}
                         onClick={() => handleRowClick(tenant)}
                       >
                         <td className="px-4 py-3">
@@ -641,13 +782,42 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             {getStatusIcon(tenant.isVerified || false)}
-                            <Badge
-                              className={getStatusColor(
-                                tenant.isVerified || false
+                            <div className="relative group">
+                              <Badge
+                                className={getStatusColor(
+                                  tenant.isVerified || false
+                                )}
+                              >
+                                {tenant.isVerified ? "Verified" : "Pending"}
+                              </Badge>
+                              {!tenant.isVerified && (
+                                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-2 w-64 z-10">
+                                  <div className="font-medium mb-1">
+                                    Missing Fields:
+                                  </div>
+                                  <div className="space-y-1">
+                                    {getMissingFields(tenant)
+                                      .slice(0, 5)
+                                      .map((field, index) => (
+                                        <div
+                                          key={index}
+                                          className="flex items-center gap-1"
+                                        >
+                                          <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                                          {field}
+                                        </div>
+                                      ))}
+                                    {getMissingFields(tenant).length > 5 && (
+                                      <div className="text-gray-300 text-xs">
+                                        +{getMissingFields(tenant).length - 5}{" "}
+                                        more fields
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                </div>
                               )}
-                            >
-                              {tenant.isVerified ? "Verified" : "Pending"}
-                            </Badge>
+                            </div>
                           </div>
                         </td>
                       </tr>
