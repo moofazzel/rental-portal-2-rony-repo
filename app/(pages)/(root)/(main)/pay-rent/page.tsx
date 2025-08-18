@@ -3,13 +3,23 @@ import { IPaymentSummary } from "@/types/payment.types";
 import PayRent from "./(components)/PayRent";
 
 export default async function PayRentPage() {
-  // get the rent summary
-  const result = await getRentSummary();
-  const payments = result as IPaymentSummary;
+  try {
+    // get the rent summary
+    const result = await getRentSummary();
+    const payments = result as IPaymentSummary;
+    console.log("🚀 ~ payments:", payments);
 
-  return (
-    <div>
-      <PayRent rentData={payments} />
-    </div>
-  );
+    return (
+      <div>
+        <PayRent rentData={payments} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error fetching rent summary:", error);
+    return (
+      <div>
+        <PayRent rentData={null} />
+      </div>
+    );
+  }
 }

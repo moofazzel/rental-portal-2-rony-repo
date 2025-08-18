@@ -17,12 +17,39 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import HelpSection from "../../(components)/HelpSection";
 
-export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
+export default function PayRent({
+  rentData,
+}: {
+  rentData?: IPaymentSummary | null;
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession();
 
-  // Use real data from API
+  // Handle case where rentData is null or undefined
+  if (!rentData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="container mx-auto p-6">
+          <div className="max-w-2xl mx-auto">
+            <Card className="shadow-lg border-0">
+              <CardContent className="p-8 text-center">
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                  Unable to Load Payment Information
+                </h1>
+                <p className="text-gray-600">
+                  There was an error loading your payment information. Please
+                  try refreshing the page or contact support.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Use real data from API with proper null checks
   const rentInfo = {
     currentMonth: new Date().toLocaleDateString("en-US", {
       month: "long",
@@ -52,24 +79,24 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
       return "";
     })(),
     spotNumber: rentData?.spotNumber || "N/A",
-    rentAmount: rentData?.fullMonthRentAmount || 0,
-    depositAmount: rentData?.depositAmount || 0,
-    totalDue: rentData?.totalDue || 0,
+    rentAmount: Number(rentData?.fullMonthRentAmount) || 0,
+    depositAmount: Number(rentData?.depositAmount) || 0,
+    totalDue: Number(rentData?.totalDue) || 0,
     isFirstTimePayment: rentData?.isFirstTimePayment || false,
     paymentAction: rentData?.paymentAction || "REGULAR_PAYMENT",
     leaseStart: rentData?.leaseStart,
     leaseEnd: rentData?.leaseEnd,
     isLeaseExpiringSoon: rentData?.isLeaseExpiringSoon || false,
-    currentMonthAmount: rentData?.currentMonthAmount || 0,
+    currentMonthAmount: Number(rentData?.currentMonthAmount) || 0,
     currentMonthDescription: rentData?.currentMonthDescription || "",
     isProRated: rentData?.isProRated || false,
-    proRatedDays: rentData?.proRatedDays || 0,
-    proRatedRentAmount: rentData?.proRatedRentAmount || 0,
+    proRatedDays: Number(rentData?.proRatedDays) || 0,
+    proRatedRentAmount: Number(rentData?.proRatedRentAmount) || 0,
     warningMessage: rentData?.warningMessage,
     canPayNextMonth: rentData?.canPayNextMonth || false,
     hasOverduePayments: rentData?.hasOverduePayments || false,
-    overdueCount: rentData?.overdueCount || 0,
-    totalOverdueAmount: rentData?.totalOverdueAmount || 0,
+    overdueCount: Number(rentData?.overdueCount) || 0,
+    totalOverdueAmount: Number(rentData?.totalOverdueAmount) || 0,
     currentMonthDueDate: rentData?.currentMonthDueDate,
     nextMonthDueDate: rentData?.nextMonthDueDate,
     overduePaymentsDetails: rentData?.overduePaymentsDetails || [],
@@ -257,9 +284,9 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
               <CreditCard className="w-5 h-5 mr-2" />
               {isLoading
                 ? "Creating Payment Link..."
-                : `Pay Current + Overdue ($${combinedOption.amount.toFixed(
-                    2
-                  )})`}
+                : `Pay Current + Overdue ($${(
+                    Number(combinedOption.amount) || 0
+                  ).toFixed(2)})`}
               <ExternalLink className="w-4 h-4 ml-2" />
             </Button>
           );
@@ -289,7 +316,7 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
     // If there are specific payment options, show a summary button
     if (rentInfo.paymentOptions && rentInfo.paymentOptions.length > 0) {
       const totalOptionsAmount = rentInfo.paymentOptions.reduce(
-        (sum, option) => sum + option.amount,
+        (sum, option) => sum + (Number(option.amount) || 0),
         0
       );
       return (
@@ -607,7 +634,7 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
                               </div>
                               <div className="text-right">
                                 <p className="text-lg font-bold text-red-900">
-                                  ${overdue.amount.toFixed(2)}
+                                  ${(Number(overdue.amount) || 0).toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -655,7 +682,7 @@ export default function PayRent({ rentData }: { rentData?: IPaymentSummary }) {
                             </div>
                             <div className="text-right">
                               <p className="text-lg font-bold text-blue-900">
-                                ${option.amount.toFixed(2)}
+                                ${(Number(option?.amount) || 0).toFixed(2)}
                               </p>
                             </div>
                           </div>
