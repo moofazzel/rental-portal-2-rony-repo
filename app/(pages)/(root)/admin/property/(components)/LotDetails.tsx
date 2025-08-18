@@ -1,16 +1,10 @@
 // app/admin/property/(components)/LotDetails.tsx
-import {
-  getPropertyById,
-  getSpotsByPropertyId,
-} from "@/app/apiClient/adminApi";
+import { getPropertyById } from "@/app/apiClient/adminApi";
+import { ISpot } from "@/types/properties.type";
 import ClientLotTable from "./ClientLotTable";
 
-export default async function LotDetails({
-  propertyId,
-}: {
-  propertyId: string;
-}) {
-  const response = await getPropertyById({ propertyId });
+export default async function LotDetails({ spots }: { spots: ISpot[] }) {
+  const response = await getPropertyById({ propertyId: spots[0].propertyId });
   const propertyAddress =
     response.success && response.data
       ? {
@@ -28,8 +22,8 @@ export default async function LotDetails({
           country: "",
         };
 
-  const res = await getSpotsByPropertyId(propertyId);
-  const spots = res.success && res.data ? res.data : [];
+  // const res = await getSpotsByPropertyId(propertyId);
+  // const spots = res.success && res.data ? res.data : [];
 
   // Get property details for identifierType and amenities
   const property = response.success && response.data ? response.data : null;

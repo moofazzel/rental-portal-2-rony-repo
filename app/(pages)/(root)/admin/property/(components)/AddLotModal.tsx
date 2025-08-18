@@ -83,7 +83,7 @@ export default function AddLotModal({
     propertyId,
     status: "AVAILABLE",
     size: { length: 0, width: 0 },
-    amenities: [], // Start with empty amenities array
+    amenities: [...amenities], // Start with all parent property amenities
     price: { daily: 0, weekly: 0, monthly: 0 },
     description: "",
     images: [],

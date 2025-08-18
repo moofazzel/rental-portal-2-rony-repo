@@ -37,15 +37,30 @@ export default function ClientLotTable({
   const getStatusClasses = (status: ISpot["status"]) => {
     switch (status) {
       case "AVAILABLE":
-        return "bg-green-100 text-green-800";
+        return "bg-yellow-100 text-yellow-800"; // Yellow for potential opportunity
       case "BOOKED":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-emerald-100 text-emerald-800"; // Green for revenue-generating
       case "MAINTENANCE":
         return "bg-orange-100 text-orange-800";
       case "RESERVED":
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getRowBackgroundColor = (status: ISpot["status"]) => {
+    switch (status) {
+      case "AVAILABLE":
+        return "bg-yellow-50 hover:bg-yellow-100"; // Yellow for potential opportunity
+      case "BOOKED":
+        return "bg-emerald-50 hover:bg-emerald-100"; // Green for revenue-generating
+      case "MAINTENANCE":
+        return "bg-red-50 hover:bg-red-100";
+      case "RESERVED":
+        return "bg-blue-50 hover:bg-blue-100";
+      default:
+        return "bg-white hover:bg-gray-50";
     }
   };
 
@@ -77,7 +92,9 @@ export default function ClientLotTable({
               return (
                 <TableRow
                   key={s.id}
-                  className="border-t hover:bg-gray-50 cursor-pointer"
+                  className={`border-t cursor-pointer ${getRowBackgroundColor(
+                    s.status
+                  )}`}
                   onClick={() => setSelectedId(s.id)}
                 >
                   <TableCell className="p-2">{s.spotNumber}</TableCell>

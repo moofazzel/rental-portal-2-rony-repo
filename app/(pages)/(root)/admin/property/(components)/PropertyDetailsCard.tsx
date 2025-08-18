@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { IPropertyFull } from "@/types/properties.type";
+import { IPropertyFull, ISpot } from "@/types/properties.type";
 import {
   Calendar,
   CheckCircle2,
@@ -20,16 +20,18 @@ import UpdatePropertyModal from "./UpdatePropertyModal";
 
 export default function PropertyDetailsCard({
   propertyDetails,
+  spots,
 }: {
   propertyDetails: IPropertyFull;
+  spots: ISpot[];
 }) {
   const {
     name,
     description,
     amenities,
     rules,
-    totalLots,
-    availableLots,
+    // totalLots,
+    // availableLots,
     isActive,
     address,
     identifierType,
@@ -37,23 +39,21 @@ export default function PropertyDetailsCard({
     updatedAt,
   } = propertyDetails;
 
-  // Calculate occupied lots
-  const occupiedLots = totalLots - (availableLots || 0);
+  // Calculate occupancy based on actual spots data
+  const totalLotsValue = spots.length || 0;
+  const availableLotsValue =
+    spots.filter((spot) => spot.status === "AVAILABLE").length || 0;
+  const occupiedLots = totalLotsValue - availableLotsValue;
 
   // const getOccupancyRate = () => {
   //   if (!totalLots || totalLots === 0) return 0;
   //   return Math.round((occupiedLots / totalLots) * 100);
   // };
   const getOccupancyRate = () => {
-    if (!totalLots || totalLots === 0) return 0;
+    if (!totalLotsValue || totalLotsValue === 0) return 0;
 
-    const available = availableLots ?? 0; // use 0 if undefined
-
-    const occupied =
-      typeof occupiedLots === "number" ? occupiedLots : totalLots - available;
-
-    const safeOccupied = Math.max(0, Math.min(occupied, totalLots));
-    return Math.round((safeOccupied / totalLots) * 100);
+    const safeOccupied = Math.max(0, Math.min(occupiedLots, totalLotsValue));
+    return Math.round((safeOccupied / totalLotsValue) * 100);
   };
 
   const getOccupancyColor = (rate: number) => {
@@ -143,7 +143,9 @@ export default function PropertyDetailsCard({
                   <p className="text-xs font-medium text-blue-600">
                     Total Lots
                   </p>
-                  <p className="text-xl font-bold text-blue-900">{totalLots}</p>
+                  <p className="text-xl font-bold text-blue-900">
+                    {totalLotsValue}
+                  </p>
                 </div>
                 <div className="p-1.5 bg-blue-200 rounded-lg">
                   <Home className="h-4 w-4 text-blue-700" />
@@ -160,7 +162,7 @@ export default function PropertyDetailsCard({
                     Available
                   </p>
                   <p className="text-xl font-bold text-green-900">
-                    {availableLots}
+                    {availableLotsValue}
                   </p>
                 </div>
                 <div className="p-1.5 bg-green-200 rounded-lg">

@@ -1,6 +1,9 @@
 // File: app/admin/property/[id]/page.tsx
 
-import { getPropertyById } from "@/app/apiClient/adminApi";
+import {
+  getPropertyById,
+  getSpotsByPropertyId,
+} from "@/app/apiClient/adminApi";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Building2 } from "lucide-react";
 import Link from "next/link";
@@ -17,9 +20,12 @@ export default async function PropertyDetailPage({
 }) {
   const { id } = await params;
 
-  const response = await getPropertyById({ propertyId: id });
+  const propertyRes = await getPropertyById({ propertyId: id });
 
-  if (!response.success || !response.data) {
+  const spotsRes = await getSpotsByPropertyId(id);
+  const spots = spotsRes.success && spotsRes.data ? spotsRes.data : [];
+
+  if (!propertyRes.success || !propertyRes.data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -65,7 +71,7 @@ export default async function PropertyDetailPage({
         </div>
 
         {/* Property Details */}
-        <PropertyDetailsCard propertyDetails={response.data} />
+        <PropertyDetailsCard propertyDetails={propertyRes.data} spots={spots} />
 
         {/* Lot Details Section */}
         <section className="mt-12">
@@ -80,7 +86,7 @@ export default async function PropertyDetailPage({
                 </p>
               </div>
             </div>
-            <LotDetails propertyId={id} />
+            <LotDetails spots={spots} />
           </div>
         </section>
       </div>

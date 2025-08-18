@@ -52,6 +52,7 @@ export interface IPropertyFull extends IProperty {
   lots?: ILot[];
   tenants?: ITenant[];
   payments?: IPayment[];
+  spots?: ISpot[];
 }
 
 export interface ILot {
