@@ -8,7 +8,6 @@ import {
   Building,
   Calendar,
   Car,
-  CheckCircle,
   Clock,
   CreditCard,
   DollarSign,
@@ -28,6 +27,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import AccountStatusBanner from "../(components)/AccountStatusBanner";
 import HelpSection from "../(components)/HelpSection";
 import AmenitiesList from "./components/AmenitiesList";
 import EditProfileModal from "./components/EditProfileModal";
@@ -35,6 +35,7 @@ import { OpenEditProfileTrigger } from "./components/OpenEditProfileTrigger";
 
 export default async function MyInfo() {
   const res = await getTenant();
+  console.log("🚀 ~ res:", res);
 
   if (!res.success) {
     return (
@@ -290,12 +291,7 @@ export default async function MyInfo() {
                     <Shield className="w-3 h-3 mr-1" />
                     {leaseData?.leaseStatus || "Unknown Status"}
                   </Badge>
-                  {tenantData.isVerified && (
-                    <Badge className="bg-green-500/20 text-green-100 border-green-400/30">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Verified
-                    </Badge>
-                  )}
+
                   <Badge className="bg-white/20 text-white border-white/30">
                     <Clock className="w-3 h-3 mr-1" />
                     Since {formatDate(leaseData?.leaseStart)}
@@ -319,6 +315,14 @@ export default async function MyInfo() {
             </div>
           </div>
         </div>
+
+        {/* Account Status Banner */}
+        {!tenantData.tenantStatus && (
+          <AccountStatusBanner
+            tenantStatus={tenantData.tenantStatus || false}
+            tenantName={tenantData.name}
+          />
+        )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

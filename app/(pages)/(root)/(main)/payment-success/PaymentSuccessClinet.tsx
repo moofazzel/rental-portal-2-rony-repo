@@ -220,7 +220,6 @@ export default function PaymentSuccessClient() {
       try {
         const response = await getPaymentBySessionId(sessionId, accountId);
 
-        console.log("🚀 ~ response:", response);
 
         if (!response.success) {
           throw new Error(response.message || "Failed to fetch receipt");

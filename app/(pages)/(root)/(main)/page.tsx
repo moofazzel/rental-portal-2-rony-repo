@@ -10,6 +10,7 @@ import { IDocument } from "@/types/document.types";
 import { INotice } from "@/types/notices.types";
 import { IServiceRequest } from "@/types/serviceRequest.types";
 import Link from "next/link";
+import AccountStatusBanner from "./(components)/AccountStatusBanner";
 import DashboardStats from "./(components)/DashboardStats";
 import PaymentHistory from "./(components)/PaymentHistory";
 import QuickActions from "./(components)/QuickActions";
@@ -98,6 +99,14 @@ export default async function TenantDashboard() {
             </Link>
           </div>
         </div>
+
+        {/* Account Status Banner */}
+        {tenantRes?.user && (
+          <AccountStatusBanner
+            tenantStatus={tenantRes.user.tenantStatus || false}
+            tenantName={tenantRes.user.name}
+          />
+        )}
 
         {/* Quick Stats Cards */}
         <DashboardStats tenantRes={tenantRes} />
