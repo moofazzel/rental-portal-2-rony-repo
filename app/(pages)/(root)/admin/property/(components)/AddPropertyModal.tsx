@@ -75,7 +75,7 @@ export default function AddPropertyModal() {
       description: "",
       address: { street: "", city: "", state: "", zip: "", country: "" },
       identifierType: "lotNumber",
-      amenities: ESSENTIAL_AMENITIES.map((amenity) => amenity.name),
+      amenities: [],
       rules: [],
       images: [],
     },
@@ -98,10 +98,7 @@ export default function AddPropertyModal() {
   // Initialize essential amenities when form opens
   useEffect(() => {
     if (open) {
-      setValue(
-        "amenities",
-        ESSENTIAL_AMENITIES.map((amenity) => amenity.name)
-      );
+      setValue("amenities", []);
     }
   }, [open, setValue]);
 
