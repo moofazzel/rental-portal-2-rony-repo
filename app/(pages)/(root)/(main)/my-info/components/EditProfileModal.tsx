@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { ITenant } from "@/types/tenant.types"; // :contentReference[oaicite:0]{index=0}
+import { updateEmergencyContact } from "@/app/apiClient/tenantApi";
+import { ITenant } from "@/types/tenant.types";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -19,7 +19,40 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MapPin, Pencil, User } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { MapPin, Pencil, Save, User } from "lucide-react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
+// Custom styles for phone input
+const phoneInputStyles = `
+  .react-tel-input .form-control {
+    height: 32px !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+    border: 1px solid #d1d5db !important;
+    padding-left: 48px !important;
+  }
+  .react-tel-input .form-control:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 1px #3b82f6 !important;
+  }
+  .react-tel-input .flag-dropdown {
+    border-radius: 6px 0 0 6px !important;
+    border: 1px solid #d1d5db !important;
+  }
+  .react-tel-input .flag-dropdown.open {
+    border-color: #3b82f6 !important;
+  }
+  .react-tel-input .selected-flag {
+    height: 32px !important;
+    padding: 0 0 0 8px !important;
+  }
+  .react-tel-input .country-list {
+    font-size: 14px !important;
+    max-height: 200px !important;
+  }
+`;
 
 interface TenantInfo {
   personal: {
@@ -45,6 +78,7 @@ export default function EditProfileModal({
   tenantInfo,
 }: EditProfileModalProps) {
   const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,18 +87,19 @@ export default function EditProfileModal({
     return () => window.removeEventListener("openEditProfileModal", handle);
   }, []);
 
-  // react-hook-form setup with defaults
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    setValue,
+    watch,
+    formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
       name: tenant.name,
       email: tenant.email,
       phoneNumber: tenant.phoneNumber,
-      emergencyContact: tenantInfo.personal.emergencyContact,
+      emergencyContact: tenantInfo.personal.emergencyContact || "",
       address: {
         property: tenantInfo.address.property,
         lot: tenantInfo.address.lot,
@@ -74,16 +109,30 @@ export default function EditProfileModal({
         zip: tenantInfo.address.zip,
       },
     },
+    mode: "onChange",
   });
 
-  // reset form to latest values whenever modal opens
+  const emergencyContactValue = watch("emergencyContact");
+
+  // Register emergency contact with validation
+  const emergencyContactField = register("emergencyContact", {
+    required: "Emergency contact phone is required",
+    validate: (value) => {
+      if (!value || value.length < 10) {
+        return "Phone number must be at least 10 digits";
+      }
+      return true;
+    },
+  });
+
+  // Reset form when modal opens
   useEffect(() => {
     if (open) {
       reset({
         name: tenant.name,
         email: tenant.email,
         phoneNumber: tenant.phoneNumber,
-        emergencyContact: "",
+        emergencyContact: tenantInfo.personal.emergencyContact || "",
         address: {
           property: tenantInfo.address.property,
           lot: tenantInfo.address.lot,
@@ -97,157 +146,267 @@ export default function EditProfileModal({
   }, [open, tenant, tenantInfo, reset]);
 
   const onSubmit = async (data: { emergencyContact: string }) => {
-    void data;
-    // TEMP STUB: pretend it worked
-    toast.success("Emergency contact updated (no network)");
-    setOpen(false);
-    router.refresh(); // so you can see changes when you hook real API
+    setIsSubmitting(true);
+    try {
+      const response = await updateEmergencyContact({
+        phone: data.emergencyContact,
+      });
+
+      if (response.success) {
+        toast.success("Emergency contact updated successfully");
+        setOpen(false);
+        router.refresh();
+      } else {
+        toast.error(response.message || "Failed to update emergency contact");
+      }
+    } catch (error) {
+      toast.error("Failed to update emergency contact");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  //   const onSubmit = async (data: { emergencyContact: string }) => {
-  //     try {
-  //       const res = await updateTenant({
-  //         id: tenant._id!,
-  //         emergencyContact: data.emergencyContact,
-  //       });
-  //       if (res.success) {
-  //         toast.success("Emergency contact updated");
-  //         setOpen(false);
-  //         router.refresh();
-  //       } else {
-  //         toast.error(res.message || "Update failed");
-  //       }
-  //     } catch {
-  //       toast.error("Failed to update");
-  //     }
-  //   };
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 !px-8 text-black"
-        >
-          <Pencil className="w-4 h-4" />
-          Edit Profile
-        </Button>
-      </DialogTrigger>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: phoneInputStyles }} />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900"
+          >
+            <Pencil className="w-4 h-4" />
+            Edit Profile
+          </Button>
+        </DialogTrigger>
 
-      <DialogContent className="max-w-3xl w-full h-[80vh] flex flex-col bg-white">
-        <DialogHeader className="sticky top-0 bg-white z-10 px-6 py-4 border-b flex items-center justify-between">
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogClose className="p-2 hover:bg-gray-100 rounded-full" />
-        </DialogHeader>
+        <DialogContent className="max-w-3xl w-full h-[80vh] flex flex-col bg-white p-0 overflow-hidden">
+          {/* Header */}
+          <DialogHeader className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-semibold text-gray-900">
+                  Edit Profile
+                </DialogTitle>
+                <p className="text-xs text-gray-600">
+                  Update your personal information and address details
+                </p>
+              </div>
+            </div>
+          </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex-1 overflow-y-auto px-6 py-6 space-y-6"
-        >
-          {/* Personal Information Card */}
-          <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-            <CardHeader className="pb-4 border-b border-gray-100">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <User className="w-5 h-5 text-blue-600" />
-                </div>
-                Personal Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label>Name</Label>
-                  <Input readOnly {...register("name")} />
-                </div>
-                <div className="space-y-1">
-                  <Label>Phone Number</Label>
-                  <Input readOnly {...register("phoneNumber")} />
-                </div>
-                <div className="space-y-1">
-                  <Label>Email Address</Label>
-                  <Input readOnly {...register("email")} />
-                </div>
-                {/* Emergency Contact */}
-                <div className="space-y-1">
-                  <Label>Emergency Contact</Label>
-                  <Input
-                    className="bg-red-100"
-                    {...register("emergencyContact", { required: true })}
-                    placeholder="Enter emergency contact"
-                  />
-                  {errors.emergencyContact && (
-                    <p className="text-red-600 text-sm">Required</p>
+          {/* Scrollable Content */}
+          <ScrollArea className="flex-1 min-h-0 px-6 py-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {/* Personal Information */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardHeader className="pb-3 border-b border-gray-100">
+                  <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                    <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
+                      <User className="w-3 h-3 text-blue-600" />
+                    </div>
+                    Personal Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="name" className="text-xs font-medium">
+                        Full Name
+                      </Label>
+                      <Input
+                        id="name"
+                        {...register("name")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="email" className="text-xs font-medium">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        {...register("email")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="phone" className="text-xs font-medium">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        {...register("phoneNumber")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label
+                        htmlFor="emergency"
+                        className="text-xs font-medium"
+                      >
+                        Emergency Contact Phone *
+                      </Label>
+                      <PhoneInput
+                        country={"us"}
+                        value={emergencyContactValue}
+                        onChange={(phone) => {
+                          setValue("emergencyContact", phone, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          });
+                        }}
+                        onBlur={emergencyContactField.onBlur}
+                        inputClass={
+                          errors.emergencyContact
+                            ? "border-red-300 text-sm h-8 !w-full"
+                            : "text-sm h-8 !w-full"
+                        }
+                        containerClass="w-full"
+                        buttonClass="h-8"
+                        dropdownClass="text-sm"
+                        enableSearch={true}
+                        searchPlaceholder="Search country..."
+                        inputProps={{
+                          name: "emergencyContact",
+                          required: true,
+                          placeholder: "Enter phone number",
+                        }}
+                      />
+                      {errors.emergencyContact && (
+                        <p className="text-red-600 text-xs">
+                          {errors.emergencyContact.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Address Information */}
+              <Card className="border border-gray-200 shadow-sm">
+                <CardHeader className="pb-3 border-b border-gray-100">
+                  <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                    <div className="w-6 h-6 bg-green-100 rounded-md flex items-center justify-center">
+                      <MapPin className="w-3 h-3 text-green-600" />
+                    </div>
+                    Address Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="property" className="text-xs font-medium">
+                        Property
+                      </Label>
+                      <Input
+                        id="property"
+                        {...register("address.property")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="lot" className="text-xs font-medium">
+                        Lot Number
+                      </Label>
+                      <Input
+                        id="lot"
+                        {...register("address.lot")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="street" className="text-xs font-medium">
+                        Street Address
+                      </Label>
+                      <Input
+                        id="street"
+                        {...register("address.street")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="city" className="text-xs font-medium">
+                        City
+                      </Label>
+                      <Input
+                        id="city"
+                        {...register("address.city")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="state" className="text-xs font-medium">
+                        State
+                      </Label>
+                      <Input
+                        id="state"
+                        {...register("address.state")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="zip" className="text-xs font-medium">
+                        ZIP Code
+                      </Label>
+                      <Input
+                        id="zip"
+                        {...register("address.zip")}
+                        readOnly
+                        className="bg-gray-50 cursor-not-allowed text-sm h-8"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-2 pt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOpen(false)}
+                  disabled={isSubmitting}
+                  className="text-xs px-3 py-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!isDirty || isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-3 h-3 mr-1" />
+                      Save Changes
+                    </>
                   )}
-                </div>
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Tenant Address Card */}
-          {/* Tenant Address Card */}
-          <Card className="shadow-lg border-0 bg-white/90 backdrop-blur-sm">
-            <CardHeader className="pb-4 border-b border-gray-100">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-green-600" />
-                </div>
-                Tenant Address
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="property">Property</Label>
-                  <Input
-                    id="property"
-                    readOnly
-                    {...register("address.property")}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="lot">Lot Number</Label>
-                  <Input id="lot" readOnly {...register("address.lot")} />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="street">Street</Label>
-                  <Input id="street" {...register("address.street")} />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" {...register("address.city")} />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="state">State</Label>
-                  <Input id="state" {...register("address.state")} />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="zip">ZIP Code</Label>
-                  <Input id="zip" {...register("address.zip")} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-2 pt-4 border-t">
-            <Button
-              variant="outline"
-              type="button"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              Save Changes
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+            </form>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
