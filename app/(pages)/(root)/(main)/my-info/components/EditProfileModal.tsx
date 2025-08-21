@@ -56,7 +56,11 @@ const phoneInputStyles = `
 
 interface TenantInfo {
   personal: {
-    emergencyContact: string;
+    emergencyContact: {
+      name: string;
+      phone: string;
+      relationship?: string;
+    };
   };
   address: {
     property: string;
@@ -99,7 +103,7 @@ export default function EditProfileModal({
       name: tenant.name,
       email: tenant.email,
       phoneNumber: tenant.phoneNumber,
-      emergencyContact: tenantInfo.personal.emergencyContact || "",
+      emergencyContact: tenantInfo.personal.emergencyContact?.phone || "",
       address: {
         property: tenantInfo.address.property,
         lot: tenantInfo.address.lot,
@@ -132,7 +136,7 @@ export default function EditProfileModal({
         name: tenant.name,
         email: tenant.email,
         phoneNumber: tenant.phoneNumber,
-        emergencyContact: tenantInfo.personal.emergencyContact || "",
+        emergencyContact: tenantInfo.personal.emergencyContact?.phone || "",
         address: {
           property: tenantInfo.address.property,
           lot: tenantInfo.address.lot,
@@ -145,9 +149,14 @@ export default function EditProfileModal({
     }
   }, [open, tenant, tenantInfo, reset]);
 
-  const onSubmit = async (data: { emergencyContact: string }) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
+      if (!data.emergencyContact) {
+        toast.error("Emergency contact is required");
+        return;
+      }
+
       const response = await updateEmergencyContact({
         phone: data.emergencyContact,
       });
@@ -254,9 +263,30 @@ export default function EditProfileModal({
                       >
                         Emergency Contact Phone *
                       </Label>
+
+                      {/* Show current emergency contact info if exists */}
+                      {tenantInfo.personal.emergencyContact?.name && (
+                        <div className="mb-2 p-2 bg-blue-50 rounded-md border border-blue-200">
+                          <p className="text-xs text-blue-700 font-medium">
+                            Current: {tenantInfo.personal.emergencyContact.name}
+                          </p>
+                          {tenantInfo.personal.emergencyContact
+                            .relationship && (
+                            <p className="text-xs text-blue-600">
+                              Relationship:{" "}
+                              {
+                                tenantInfo.personal.emergencyContact
+                                  .relationship
+                              }
+                            </p>
+                          )}
+                        </div>
+                      )}
+
                       <PhoneInput
+                        key={`emergency-${open}-${emergencyContactValue}`}
                         country={"us"}
-                        value={emergencyContactValue}
+                        value={emergencyContactValue || ""}
                         onChange={(phone) => {
                           setValue("emergencyContact", phone, {
                             shouldValidate: true,
@@ -275,9 +305,11 @@ export default function EditProfileModal({
                         enableSearch={true}
                         searchPlaceholder="Search country..."
                         inputProps={{
-                          name: "emergencyContact",
                           required: true,
-                          placeholder: "Enter phone number",
+                          placeholder: emergencyContactValue
+                            ? ""
+                            : "Enter phone number",
+                          ...emergencyContactField,
                         }}
                       />
                       {errors.emergencyContact && (
@@ -387,7 +419,7 @@ export default function EditProfileModal({
                 <Button
                   type="submit"
                   size="sm"
-                  disabled={!isDirty || isSubmitting}
+                  disabled={isSubmitting}
                   className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1"
                 >
                   {isSubmitting ? (

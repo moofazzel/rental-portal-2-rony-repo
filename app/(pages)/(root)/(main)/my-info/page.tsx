@@ -35,7 +35,6 @@ import { OpenEditProfileTrigger } from "./components/OpenEditProfileTrigger";
 
 export default async function MyInfo() {
   const res = await getTenant();
-  console.log("🚀 ~ res:", res);
 
   if (!res.success) {
     return (
@@ -202,8 +201,6 @@ export default async function MyInfo() {
       : spotData.price;
   const { daily, weekly, monthly } = priceData;
 
-  console.log("data", spotData, propertyData);
-
   const rates: [string, number][] = [
     ["Daily", daily],
     ["Weekly", weekly],
@@ -228,12 +225,38 @@ export default async function MyInfo() {
     );
   }
 
-  const emergencyContactText = leaseData?.emergencyContact
-    ? `${leaseData.emergencyContact.name} - ${leaseData.emergencyContact.phone}`
-    : "";
+  // Handle emergency contact data - it might be a string or object
+  const getEmergencyContact = () => {
+    if (!tenantData?.emergencyContact) {
+      return { name: "", phone: "", relationship: "" };
+    }
+
+    // If it's a string, treat it as phone number
+    if (typeof tenantData.emergencyContact === "string") {
+      return { name: "", phone: tenantData.emergencyContact, relationship: "" };
+    }
+
+    // If it's an object, use it as is
+    if (
+      typeof tenantData.emergencyContact === "object" &&
+      tenantData.emergencyContact !== null
+    ) {
+      const contact = tenantData.emergencyContact as any;
+      return {
+        name: contact.name || "",
+        phone: contact.phone || "",
+        relationship: contact.relationship || "",
+      };
+    }
+
+    return { name: "", phone: "", relationship: "" };
+  };
+
+  const emergencyContactData = getEmergencyContact();
+
   const modalTenantInfo = {
     personal: {
-      emergencyContact: emergencyContactText,
+      emergencyContact: emergencyContactData,
     },
     address: {
       property: propertyData?.name ?? "",
@@ -452,7 +475,9 @@ export default async function MyInfo() {
                     </div>
                   </div>
 
-                  <OpenEditProfileTrigger />
+                  <OpenEditProfileTrigger
+                    emergencyContact={emergencyContactData}
+                  />
                 </div>
               </CardContent>
             </Card>

@@ -186,6 +186,7 @@ export async function updateEmergencyContact(data: { phone: string }) {
   const url = `${API_BASE_URL}/users/emergency-contact`;
   return api(url, {
     method: "PATCH",
+    body: JSON.stringify(data),
     requireToken: true,
   });
 }

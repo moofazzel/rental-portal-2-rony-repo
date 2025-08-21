@@ -4,6 +4,8 @@ export interface ITenant {
   name: string;
   email: string;
   phoneNumber: string;
+
+  emergencyContact?: string;
   bio?: string;
   isInvited?: boolean;
   isVerified?: boolean;
