@@ -4,6 +4,17 @@ import { ISpot } from "@/types/properties.type";
 import ClientLotTable from "./ClientLotTable";
 
 export default async function LotDetails({ spots }: { spots: ISpot[] }) {
+  // Check if spots array is empty or undefined
+  if (!spots || spots.length === 0) {
+    return (
+      <div>
+        <p className="text-gray-500 italic">
+          No spots found for this property.
+        </p>
+      </div>
+    );
+  }
+
   const response = await getPropertyById({ propertyId: spots[0].propertyId });
   const propertyAddress =
     response.success && response.data
@@ -32,19 +43,13 @@ export default async function LotDetails({ spots }: { spots: ISpot[] }) {
 
   return (
     <div>
-      {spots.length === 0 ? (
-        <p className="text-gray-500 italic">
-          No spots found for this property.
-        </p>
-      ) : (
-        // pass the array into a client‐side table for interactivity
-        <ClientLotTable
-          spots={spots}
-          propertyAddress={propertyAddress}
-          identifierType={identifierType}
-          availableAmenities={availableAmenities}
-        />
-      )}
+      {/* pass the array into a client‐side table for interactivity */}
+      <ClientLotTable
+        spots={spots}
+        propertyAddress={propertyAddress}
+        identifierType={identifierType}
+        availableAmenities={availableAmenities}
+      />
     </div>
   );
 }
