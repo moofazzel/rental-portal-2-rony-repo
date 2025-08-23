@@ -31,7 +31,7 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -74,7 +74,9 @@ export interface IUpdateTenantData {
       relationship: string;
     };
     specialRequests?: string[];
+    leaseAgreement?: string;
     documents?: string[];
+
     notes?: string;
   };
 }
@@ -356,13 +358,16 @@ export default function TenantEditModal({
                   })
                 : [],
           },
-          documents: finalUploadedFileUrl ? [finalUploadedFileUrl] : [],
+          // document is empty array forcefully
+          documents: [],
+          leaseAgreement: finalUploadedFileUrl,
           specialRequests: data.specialRequests
             ? data.specialRequests.split(", ").filter((s) => s.trim())
             : [],
           notes: data.notes,
         },
       };
+      console.log("🚀 ~ payload:", payload);
 
       const res = await editTenantMutation({
         userId: tenant._id!,
@@ -382,6 +387,78 @@ export default function TenantEditModal({
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    form.reset(
+      {
+        name: tenant?.name || "",
+        phoneNumber: tenant?.phoneNumber || "",
+        email: tenant?.email || "",
+        rvMake: tenant?.rvInfo?.make || "",
+        rvModel: tenant?.rvInfo?.model || "",
+        rvYear: tenant?.rvInfo?.year?.toString() || "",
+        rvLength: tenant?.rvInfo?.length?.toString() || "",
+        rvLicensePlate: tenant?.rvInfo?.licensePlate || "",
+        leaseType: (tenant?.lease?.leaseType?.toLowerCase() ||
+          tenant?.leaseType ||
+          "monthly") as "monthly" | "fixed",
+        leaseStart: tenant?.lease?.leaseStart
+          ? new Date(tenant.lease.leaseStart).toISOString().split("T")[0]
+          : tenant?.leaseStart
+          ? new Date(tenant.leaseStart).toISOString().split("T")[0]
+          : "",
+        leaseEnd: tenant?.lease?.leaseEnd
+          ? new Date(tenant.lease.leaseEnd).toISOString().split("T")[0]
+          : tenant?.leaseEnd
+          ? new Date(tenant.leaseEnd).toISOString().split("T")[0]
+          : "",
+        rentAmount:
+          tenant?.lease?.rentAmount?.toString() ||
+          tenant?.lotPrice?.monthly?.toString() ||
+          "",
+        additionalRentAmount:
+          tenant?.lease?.additionalRentAmount?.toString() || "",
+        depositAmount:
+          tenant?.lease?.depositAmount?.toString() || tenant?.deposit || "",
+        occupants:
+          tenant?.lease?.occupants?.toString() || tenant?.occupants || "",
+        pets:
+          tenant?.lease?.pets?.petDetails &&
+          tenant.lease.pets.petDetails.length > 0
+            ? tenant.lease.pets.petDetails
+                .map((pet) =>
+                  typeof pet === "string"
+                    ? pet
+                    : `${(pet as any).type || "Unknown"} ${
+                        (pet as any).breed || "Unknown"
+                      } ${(pet as any).name || "Unknown"} ${
+                        (pet as any).weight || 0
+                      }`
+                )
+                .join(", ")
+            : "",
+
+        specialRequests: tenant?.lease?.specialRequests?.join(", ") || "",
+        notes: tenant?.lease?.notes || "",
+      },
+      { keepDefaultValues: true }
+    );
+
+    // Reset file upload states
+    setUploadedFile(null);
+    setUploadProgress(0);
+    setUploadStatus("idle");
+    setUploadedFileUrl("");
+    setIsDragOver(false);
+
+    // Reset additional rent state
+    setShowAdditionalRent(
+      !!(
+        tenant?.lease?.additionalRentAmount &&
+        tenant.lease.additionalRentAmount > 0
+      )
+    );
+  }, [tenant, form]);
 
   return (
     <>
@@ -676,88 +753,6 @@ export default function TenantEditModal({
                   </CardContent>
                 </Card>
 
-                {/* RV Information */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Car className="h-4 w-4 text-orange-600" />
-                      RV Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="rvMake">RV Make</Label>
-                      <Input
-                        id="rvMake"
-                        {...form.register("rvMake")}
-                        placeholder="Enter RV make"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvModel">RV Model</Label>
-                      <Input
-                        id="rvModel"
-                        {...form.register("rvModel")}
-                        placeholder="Enter RV model"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvYear">RV Year</Label>
-                      <Input
-                        id="rvYear"
-                        {...form.register("rvYear")}
-                        type="number"
-                        placeholder="Enter RV year"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvLength">RV Length (ft)</Label>
-                      <Input
-                        id="rvLength"
-                        {...form.register("rvLength")}
-                        type="number"
-                        placeholder="Enter RV length in feet"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="rvLicensePlate">License Plate</Label>
-                      <Input
-                        id="rvLicensePlate"
-                        {...form.register("rvLicensePlate")}
-                        placeholder="Enter license plate number"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Additional Information */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-purple-600" />
-                      Additional Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="specialRequests">Special Requests</Label>
-                      <Input
-                        id="specialRequests"
-                        {...form.register("specialRequests")}
-                        placeholder="Enter special requests (comma separated)"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">Notes</Label>
-                      <Input
-                        id="notes"
-                        {...form.register("notes")}
-                        placeholder="Enter additional notes"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
                 {/* File Upload Section */}
                 <Card>
                   <CardHeader>
@@ -908,6 +903,88 @@ export default function TenantEditModal({
                         )}
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+
+                {/* RV Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Car className="h-4 w-4 text-orange-600" />
+                      RV Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rvMake">RV Make</Label>
+                      <Input
+                        id="rvMake"
+                        {...form.register("rvMake")}
+                        placeholder="Enter RV make"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvModel">RV Model</Label>
+                      <Input
+                        id="rvModel"
+                        {...form.register("rvModel")}
+                        placeholder="Enter RV model"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvYear">RV Year</Label>
+                      <Input
+                        id="rvYear"
+                        {...form.register("rvYear")}
+                        type="number"
+                        placeholder="Enter RV year"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvLength">RV Length (ft)</Label>
+                      <Input
+                        id="rvLength"
+                        {...form.register("rvLength")}
+                        type="number"
+                        placeholder="Enter RV length in feet"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="rvLicensePlate">License Plate</Label>
+                      <Input
+                        id="rvLicensePlate"
+                        {...form.register("rvLicensePlate")}
+                        placeholder="Enter license plate number"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Additional Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-purple-600" />
+                      Additional Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="specialRequests">Special Requests</Label>
+                      <Input
+                        id="specialRequests"
+                        {...form.register("specialRequests")}
+                        placeholder="Enter special requests (comma separated)"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="notes">Notes</Label>
+                      <Input
+                        id="notes"
+                        {...form.register("notes")}
+                        placeholder="Enter additional notes"
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </div>

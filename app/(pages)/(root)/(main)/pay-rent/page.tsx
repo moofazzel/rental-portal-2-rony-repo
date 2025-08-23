@@ -7,7 +7,6 @@ export default async function PayRentPage() {
     // get the rent summary
     const result = await getRentSummary();
     const payments = result as IPaymentSummary;
-    console.log("🚀 ~ payments:", payments);
 
     return (
       <div>
