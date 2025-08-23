@@ -25,6 +25,7 @@ export default function PropertyDetailsCard({
   propertyDetails: IPropertyFull;
   spots: ISpot[];
 }) {
+  console.log("🚀 ~ propertyDetails:", propertyDetails);
   const {
     name,
     description,

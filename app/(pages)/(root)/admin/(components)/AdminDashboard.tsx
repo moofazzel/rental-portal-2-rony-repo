@@ -58,7 +58,6 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ initialData }: AdminDashboardProps) {
-  console.log("🚀 ~ initialData:", initialData);
   const { stats, tenants, properties, serviceRequests, notices } = initialData;
   const { data: session } = useSession();
 

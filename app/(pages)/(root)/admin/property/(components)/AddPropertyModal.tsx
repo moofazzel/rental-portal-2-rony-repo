@@ -61,6 +61,7 @@ export default function AddPropertyModal() {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [additionalAmenitiesInput, setAdditionalAmenitiesInput] = useState("");
   const {
     register,
     handleSubmit,
@@ -85,6 +86,7 @@ export default function AddPropertyModal() {
   const handleOpenChange = (val: boolean) => {
     if (!val) {
       reset();
+      setAdditionalAmenitiesInput("");
       // Clear upload states on close
       setUploadedImages([]);
       setUploadedFileNames(new Set());
@@ -99,21 +101,31 @@ export default function AddPropertyModal() {
   useEffect(() => {
     if (open) {
       setValue("amenities", []);
+      setAdditionalAmenitiesInput("");
     }
   }, [open, setValue]);
 
   // Handle additional amenities input
   const handleAdditionalAmenities = (value: string) => {
+    setAdditionalAmenitiesInput(value);
+
     const additionalAmenities = value
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
 
-    // Get current amenities
+    // Get current essential amenities (those that are selected from the predefined list)
     const currentAmenities = watch("amenities") || [];
+    const essentialAmenityNames = ESSENTIAL_AMENITIES.map((a) => a.name);
+    const selectedEssentialAmenities = currentAmenities.filter((amenity) =>
+      essentialAmenityNames.includes(amenity)
+    );
 
-    // Combine current amenities with additional amenities
-    const allAmenities = [...currentAmenities, ...additionalAmenities];
+    // Combine selected essential amenities with additional amenities
+    const allAmenities = [
+      ...selectedEssentialAmenities,
+      ...additionalAmenities,
+    ];
     setValue("amenities", allAmenities);
   };
 
@@ -427,6 +439,7 @@ export default function AddPropertyModal() {
                     <Input
                       id={`${id}-amenities`}
                       placeholder="e.g. Pool, Laundry, Clubhouse (separate with commas)"
+                      value={additionalAmenitiesInput}
                       onChange={(e) =>
                         handleAdditionalAmenities(e.target.value)
                       }

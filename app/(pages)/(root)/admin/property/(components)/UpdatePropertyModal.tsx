@@ -79,6 +79,7 @@ export default function UpdatePropertyModal({ property }: Props) {
   const [pending, start] = useTransition();
   const router = useRouter();
   const id = useId();
+  const [additionalAmenitiesInput, setAdditionalAmenitiesInput] = useState("");
 
   // Cloudinary upload state
   const [isUploadingImages, setIsUploadingImages] = useState(false);
@@ -128,6 +129,7 @@ export default function UpdatePropertyModal({ property }: Props) {
   // Reset form when dialog closes
   const handleOpenChange = (val: boolean) => {
     if (!val) {
+      setAdditionalAmenitiesInput("");
       // Clear upload states on close
       setUploadedImages([]);
       setUploadedFileNames(new Set());
@@ -145,21 +147,36 @@ export default function UpdatePropertyModal({ property }: Props) {
       // Don't automatically add missing essential amenities
       const originalAmenities = property.amenities || [];
       setValue("amenities", originalAmenities);
+
+      // Initialize additional amenities input with non-essential amenities
+      const nonEssentialAmenities = originalAmenities.filter(
+        (item) => !ESSENTIAL_AMENITIES.map((a) => a.name).includes(item)
+      );
+      setAdditionalAmenitiesInput(nonEssentialAmenities.join(", "));
     }
   }, [open, setValue, property.amenities]);
 
   // Handle additional amenities input
   const handleAdditionalAmenities = (value: string) => {
+    setAdditionalAmenitiesInput(value);
+
     const additionalAmenities = value
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
 
-    // Get current amenities
+    // Get current essential amenities (those that are selected from the predefined list)
     const currentAmenities = watch("amenities") || [];
+    const essentialAmenityNames = ESSENTIAL_AMENITIES.map((a) => a.name);
+    const selectedEssentialAmenities = currentAmenities.filter((amenity) =>
+      essentialAmenityNames.includes(amenity)
+    );
 
-    // Combine current amenities with additional amenities
-    const allAmenities = [...currentAmenities, ...additionalAmenities];
+    // Combine selected essential amenities with additional amenities
+    const allAmenities = [
+      ...selectedEssentialAmenities,
+      ...additionalAmenities,
+    ];
     setValue("amenities", allAmenities, { shouldDirty: true });
   };
 
@@ -453,18 +470,9 @@ export default function UpdatePropertyModal({ property }: Props) {
                     <Input
                       id={`${id}-amenities`}
                       placeholder="e.g. Pool, Laundry, Clubhouse (separate with commas)"
+                      value={additionalAmenitiesInput}
                       onChange={(e) =>
                         handleAdditionalAmenities(e.target.value)
-                      }
-                      defaultValue={
-                        property.amenities
-                          ?.filter(
-                            (item) =>
-                              !ESSENTIAL_AMENITIES.map((a) => a.name).includes(
-                                item
-                              )
-                          )
-                          .join(", ") || ""
                       }
                     />
                     <p className="text-xs text-gray-500 mt-1">
