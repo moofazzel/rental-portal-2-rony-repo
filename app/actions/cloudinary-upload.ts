@@ -51,18 +51,106 @@ export async function uploadToCloudinaryAction(
 
     const timestamp = Math.floor(Date.now() / 1000).toString();
 
-    // Build signature using parameters to send (sorted keys): folder, timestamp
-    const stringToSign = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
-    const signature = crypto
-      .createHash("sha1")
-      .update(stringToSign)
-      .digest("hex");
-
     // Decide resource type: images go to image endpoint, others (pdf/doc) to raw
     const mimeType = (file as File).type || "";
     const resourceType: CloudinaryResourceType = mimeType.startsWith("image/")
       ? "image"
       : "raw";
+
+    // For PDFs, use signed upload with proper access settings
+    if (resourceType === "raw") {
+      // Build signature for raw uploads - parameters must be sorted alphabetically
+      const params = {
+        access_mode: "public",
+        allowed_formats: "pdf",
+        folder: folder,
+        format: "pdf",
+        timestamp: timestamp,
+      };
+
+      // Sort parameters alphabetically and build signature string
+      const sortedParams = Object.keys(params)
+        .sort()
+        .map((key) => `${key}=${params[key as keyof typeof params]}`)
+        .join("&");
+
+      const stringToSign = `${sortedParams}${apiSecret}`;
+      const signature = crypto
+        .createHash("sha1")
+        .update(stringToSign)
+        .digest("hex");
+
+      const serverForm = new FormData();
+      serverForm.append("file", file);
+      serverForm.append("folder", folder);
+      serverForm.append("timestamp", timestamp);
+      serverForm.append("api_key", apiKey);
+      serverForm.append("signature", signature);
+      serverForm.append("resource_type", "raw");
+      serverForm.append("format", "pdf");
+      serverForm.append("access_mode", "public");
+      serverForm.append("flags", "trusted");
+      serverForm.append("allowed_formats", "pdf");
+
+      const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
+      const resp = await fetch(endpoint, {
+        method: "POST",
+        body: serverForm,
+      });
+
+      if (!resp.ok) {
+        let detail = "";
+        try {
+          const errJson = (await resp.json()) as {
+            error?: { message?: string };
+          };
+          detail = errJson?.error?.message || JSON.stringify(errJson);
+        } catch {
+          detail = await resp.text();
+        }
+        return { success: false, error: `${resp.status} ${detail}` };
+      }
+
+      const json = (await resp.json()) as {
+        secure_url?: string;
+        public_id?: string;
+        original_filename?: string;
+        bytes?: number;
+        resource_type?: CloudinaryResourceType;
+        format?: string;
+      };
+
+      return {
+        success: true,
+        data: {
+          secureUrl: json.secure_url || "",
+          publicId: json.public_id || "",
+          originalFilename: json.original_filename,
+          bytes: json.bytes,
+          resourceType: "raw",
+          format: json.format,
+        },
+      };
+    }
+
+    // For images, use the original signed upload approach
+    const params = {
+      access_mode: "public",
+      folder: folder,
+      timestamp: timestamp,
+    };
+
+    // Sort parameters alphabetically and build signature string
+    const sortedParams = Object.keys(params)
+      .sort()
+      .map((key) => `${key}=${params[key as keyof typeof params]}`)
+      .join("&");
+
+    const stringToSign = `${sortedParams}${apiSecret}`;
+    const signature = crypto
+      .createHash("sha1")
+      .update(stringToSign)
+      .digest("hex");
 
     const serverForm = new FormData();
     serverForm.append("file", file);
@@ -70,6 +158,7 @@ export async function uploadToCloudinaryAction(
     serverForm.append("timestamp", timestamp);
     serverForm.append("api_key", apiKey);
     serverForm.append("signature", signature);
+    serverForm.append("access_mode", "public");
 
     const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
     const resp = await fetch(endpoint, {

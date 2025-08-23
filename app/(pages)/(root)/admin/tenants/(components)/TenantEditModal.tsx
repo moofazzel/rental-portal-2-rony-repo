@@ -1,6 +1,7 @@
 "use client";
 
 import { uploadToCloudinaryAction } from "@/app/actions/cloudinary-upload";
+import { removeLeaseAgreement } from "@/app/actions/remove-lease-agreement";
 import { updateUserById } from "@/app/apiClient/adminApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  checkPdfAccessibility,
+  getSecurePdfUrl,
+} from "@/lib/cloudinary-client";
 import { ITenant } from "@/types/tenant.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -190,6 +195,12 @@ export default function TenantEditModal({
     )
   );
 
+  // Check if tenant has an existing lease agreement
+  const existingLeaseAgreement = tenant?.lease?.leaseAgreement;
+
+  // State for tracking deletion
+  const [isDeletingAgreement, setIsDeletingAgreement] = useState(false);
+
   // File upload handlers
   const handleFileUpload = (file: File) => {
     if (file.type !== "application/pdf") {
@@ -240,6 +251,35 @@ export default function TenantEditModal({
     setUploadedFileUrl("");
   };
 
+  const handleRemoveExistingAgreement = async () => {
+    if (!tenant?.lease?.id || !existingLeaseAgreement) {
+      toast.error("No lease agreement to remove");
+      return;
+    }
+
+    try {
+      setIsDeletingAgreement(true);
+
+      // Call the server action to remove the lease agreement
+      const result = await removeLeaseAgreement(tenant.lease.id);
+
+      if (result.success) {
+        toast.success("Lease agreement removed successfully");
+        // Reset the uploaded file URL to clear the display
+        setUploadedFileUrl("");
+        // Refresh the page to get updated data
+        router.refresh();
+      } else {
+        throw new Error(result.message || "Failed to remove lease agreement");
+      }
+    } catch (error) {
+      console.error("Error removing lease agreement:", error);
+      toast.error("Failed to remove lease agreement. Please try again.");
+    } finally {
+      setIsDeletingAgreement(false);
+    }
+  };
+
   const handleFileUploadWithProgress = async (file: File) => {
     if (!file) return null;
 
@@ -269,9 +309,22 @@ export default function TenantEditModal({
 
       if (uploadResult.success) {
         setUploadStatus("success");
-        setUploadedFileUrl(uploadResult.data.secureUrl);
+
+        // Generate a secure URL that avoids untrusted customer issues
+        const secureUrl = getSecurePdfUrl(uploadResult.data.publicId);
+        setUploadedFileUrl(secureUrl);
+
+        // Verify the URL is accessible
+        const isAccessible = await checkPdfAccessibility(secureUrl);
+        if (!isAccessible) {
+          console.warn(
+            "PDF URL may not be accessible, using original URL as fallback"
+          );
+          setUploadedFileUrl(uploadResult.data.secureUrl);
+        }
+
         toast.success("Lease agreement uploaded successfully!");
-        return uploadResult.data.secureUrl;
+        return isAccessible ? secureUrl : uploadResult.data.secureUrl;
       } else {
         setUploadStatus("error");
         console.error("Upload failed:", uploadResult.error);
@@ -315,6 +368,9 @@ export default function TenantEditModal({
         setIsUploading(false);
       } else if (uploadStatus === "success") {
         finalUploadedFileUrl = uploadedFileUrl;
+      } else if (existingLeaseAgreement && !uploadedFile) {
+        // Keep existing lease agreement if no new file is uploaded
+        finalUploadedFileUrl = existingLeaseAgreement;
       }
 
       const payload: IUpdateTenantData = {
@@ -452,6 +508,11 @@ export default function TenantEditModal({
     setUploadStatus("idle");
     setUploadedFileUrl("");
     setIsDragOver(false);
+
+    // Set existing lease agreement URL if available
+    if (tenant?.lease?.leaseAgreement) {
+      setUploadedFileUrl(tenant.lease.leaseAgreement);
+    }
 
     // Reset additional rent state
     setShowAdditionalRent(
@@ -764,6 +825,59 @@ export default function TenantEditModal({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {/* Show existing lease agreement if available */}
+                    {existingLeaseAgreement &&
+                      !uploadedFile &&
+                      uploadStatus === "idle" && (
+                        <div className="mb-4">
+                          <div className="border rounded-lg p-4 bg-blue-50">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <File className="h-8 w-8 text-blue-500" />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    Current Lease Agreement
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    PDF file uploaded
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    window.open(
+                                      existingLeaseAgreement,
+                                      "_blank"
+                                    )
+                                  }
+                                >
+                                  View
+                                </Button>
+
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={handleRemoveExistingAgreement}
+                                  disabled={isDeletingAgreement}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 disabled:opacity-50"
+                                >
+                                  {isDeletingAgreement ? (
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                                  ) : (
+                                    <X className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                     {!uploadedFile ? (
                       <div
                         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
@@ -798,7 +912,9 @@ export default function TenantEditModal({
                             document.getElementById("fileInput")?.click()
                           }
                         >
-                          Select File
+                          {existingLeaseAgreement
+                            ? "Upload New File"
+                            : "Select File"}
                         </Button>
                       </div>
                     ) : (

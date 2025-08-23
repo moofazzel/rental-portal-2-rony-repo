@@ -1,3 +1,5 @@
+"use server";
+
 import { v2 as cloudinary } from "cloudinary";
 
 // Configure Cloudinary
@@ -28,6 +30,8 @@ export async function uploadDocument(
         public_id: `${Date.now()}-${fileName.replace(/\.[^/.]+$/, "")}`,
         format: fileType === "application/pdf" ? "pdf" : "doc",
         allowed_formats: ["pdf", "doc", "docx"],
+        access_mode: "public",
+        flags: "trusted",
         transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
       },
       (error, result) => {
@@ -79,6 +83,31 @@ export function getCloudinaryUrl(
     resource_type: "raw",
     format: format,
     secure: true,
-    flags: "attachment", // Forces download instead of preview
+    flags: "trusted", // Ensure trusted access
+    access_mode: "public", // Ensure public access
   });
+}
+
+// New function to generate secure PDF URLs that avoid untrusted customer issues
+export function getSecurePdfUrl(publicId: string): string {
+  return cloudinary.url(publicId, {
+    resource_type: "raw",
+    format: "pdf",
+    secure: true,
+    flags: "trusted",
+    access_mode: "public",
+    // Add transformation to ensure proper delivery
+    transformation: [{ quality: "auto" }, { fetch_format: "pdf" }],
+  });
+}
+
+// Function to check if a PDF URL is accessible
+export async function checkPdfAccessibility(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: "HEAD" });
+    return response.ok;
+  } catch (error) {
+    console.error("Error checking PDF accessibility:", error);
+    return false;
+  }
 }
