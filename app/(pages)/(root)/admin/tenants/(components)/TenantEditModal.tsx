@@ -97,7 +97,6 @@ const formSchema = z.object({
   depositAmount: z.string().min(1, "Security deposit is required"),
   occupants: z.string().min(1, "Number of occupants is required"),
   pets: z.string().optional(),
-
   specialRequests: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -115,6 +114,7 @@ export default function TenantEditModal({
   open,
   onOpenChange,
 }: TenantEditModalProps) {
+  console.log("🚀 ~ tenant:", tenant);
   const router = useRouter();
 
   const form = useForm<FormData>({
@@ -151,7 +151,21 @@ export default function TenantEditModal({
         tenant?.lease?.depositAmount?.toString() || tenant?.deposit || "",
       occupants:
         tenant?.lease?.occupants?.toString() || tenant?.occupants || "",
-      pets: tenant?.lease?.pets?.petDetails?.join(", ") || tenant?.pets || "",
+      pets:
+        tenant?.lease?.pets?.petDetails &&
+        tenant.lease.pets.petDetails.length > 0
+          ? tenant.lease.pets.petDetails
+              .map((pet) =>
+                typeof pet === "string"
+                  ? pet
+                  : `${(pet as any).type || "Unknown"} ${
+                      (pet as any).breed || "Unknown"
+                    } ${(pet as any).name || "Unknown"} ${
+                      (pet as any).weight || 0
+                    }`
+              )
+              .join(", ")
+          : "",
 
       specialRequests: tenant?.lease?.specialRequests?.join(", ") || "",
       notes: tenant?.lease?.notes || "",
@@ -328,18 +342,19 @@ export default function TenantEditModal({
           depositAmount: parseFloat(data.depositAmount) || 0,
           occupants: parseInt(data.occupants) || 0,
           pets: {
-            hasPets: !!data.pets,
-            petDetails: data.pets
-              ? data.pets
-                  .split(", ")
-                  .filter((p) => p.trim())
-                  .map((pet) => ({
-                    type: "Unknown",
-                    breed: "Unknown",
-                    name: pet.trim(),
-                    weight: 0,
-                  }))
-              : [],
+            hasPets: !!data.pets && data.pets.trim() !== "",
+            petDetails:
+              data.pets && data.pets.trim() !== ""
+                ? data.pets.split(", ").map((pet) => {
+                    const parts = pet.trim().split(" ");
+                    return {
+                      type: parts[0] || "Unknown",
+                      breed: parts[1] || "Unknown",
+                      name: parts[2] || "Unknown",
+                      weight: parseFloat(parts[3]) || 0,
+                    };
+                  })
+                : [],
           },
           documents: finalUploadedFileUrl ? [finalUploadedFileUrl] : [],
           specialRequests: data.specialRequests
@@ -428,96 +443,6 @@ export default function TenantEditModal({
                           {form.formState.errors.phoneNumber.message}
                         </p>
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* RV Information */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Car className="h-4 w-4 text-orange-600" />
-                      RV Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="rvMake">RV Make</Label>
-                      <Input
-                        id="rvMake"
-                        {...form.register("rvMake")}
-                        placeholder="Enter RV make"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvModel">RV Model</Label>
-                      <Input
-                        id="rvModel"
-                        {...form.register("rvModel")}
-                        placeholder="Enter RV model"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvYear">RV Year</Label>
-                      <Input
-                        id="rvYear"
-                        {...form.register("rvYear")}
-                        type="number"
-                        placeholder="Enter RV year"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rvLength">RV Length (ft)</Label>
-                      <Input
-                        id="rvLength"
-                        {...form.register("rvLength")}
-                        type="number"
-                        placeholder="Enter RV length in feet"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="rvLicensePlate">License Plate</Label>
-                      <Input
-                        id="rvLicensePlate"
-                        {...form.register("rvLicensePlate")}
-                        placeholder="Enter license plate number"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Site Address */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-green-600" />
-                      Site Address
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="propertyName">Property Name</Label>
-                      <Input
-                        className="cursor-not-allowed"
-                        id="propertyName"
-                        value={
-                          typeof tenant.property === "object"
-                            ? tenant.property.name
-                            : "No data"
-                        }
-                        placeholder="Enter property name"
-                        readOnly
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lotNumber">Lot Number</Label>
-                      <Input
-                        className="cursor-not-allowed"
-                        id="lotNumber"
-                        value={tenant?.lotNumber}
-                        placeholder="Enter lot number"
-                        readOnly
-                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -624,8 +549,9 @@ export default function TenantEditModal({
                         <Label htmlFor="pets">Pets</Label>
                         <Input
                           id="pets"
+                          title="Enter pet information (e.g., Dog Golden Retriever Max 50)"
                           {...form.register("pets")}
-                          placeholder="Enter pet information (optional)"
+                          placeholder="Enter pet information (e.g., Dog Golden Retriever Max 50)"
                         />
                       </div>
 
@@ -710,6 +636,96 @@ export default function TenantEditModal({
                           />
                         </div>
                       )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Site Address */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-green-600" />
+                      Site Address
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="propertyName">Property Name</Label>
+                      <Input
+                        className="cursor-not-allowed"
+                        id="propertyName"
+                        value={
+                          typeof tenant.property === "object"
+                            ? tenant.property.name
+                            : "No data"
+                        }
+                        placeholder="Enter property name"
+                        readOnly
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lotNumber">Lot Number</Label>
+                      <Input
+                        className="cursor-not-allowed"
+                        id="lotNumber"
+                        value={tenant?.lotNumber}
+                        placeholder="Enter lot number"
+                        readOnly
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* RV Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Car className="h-4 w-4 text-orange-600" />
+                      RV Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rvMake">RV Make</Label>
+                      <Input
+                        id="rvMake"
+                        {...form.register("rvMake")}
+                        placeholder="Enter RV make"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvModel">RV Model</Label>
+                      <Input
+                        id="rvModel"
+                        {...form.register("rvModel")}
+                        placeholder="Enter RV model"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvYear">RV Year</Label>
+                      <Input
+                        id="rvYear"
+                        {...form.register("rvYear")}
+                        type="number"
+                        placeholder="Enter RV year"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rvLength">RV Length (ft)</Label>
+                      <Input
+                        id="rvLength"
+                        {...form.register("rvLength")}
+                        type="number"
+                        placeholder="Enter RV length in feet"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="rvLicensePlate">License Plate</Label>
+                      <Input
+                        id="rvLicensePlate"
+                        {...form.register("rvLicensePlate")}
+                        placeholder="Enter license plate number"
+                      />
                     </div>
                   </CardContent>
                 </Card>
