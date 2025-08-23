@@ -1,5 +1,3 @@
-// app/admin/property/(components)/PropertyDetailsCard.tsx
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { IPropertyFull, ISpot } from "@/types/properties.type";
@@ -16,6 +14,7 @@ import {
 } from "lucide-react";
 import AddLotModal from "./AddLotModal";
 import DeletePropertyModal from "./DeletePropertyModal";
+import ImageModal from "./ImageModal";
 import UpdatePropertyModal from "./UpdatePropertyModal";
 
 export default function PropertyDetailsCard({
@@ -25,7 +24,6 @@ export default function PropertyDetailsCard({
   propertyDetails: IPropertyFull;
   spots: ISpot[];
 }) {
-  console.log("🚀 ~ propertyDetails:", propertyDetails);
   const {
     name,
     description,
@@ -73,6 +71,11 @@ export default function PropertyDetailsCard({
       {/* Header Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+          <ImageModal
+            images={propertyDetails.images || []}
+            propertyName={propertyDetails.name}
+          />
+
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <Badge
@@ -131,6 +134,7 @@ export default function PropertyDetailsCard({
         </div>
       </div>
 
+      {/* Image Modal */}
       {/* Stats Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
