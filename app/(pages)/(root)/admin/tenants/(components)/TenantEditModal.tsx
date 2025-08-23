@@ -260,6 +260,7 @@ export default function TenantEditModal({
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("folder", "documents");
 
       const uploadResult = await uploadToCloudinaryAction(formData);
 
@@ -273,7 +274,8 @@ export default function TenantEditModal({
         return uploadResult.data.secureUrl;
       } else {
         setUploadStatus("error");
-        toast.error("Failed to upload lease agreement. Please try again.");
+        console.error("Upload failed:", uploadResult.error);
+        toast.error(`Failed to upload lease agreement: ${uploadResult.error}`);
         return null;
       }
     } catch (error) {
