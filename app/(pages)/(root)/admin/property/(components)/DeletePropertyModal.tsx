@@ -22,19 +22,20 @@ export default function DeletePropertyModal({
 }: {
   property: IPropertyFull;
 }) {
+  console.log("🚀 ~ property: fff", property);
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!property?.id) {
+    if (!property?._id) {
       toast.error("Property ID is required");
       return;
     }
 
     setIsDeleting(true);
     try {
-      const res = await deleteProperty(property.id);
+      const res = await deleteProperty(property._id);
 
       if (!res.success) {
         toast.error(res.message);
