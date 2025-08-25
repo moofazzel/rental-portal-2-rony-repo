@@ -194,7 +194,7 @@ const UpdateNoticeModal = ({
     console.log(payload);
     try {
       const res = await updateNoticeMutation(payload);
-      console.log(res);
+      console.log("🚀 ~ res:", res);
 
       if (!res.success) {
         toast.error(res.message || "Update failed");
@@ -417,14 +417,18 @@ const UpdateNoticeModal = ({
                           <SelectValue placeholder="Select Community" />
                         </SelectTrigger>
                         <SelectContent>
-                          {properties?.data?.map((prop) => (
-                            <SelectItem
-                              key={prop.id || ""}
-                              value={prop.id || ""}
-                            >
-                              {prop.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="none">
+                            No Community Selected
+                          </SelectItem>
+                          {properties?.data
+                            ?.filter(
+                              (prop) => prop._id && prop._id.trim() !== ""
+                            )
+                            .map((prop) => (
+                              <SelectItem key={prop._id!} value={prop._id!}>
+                                {prop.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -486,7 +490,7 @@ const UpdateNoticeModal = ({
                       <div className="flex flex-wrap gap-2">
                         {formData.tags.map((tag, index) => (
                           <Badge
-                            key={index}
+                            key={`tag-${tag}-${index}`}
                             variant="outline"
                             className="bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200 transition-colors"
                           >

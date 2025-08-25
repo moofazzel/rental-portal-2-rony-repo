@@ -246,8 +246,15 @@ export default function NoticeList() {
             </div>
           </div>
         ) : (
-          paginatedNotices?.map((notice) => (
-            <NoticeCard key={notice.id} notice={notice} />
+          paginatedNotices?.map((notice, index) => (
+            <NoticeCard
+              key={
+                (notice as any)._id ||
+                notice.id ||
+                `notice-list-${index}-${notice?.createdAt || index}`
+              }
+              notice={notice}
+            />
           ))
         )}
       </div>

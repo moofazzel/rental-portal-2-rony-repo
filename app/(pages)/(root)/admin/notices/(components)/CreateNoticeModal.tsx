@@ -125,7 +125,7 @@ const CreateNoticeModal = () => {
       attachments: formData.attachments?.length ? formData.attachments : [],
       tags: formData.tags?.length ? formData.tags : [],
       sendNotification,
-      propertyId: propertyId || undefined,
+      propertyId: propertyId === "none" ? undefined : propertyId || undefined,
     };
 
     console.log(payload);
@@ -525,14 +525,18 @@ const CreateNoticeModal = () => {
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {properties?.data?.map((prop) => (
-                            <SelectItem
-                              key={prop.id || ""}
-                              value={prop.id || ""}
-                            >
-                              {prop.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="none">
+                            No Community Selected
+                          </SelectItem>
+                          {properties?.data
+                            ?.filter(
+                              (prop) => prop._id && prop._id.trim() !== ""
+                            )
+                            .map((prop) => (
+                              <SelectItem key={prop._id!} value={prop._id!}>
+                                {prop.name}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                       {errors.propertyId && (
@@ -612,7 +616,7 @@ const CreateNoticeModal = () => {
                       <div className="flex flex-wrap gap-2">
                         {formData.tags.map((tag, index) => (
                           <Badge
-                            key={index}
+                            key={`tag-${tag}-${index}`}
                             variant="outline"
                             className="bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200 transition-colors"
                           >

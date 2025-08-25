@@ -541,65 +541,76 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
                   </thead>
 
                   <tbody className="cursor-pointer">
-                    {propertyData.notices.map((notice, index) => (
-                      <tr
-                        key={notice?.id}
-                        className={`${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                        } hover:bg-blue-50 transition-colors duration-200`}
-                        onClick={() => {
-                          setSelectedNotice(notice);
-                          setModalOpen(true);
-                        }}
-                      >
-                        <td className="px-4 py-3">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              {notice?.title}
+                    {propertyData.notices.map((notice, index) => {
+                      // Ensure we have a unique key, fallback to composite key if no ID
+                      const uniqueKey =
+                        (notice as any)?._id ||
+                        notice?.id ||
+                        `notice-${propertyId}-${index}-${
+                          notice?.createdAt || index
+                        }`;
+                      return (
+                        <tr
+                          key={uniqueKey}
+                          className={`${
+                            index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          } hover:bg-blue-50 transition-colors duration-200`}
+                          onClick={() => {
+                            setSelectedNotice(notice);
+                            setModalOpen(true);
+                          }}
+                        >
+                          <td className="px-4 py-3">
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {notice?.title}
+                              </div>
+                              <div className="text-sm text-gray-600 line-clamp-2">
+                                {notice?.content
+                                  ?.split(" ")
+                                  .slice(0, 15)
+                                  .join(" ") + "..."}
+                              </div>
                             </div>
-                            <div className="text-sm text-gray-600 line-clamp-2">
-                              {notice?.content
-                                ?.split(" ")
-                                .slice(0, 15)
-                                .join(" ") + "..."}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <Bell className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm font-medium text-blue-600">
+                                {notice?.type}
+                              </span>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Bell className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-medium text-blue-600">
-                              {notice?.type}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge className={getPriorityColor(notice.priority)}>
-                            {notice?.priority}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(notice)}
-                            <Badge className={getStatusColor(notice)}>
-                              {getStatusText(notice)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <Badge
+                              className={getPriorityColor(notice.priority)}
+                            >
+                              {notice?.priority}
                             </Badge>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm">
-                              {notice?.expiryDate
-                                ? new Date(
-                                    notice?.expiryDate
-                                  ).toLocaleDateString()
-                                : "N/A"}
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(notice)}
+                              <Badge className={getStatusColor(notice)}>
+                                {getStatusText(notice)}
+                              </Badge>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm">
+                                {notice?.expiryDate
+                                  ? new Date(
+                                      notice?.expiryDate
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
