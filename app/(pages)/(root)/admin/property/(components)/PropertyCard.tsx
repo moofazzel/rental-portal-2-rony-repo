@@ -27,7 +27,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   // };
 
   return (
-    <Link href={`/admin/property/${property?.id}`}>
+    <Link href={`/admin/property/${property?._id}`}>
       <Card className="hover:shadow-xl transition-all duration-300 group relative overflow-hidden border-0 shadow-md hover:scale-[1.02]">
         {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
