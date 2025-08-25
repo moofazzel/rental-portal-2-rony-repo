@@ -11,7 +11,6 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  console.log("🚀 ~ property:", property);
   // console.log("PropertyCard rendered with property:", property);
 
   // const getOccupancyRate = () => {
