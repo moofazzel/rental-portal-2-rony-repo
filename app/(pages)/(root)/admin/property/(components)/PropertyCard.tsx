@@ -11,6 +11,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
+  console.log("🚀 ~ property:", property);
   // console.log("PropertyCard rendered with property:", property);
 
   // const getOccupancyRate = () => {
@@ -74,7 +75,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 </span>
               </div>
               <div className="text-lg font-bold text-gray-900">
-                {property?.totalLots || 0}
+                {property?.totalSpots || 0}
               </div>
             </div>
 
@@ -86,7 +87,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 </span>
               </div>
               <div className="text-lg font-bold text-gray-900">
-                {property?.availableLots || 0}
+                {property?.availableSpots || 0}
               </div>
             </div>
           </div>
