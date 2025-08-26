@@ -61,19 +61,19 @@ export default async function TenantDashboard() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="px-4 md:px-6">
-          <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center py-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 Welcome back, {session?.user?.name?.split(" ")[0] || "Tenant"}!
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">
                 Here's what's happening with your rental today
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Property</p>
-                <p className="font-medium text-gray-900">
+            <div className="flex-1 flex sm:justify-end">
+              <div className="text-left sm:text-right w-full sm:w-auto">
+                <p className="text-xs sm:text-sm text-gray-500">Property</p>
+                <p className="font-medium text-gray-900 text-sm sm:text-base break-words max-w-full sm:max-w-xs truncate">
                   {tenantRes?.property?.name || "Loading..."}
                 </p>
               </div>
@@ -82,7 +82,7 @@ export default async function TenantDashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
         {/* Account Status Banner */}
         {tenantRes?.tenantStatus && (
           <div className="mb-8">
@@ -99,7 +99,7 @@ export default async function TenantDashboard() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-8">
           {/* Left Column - Notices */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -117,23 +117,28 @@ export default async function TenantDashboard() {
           <div className="lg:col-span-2 space-y-8">
             {/* Service Requests */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+              <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 sm:mr-3"></div>
                     Service Requests
                   </h2>
-                  <Link href="/services">
-                    <Button
-                      size="sm"
-                      className="bg-green-600 hover:bg-green-700 text-white rounded-lg"
-                    >
-                      New Request
-                    </Button>
-                  </Link>
+                  <div className="w-full sm:w-auto">
+                    <Link href="/services" className="block w-full sm:w-auto">
+                      <Button
+                        size="sm"
+                        className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                      >
+                        <span className="block sm:hidden">New</span>
+                        <span className="hidden sm:block">New Request</span>
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-              <ServiceRequests requests={serviceRequests} />
+              <div className="px-2 sm:px-0">
+                <ServiceRequests requests={serviceRequests} />
+              </div>
             </div>
 
             {/* Documents */}

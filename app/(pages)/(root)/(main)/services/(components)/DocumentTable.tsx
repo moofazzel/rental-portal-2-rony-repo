@@ -158,26 +158,34 @@ export function DocumentTable({
               className="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
               onClick={() => handleView(document)}
             >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-4">
+                {/* Index Number */}
+                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mb-2 sm:mb-0">
                   <span className="text-blue-600 font-semibold text-sm">
                     {index + 1}
                   </span>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    {getFileTypeIcon(document.fileType)}
-                    <h4 className="font-semibold text-slate-900">
-                      {document.title}
-                    </h4>
-                    <Badge className={getStatusColor(document)}>
+                {/* Main Content */}
+                <div className="flex-1 w-full">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-2">
+                    <div className="flex items-center gap-2">
+                      {getFileTypeIcon(document.fileType)}
+                      <h4 className="font-semibold text-slate-900 break-words max-w-xs sm:max-w-none">
+                        {document.title}
+                      </h4>
+                    </div>
+                    <Badge
+                      className={`${getStatusColor(
+                        document
+                      )} mt-1 sm:mt-0 w-fit`}
+                    >
                       {getStatusText(document)}
                     </Badge>
                   </div>
-                  <p className="text-sm text-slate-600 mb-2">
+                  <p className="text-sm text-slate-600 mb-2 break-words">
                     {document.description || "No description provided"}
                   </p>
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-slate-500">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       <span>
@@ -187,18 +195,23 @@ export function DocumentTable({
                     {document.uploadedBy && (
                       <div className="flex items-center gap-1">
                         <User className="w-3 h-3" />
-                        <span>{document.uploadedBy.name}</span>
+                        <span className="truncate max-w-[120px] sm:max-w-none">
+                          {document.uploadedBy.name}
+                        </span>
                       </div>
                     )}
                     {document.propertyId?.name && (
                       <div className="flex items-center gap-1">
                         <Building className="w-3 h-3" />
-                        <span>{document.propertyId.name}</span>
+                        <span className="truncate max-w-[120px] sm:max-w-none">
+                          {document.propertyId.name}
+                        </span>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex-shrink-0">
+                {/* Download Button */}
+                <div className="flex-shrink-0 mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto">
                   <Button
                     size="sm"
                     variant="outline"
@@ -206,10 +219,10 @@ export function DocumentTable({
                       e.stopPropagation();
                       handleDownload(document);
                     }}
-                    className="gap-1"
+                    className="gap-1 w-full sm:w-auto"
                   >
                     <Download className="w-4 h-4" />
-                    Download
+                    <span className="hidden xs:inline">Download</span>
                   </Button>
                 </div>
               </div>

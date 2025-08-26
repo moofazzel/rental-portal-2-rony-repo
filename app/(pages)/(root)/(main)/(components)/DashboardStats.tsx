@@ -81,12 +81,12 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
       {/* Rent Status Card */}
       <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">
+        <CardHeader className="pb-3 sm:pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
               Rent Status
             </CardTitle>
             <Badge
@@ -100,17 +100,17 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           <div className="flex items-baseline space-x-2">
-            <span className="text-3xl font-bold text-gray-900">
+            <span className="text-2xl sm:text-3xl font-bold text-gray-900">
               {rent?.currentRentAmount &&
                 formatCurrency(rent?.currentRentAmount)}
             </span>
-            <span className="text-sm text-gray-500">per month</span>
+            <span className="text-xs sm:text-sm text-gray-500">per month</span>
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs sm:text-sm">
               <span className="text-gray-600">Due Date:</span>
               <span className="font-medium text-gray-900">
                 {formatDate(rent?.dueDates?.currentMonthDueDate || "")}
@@ -118,7 +118,7 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
             </div>
 
             {rent?.summary?.currentMonthAmount && (
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Total Due:</span>
                 <span className="font-semibold text-gray-900">
                   {formatCurrency(rent.summary.currentMonthAmount)}
@@ -128,7 +128,7 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
 
             {rent?.summary?.totalOverdueAmount &&
               rent.summary.totalOverdueAmount > 0 && (
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-red-600">Overdue:</span>
                   <span className="font-semibold text-red-600">
                     {formatCurrency(rent.summary.totalOverdueAmount)}
@@ -141,13 +141,13 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
 
       {/* Pay Rent Card */}
       <Card className="bg-gradient-to-br from-blue-600 to-indigo-700 border-0 shadow-sm hover:shadow-md transition-shadow">
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-white">
+        <CardContent className="p-4 sm:p-6">
+          <div className="text-center space-y-3 sm:space-y-4">
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="text-lg sm:text-xl font-semibold text-white">
                 Ready to Pay?
               </h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-blue-100 text-xs sm:text-sm">
                 Quick and secure payment processing
               </p>
             </div>
@@ -155,19 +155,19 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
             <Link href="/pay-rent" className="block">
               <Button
                 size="lg"
-                className="w-full bg-white text-blue-600 hover:bg-gray-50 font-semibold text-lg py-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+                className="w-full bg-white text-blue-600 hover:bg-gray-50 font-semibold text-base sm:text-lg py-4 sm:py-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
               >
                 Pay Rent Now
               </Button>
             </Link>
 
-            <div className="flex items-center justify-center space-x-4 text-blue-100 text-xs">
+            <div className="flex items-center justify-center space-x-3 sm:space-x-4 text-blue-100 text-xs">
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 sm:mr-2"></div>
                 Secure
               </div>
               <div className="flex items-center">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 sm:mr-2"></div>
                 Instant
               </div>
             </div>
