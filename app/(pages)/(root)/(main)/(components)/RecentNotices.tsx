@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { INotice } from "@/types/notices.types";
 import Link from "next/link";
 
@@ -12,33 +12,39 @@ interface RecentNoticesProps {
 export default function RecentNotices({ notices }: RecentNoticesProps) {
   return (
     <Card className="shadow-lg border-0">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          Recent Notices
-        </CardTitle>
-      </CardHeader>
       <CardContent className="p-0">
         {notices?.length > 0 ? (
           <>
             <div className="divide-y divide-slate-100">
-              {notices.slice(0, 2).map((notice) => (
+              {notices.slice(0, 3).map((notice, index) => (
                 <div
                   key={notice.id}
-                  className="p-4 hover:bg-slate-50 transition-colors"
+                  className="p-6 hover:bg-slate-50 transition-colors"
                 >
-                  <div className="flex items-start gap-3 mb-2">
-                    <span className="font-medium text-sm text-slate-900">
-                      {notice.title}
-                    </span>
-                    {/* <Badge variant="secondary" className="text-xs">
-                {notice.isRecent ? "Today" : notice.date}
-              </Badge> */}
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-semibold text-sm">
+                        {index + 1}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-slate-900 mb-2">
+                        {notice.title}
+                      </h4>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {notice.content}
+                      </p>
+                      {notice.date && (
+                        <p className="text-xs text-slate-500 mt-2">
+                          {new Date(notice.date).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-600">{notice.content}</p>
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-slate-100">
+            <div className="p-6 border-t border-slate-100">
               <Link href="/notices">
                 <Button variant="outline" className="w-full text-sm">
                   View All Notices
@@ -47,8 +53,26 @@ export default function RecentNotices({ notices }: RecentNoticesProps) {
             </div>
           </>
         ) : (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            No notices found.
+          <div className="p-6 text-center">
+            <div className="space-y-3">
+              <div className="flex items-center justify-center gap-3 text-slate-400">
+                <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                  <span className="text-slate-500 font-semibold text-sm">
+                    1
+                  </span>
+                </div>
+                <div className="h-4 bg-slate-200 rounded w-48"></div>
+              </div>
+              <div className="flex items-center justify-center gap-3 text-slate-400">
+                <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                  <span className="text-slate-500 font-semibold text-sm">
+                    2
+                  </span>
+                </div>
+                <div className="h-4 bg-slate-200 rounded w-48"></div>
+              </div>
+            </div>
+            <p className="text-sm text-slate-500 mt-4">No notices available</p>
           </div>
         )}
       </CardContent>

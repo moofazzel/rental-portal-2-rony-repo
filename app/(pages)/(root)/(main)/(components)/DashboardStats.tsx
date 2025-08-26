@@ -1,8 +1,10 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ITenantApiResponse } from "@/types/tenant.types";
+import Link from "next/link";
 
 interface TenantProps {
   tenantRes: ITenantApiResponse | null;
@@ -11,25 +13,26 @@ interface TenantProps {
 export default function DashboardStats({ tenantRes }: TenantProps) {
   const rent = tenantRes?.rent;
   const payments = tenantRes?.payments;
-  const lease = tenantRes?.lease;
-  const recentPayment = payments?.recent?.[0]; // Get most recent payment
+  const recentPayment = payments?.recent?.[0];
 
   const getRentStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "paid":
-        return "bg-green-400 text-green-900";
+        return "bg-green-100 text-green-800";
       case "unpaid":
-        return "bg-yellow-400 text-yellow-900";
+        return "bg-yellow-100 text-yellow-800";
       case "overdue":
-        return "bg-red-400 text-red-900";
+        return "bg-red-100 text-red-800";
       case "pending":
-        return "bg-blue-400 text-blue-900";
+        return "bg-blue-100 text-blue-800";
       case "current_month_overdue":
-        return "bg-red-400 text-red-900";
+        return "bg-red-100 text-red-800";
       case "payment_limit_reached":
-        return "bg-yellow-400 text-yellow-900";
+        return "bg-yellow-100 text-yellow-800";
+      case "first_time_payment":
+        return "bg-blue-100 text-blue-800";
       default:
-        return "bg-gray-400 text-gray-900";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -47,21 +50,10 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
         return "Overdue";
       case "payment_limit_reached":
         return "Paid One Month Ahead";
+      case "first_time_payment":
+        return "First Payment";
       default:
         return "Unknown";
-    }
-  };
-
-  const getLeaseStatusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "active":
-        return "bg-green-400 text-green-900";
-      case "expired":
-        return "bg-red-400 text-red-900";
-      case "pending":
-        return "bg-yellow-400 text-yellow-900";
-      default:
-        return "bg-gray-400 text-gray-900";
     }
   };
 
@@ -89,117 +81,97 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-green-100">
-            Rent Status
-          </CardTitle>
-          <Badge
-            variant="secondary"
-            className={getRentStatusColor(
-              rent?.summary?.paymentAction || recentPayment?.status || ""
-            )}
-          >
-            {getRentStatusText(
-              rent?.summary?.paymentAction || recentPayment?.status || ""
-            )}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">
-            {rent?.currentRentAmount && formatCurrency(rent?.currentRentAmount)}
-          </div>
-          <p className="text-xs text-green-200 mt-1">
-            {rent?.summary?.hasOverduePayments
-              ? `${rent.summary.overdueCount} overdue payments`
-              : `Due on ${formatDate(
-                  rent?.dueDates?.currentMonthDueDate || ""
-                )}`}
-          </p>
-          {rent?.summary?.totalOverdueAmount &&
-            rent.summary.totalOverdueAmount > 0 && (
-              <p className="text-xs text-red-200 mt-1">
-                Overdue: {formatCurrency(rent.summary.totalOverdueAmount)}
-              </p>
-            )}
-        </CardContent>
-      </Card>
-
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-blue-100">
-            Service Requests
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">
-            {tenantRes?.serviceRequests?.count || 0}
-          </div>
-          <p className="text-xs text-blue-200 mt-1">
-            {tenantRes?.serviceRequests?.recent?.length || 0} recent requests
-          </p>
-          {tenantRes?.serviceRequests?.recent?.[0] && (
-            <p className="text-xs text-blue-200">
-              Latest: {tenantRes.serviceRequests.recent[0].title}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-purple-100">
-            Lot Number
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">
-            {tenantRes?.spot?.spotNumber || "No spot assigned"}
-          </div>
-          <p className="text-xs text-purple-200 mt-1">
-            {tenantRes?.spot?.spotIdentifier || ""}
-          </p>
-          <p className="text-xs text-purple-200">
-            {tenantRes?.property?.name || "No property assigned"}
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-amber-100">
-            Lease Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Rent Status Card */}
+      <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold text-gray-900">
+              Rent Status
+            </CardTitle>
             <Badge
-              variant="secondary"
-              className={getLeaseStatusColor(lease?.leaseStatus || "")}
+              className={`${getRentStatusColor(
+                rent?.summary?.paymentAction || recentPayment?.status || ""
+              )} text-xs font-medium`}
             >
-              {lease?.leaseStatus || "Unknown"}
+              {getRentStatusText(
+                rent?.summary?.paymentAction || recentPayment?.status || ""
+              )}
             </Badge>
           </div>
-          <p className="text-xs text-amber-200 mt-1">
-            Since {formatDate(lease?.leaseStart || "")}
-          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-baseline space-x-2">
+            <span className="text-3xl font-bold text-gray-900">
+              {rent?.currentRentAmount &&
+                formatCurrency(rent?.currentRentAmount)}
+            </span>
+            <span className="text-sm text-gray-500">per month</span>
+          </div>
 
-          {lease?.rvInfo && (
-            <p className="text-xs text-amber-200">
-              {lease.rvInfo.year} {lease.rvInfo.make} {lease.rvInfo.model}
-            </p>
-          )}
-          {tenantRes?.announcements?.unreadCount &&
-            tenantRes.announcements.unreadCount > 0 && (
-              <p className="text-xs text-amber-200">
-                {tenantRes.announcements.unreadCount} unread announcements
-              </p>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Due Date:</span>
+              <span className="font-medium text-gray-900">
+                {formatDate(rent?.dueDates?.currentMonthDueDate || "")}
+              </span>
+            </div>
+
+            {rent?.summary?.currentMonthAmount && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Total Due:</span>
+                <span className="font-semibold text-gray-900">
+                  {formatCurrency(rent.summary.currentMonthAmount)}
+                </span>
+              </div>
             )}
+
+            {rent?.summary?.totalOverdueAmount &&
+              rent.summary.totalOverdueAmount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-red-600">Overdue:</span>
+                  <span className="font-semibold text-red-600">
+                    {formatCurrency(rent.summary.totalOverdueAmount)}
+                  </span>
+                </div>
+              )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pay Rent Card */}
+      <Card className="bg-gradient-to-br from-blue-600 to-indigo-700 border-0 shadow-sm hover:shadow-md transition-shadow">
+        <CardContent className="p-6">
+          <div className="text-center space-y-4">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-white">
+                Ready to Pay?
+              </h3>
+              <p className="text-blue-100 text-sm">
+                Quick and secure payment processing
+              </p>
+            </div>
+
+            <Link href="/pay-rent" className="block">
+              <Button
+                size="lg"
+                className="w-full bg-white text-blue-600 hover:bg-gray-50 font-semibold text-lg py-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                Pay Rent Now
+              </Button>
+            </Link>
+
+            <div className="flex items-center justify-center space-x-4 text-blue-100 text-xs">
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                Secure
+              </div>
+              <div className="flex items-center">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                Instant
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

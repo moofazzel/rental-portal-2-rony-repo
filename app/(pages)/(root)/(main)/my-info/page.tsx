@@ -340,9 +340,9 @@ export default async function MyInfo() {
         </div>
 
         {/* Account Status Banner */}
-        {!tenantData.tenantStatus && (
+        {!res.data.tenantStatus && (
           <AccountStatusBanner
-            tenantStatus={tenantData.tenantStatus || false}
+            tenantStatus={res.data.tenantStatus || false}
             tenantName={tenantData.name}
           />
         )}

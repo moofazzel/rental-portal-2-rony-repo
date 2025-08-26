@@ -126,6 +126,7 @@ export interface ITenant {
 // declares exactly the envelope you get back
 export interface ITenantApiResponse {
   user: ITenant;
+  tenantStatus?: boolean;
   property: {
     _id: string;
     name: string;

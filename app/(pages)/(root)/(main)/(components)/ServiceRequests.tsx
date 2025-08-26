@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { IServiceRequest } from "@/types/serviceRequest.types";
 import Link from "next/link";
 
@@ -41,65 +41,71 @@ export default function ServiceRequests({ requests }: ServiceRequestsProps) {
   };
 
   return (
-    <Card className="shadow-lg border-0">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          Recent Service Requests
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {requests.length > 0 ? (
-          <>
-            <div className="divide-y divide-slate-100">
-              {requests.slice(0, 2).map((request) => (
-                <div
-                  key={request?._id}
-                  className="p-4 hover:bg-slate-50 transition-colors"
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <span className="font-medium text-sm text-slate-900">
+    <CardContent className="p-0">
+      {requests.length > 0 ? (
+        <>
+          <div className="divide-y divide-slate-100">
+            {requests.slice(0, 3).map((request) => (
+              <div
+                key={request?._id}
+                className="p-6 hover:bg-slate-50 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-slate-900 mb-2">
                       {request?.title}
-                    </span>
-                    {getStatusBadge(request.status)}
+                    </h4>
+                    <p className="text-sm text-slate-600">
+                      {request?.description || "No description provided"}
+                    </p>
                   </div>
-                  <div className="text-xs text-slate-600 space-y-1">
-                    <div>
-                      Submitted :{" "}
-                      {request?.requestedDate
-                        ? new Date(request.requestedDate).toLocaleDateString(
-                            undefined,
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            }
-                          )
-                        : "N/A"}
-                    </div>
-                    {/* {request.resolvedDate && (
-                  <div>Resolved: {request.resolvedDate}</div>
-                )}
-                {request.estimatedCompletion && (
-                  <div>Estimated completion: {request.estimatedCompletion}</div>
-                )} */}
+                  {getStatusBadge(request.status)}
+                </div>
+                <div className="text-xs text-slate-500">
+                  <div>
+                    Submitted:{" "}
+                    {request?.requestedDate
+                      ? new Date(request.requestedDate).toLocaleDateString(
+                          undefined,
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )
+                      : "N/A"}
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="p-4 border-t border-slate-100">
-              <Link href="/services">
-                <Button variant="outline" className="w-full text-sm">
-                  View All Requests
-                </Button>
-              </Link>
-            </div>
-          </>
-        ) : (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            No service requests found.
+              </div>
+            ))}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <div className="p-6 border-t border-slate-100">
+            <Link href="/services">
+              <Button variant="outline" className="w-full text-sm">
+                View All Requests
+              </Button>
+            </Link>
+          </div>
+        </>
+      ) : (
+        <div className="p-6 text-center">
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center justify-center gap-3 text-slate-400">
+              <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                <span className="text-slate-500 font-semibold text-sm">1</span>
+              </div>
+              <div className="h-4 bg-slate-200 rounded w-48"></div>
+            </div>
+            <div className="flex items-center justify-center gap-3 text-slate-400">
+              <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                <span className="text-slate-500 font-semibold text-sm">2</span>
+              </div>
+              <div className="h-4 bg-slate-200 rounded w-48"></div>
+            </div>
+          </div>
+          <p className="text-sm text-slate-500">No service requests found</p>
+        </div>
+      )}
+    </CardContent>
   );
 }

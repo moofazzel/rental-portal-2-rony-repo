@@ -91,6 +91,7 @@ export function DocumentTable({
     }
     window.open(document.fileUrl, "_blank");
   };
+
   const getFileTypeIcon = (fileType: string) => {
     switch (fileType) {
       case "PDF":
@@ -103,21 +104,6 @@ export function DocumentTable({
         return <FileText className="w-4 h-4 text-purple-500" />;
       default:
         return <FileText className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
-  const getFileTypeColor = (fileType: string) => {
-    switch (fileType) {
-      case "PDF":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "DOC":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "IMAGE":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "VIDEO":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -144,162 +130,93 @@ export function DocumentTable({
     return "Active";
   };
 
-  const getCategoryColor = (category?: string) => {
-    switch (category) {
-      case "LEASE_AGREEMENT":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "PROPERTY_RULES":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "MAINTENANCE":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "EMERGENCY":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "PROPERTY_INFO":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const formatCategory = (category?: string) => {
-    if (!category) return "General";
-    return category.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
   return (
-    <CardContent className="p-0 shadow-md ">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Document
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Type
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Category
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Uploaded
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="cursor-pointer">
-            {documents.length === 0 && (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-sm text-gray-500"
-                >
-                  No documents available yet.
-                </td>
-              </tr>
-            )}
-            {documents.map((document, index) => (
-              <tr
-                key={document._id}
-                className={`${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                } hover:bg-blue-50 transition-colors duration-200`}
-              >
-                <td className="px-4 py-3" onClick={() => handleView(document)}>
-                  <div>
-                    <div className="font-medium text-gray-900">
-                      {document.title}
-                    </div>
-                    <div className="text-sm text-gray-600 line-clamp-2">
-                      {document.description || "No description provided"}
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Building className="w-3 h-3 text-gray-400" />
-                      <span className="text-xs text-gray-500">
-                        {document.propertyId?.name || "Unknown property"}
-                      </span>
-                      {document.formattedFileSize && (
-                        <>
-                          <span className="text-gray-300">•</span>
-                          <span className="text-xs text-gray-500">
-                            {document.formattedFileSize}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
+    <CardContent className="p-0">
+      {documents.length === 0 ? (
+        <div className="p-6 text-center">
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center justify-center gap-3 text-slate-400">
+              <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                <span className="text-slate-500 font-semibold text-sm">1</span>
+              </div>
+              <div className="h-4 bg-slate-200 rounded w-48"></div>
+            </div>
+            <div className="flex items-center justify-center gap-3 text-slate-400">
+              <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
+                <span className="text-slate-500 font-semibold text-sm">2</span>
+              </div>
+              <div className="h-4 bg-slate-200 rounded w-48"></div>
+            </div>
+          </div>
+          <p className="text-sm text-slate-500">No documents available</p>
+        </div>
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {documents.slice(0, 5).map((document, index) => (
+            <div
+              key={document._id}
+              className="p-6 hover:bg-slate-50 transition-colors cursor-pointer"
+              onClick={() => handleView(document)}
+            >
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold text-sm">
+                    {index + 1}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
                     {getFileTypeIcon(document.fileType)}
-                    <Badge className={getFileTypeColor(document.fileType)}>
-                      {document.fileType}
-                    </Badge>
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <Badge className={getCategoryColor(document.category)}>
-                    {formatCategory(document.category)}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(document)}
+                    <h4 className="font-semibold text-slate-900">
+                      {document.title}
+                    </h4>
                     <Badge className={getStatusColor(document)}>
                       {getStatusText(document)}
                     </Badge>
                   </div>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm">
-                      {new Date(document.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  {document.uploadedBy && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <User className="w-3 h-3 text-gray-400" />
-                      <span className="text-xs text-gray-500">
-                        {document.uploadedBy.name}
+                  <p className="text-sm text-slate-600 mb-2">
+                    {document.description || "No description provided"}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>
+                        {new Date(document.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDownload(document)}
-                      className="gap-1"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download
-                    </Button>
-                    {onDelete && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onDelete(document._id)}
-                        className="gap-1 text-red-600 hover:text-red-700"
-                      >
-                        <XCircle className="w-4 h-4" />
-                        Delete
-                      </Button>
+                    {document.uploadedBy && (
+                      <div className="flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        <span>{document.uploadedBy.name}</span>
+                      </div>
+                    )}
+                    {document.propertyId?.name && (
+                      <div className="flex items-center gap-1">
+                        <Building className="w-3 h-3" />
+                        <span>{document.propertyId.name}</span>
+                      </div>
                     )}
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload(document);
+                    }}
+                    className="gap-1"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </CardContent>
   );
 }

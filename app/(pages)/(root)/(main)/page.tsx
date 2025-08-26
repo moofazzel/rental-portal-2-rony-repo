@@ -12,8 +12,6 @@ import { IServiceRequest } from "@/types/serviceRequest.types";
 import Link from "next/link";
 import AccountStatusBanner from "./(components)/AccountStatusBanner";
 import DashboardStats from "./(components)/DashboardStats";
-import PaymentHistory from "./(components)/PaymentHistory";
-import QuickActions from "./(components)/QuickActions";
 import RecentNotices from "./(components)/RecentNotices";
 import ServiceRequests from "./(components)/ServiceRequests";
 import { DocumentTable } from "./services/(components)/DocumentTable";
@@ -21,18 +19,14 @@ import { DocumentTable } from "./services/(components)/DocumentTable";
 type GetAllServiceRequestsResponse = {
   serviceRequests: IServiceRequest[];
 };
+
 export default async function TenantDashboard() {
-  //fetch notices data
-
   const session = await auth();
-
   const result = await getTenantNotices();
-
   const noticeResponse = result.data as INotice[];
 
   //fetch service requests data
   const serviceRequestsResult = await getTenantServiceRequests();
-
   let serviceRequests: IServiceRequest[] = [];
 
   if (
@@ -48,6 +42,7 @@ export default async function TenantDashboard() {
       serviceRequestsResult.data
     );
   }
+
   //fetch tenant data
   const tenantData = await getTenant();
   const tenantRes = tenantData?.data;
@@ -62,95 +57,118 @@ export default async function TenantDashboard() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent flex items-center gap-3">
-              Welcome Back!
-              {session?.user?.name && (
-                <span className="ml-3 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-lg font-semibold shadow-sm border border-blue-200">
-                  {session.user.name}
-                </span>
-              )}
-            </h1>
-            <p className="text-slate-600 mt-2">
-              Here&apos;s what&apos;s happening with your rental today.
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="px-4 md:px-6">
+          <div className="flex justify-between items-center py-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Welcome back, {session?.user?.name?.split(" ")[0] || "Tenant"}!
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Here's what's happening with your rental today
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Property</p>
+                <p className="font-medium text-gray-900">
+                  {tenantRes?.property?.name || "Loading..."}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-3">
-            <Link href="/pay-rent">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg text-white cursor-pointer"
-              >
-                Pay Rent
-              </Button>
-            </Link>
-            <Link href="/services">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-slate-300 hover:bg-slate-50 cursor-pointer"
-              >
-                Request Service
-              </Button>
-            </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Account Status Banner */}
+        {tenantRes?.tenantStatus && (
+          <div className="mb-8">
+            <AccountStatusBanner
+              tenantStatus={tenantRes.tenantStatus || false}
+              tenantName={tenantRes.user.name}
+            />
+          </div>
+        )}
+
+        {/* Rent Status and Pay Section */}
+        <div className="mb-8">
+          <DashboardStats tenantRes={tenantRes} />
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Notices */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                  Community Notices
+                </h2>
+              </div>
+              <RecentNotices notices={noticeResponse} />
+            </div>
+          </div>
+
+          {/* Right Column - Service Requests and Documents */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Service Requests */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Service Requests
+                  </h2>
+                  <Link href="/services">
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                    >
+                      New Request
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <ServiceRequests requests={serviceRequests} />
+            </div>
+
+            {/* Documents */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  Community Documents
+                </h2>
+              </div>
+              {documentLoadError && (
+                <div className="px-6 py-4">
+                  <div className="text-sm text-red-600">
+                    {documentLoadError}
+                  </div>
+                </div>
+              )}
+              <DocumentTable documents={documents} />
+            </div>
           </div>
         </div>
 
-        {/* Account Status Banner */}
-        {tenantRes?.user && (
-          <AccountStatusBanner
-            tenantStatus={tenantRes.user.tenantStatus || false}
-            tenantName={tenantRes.user.name}
-          />
-        )}
-
-        {/* Quick Stats Cards */}
-        <DashboardStats tenantRes={tenantRes} />
-
-        {/* Main Content Grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Quick Actions & Notices */}
-          <div className="lg:col-span-1 space-y-6">
-            <QuickActions />
-            <RecentNotices notices={noticeResponse} />
-          </div>
-
-          {/* Right Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            <ServiceRequests requests={serviceRequests} />
-            <PaymentHistory
-              payments={
-                tenantRes?.payments?.recent?.map((payment) => ({
-                  id: payment._id,
-                  date: payment.paidDate || payment.dueDate,
-                  method: payment.status === "PAID" ? "Online" : "Pending",
-                  amount: payment.amount,
-                  description: payment.description,
-                  receiptNumber: payment.receiptNumber,
-                })) || []
-              }
-            />
-          </div>
-        </section>
-
-        {/* Documents section */}
-        <section className="space-y-3">
-          {documentLoadError && (
-            <div className="text-sm text-red-600">{documentLoadError}</div>
-          )}
-          <DocumentTable documents={documents} />
-        </section>
-
         {/* Footer */}
-        <div className="text-center pt-10 text-sm text-slate-500">
-          Need help? Contact the office at (555) 555-0000 or visit the
-          <Link href="/support" className="text-blue-600 hover:underline">
-            Support page
-          </Link>
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              Need help? Contact the office at (555) 555-0000 or visit the{" "}
+              <Link
+                href="/support"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Support page
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
