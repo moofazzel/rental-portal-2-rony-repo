@@ -34,9 +34,9 @@ export default function RecentNotices({ notices }: RecentNoticesProps) {
                       <p className="text-sm text-slate-600 leading-relaxed">
                         {notice.content}
                       </p>
-                      {notice.date && (
+                      {notice.createdAt && (
                         <p className="text-xs text-slate-500 mt-2">
-                          {new Date(notice.date).toLocaleDateString()}
+                          {new Date(notice.createdAt).toLocaleDateString()}
                         </p>
                       )}
                     </div>
