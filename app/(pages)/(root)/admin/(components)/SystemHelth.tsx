@@ -1,5 +1,8 @@
+import { getAllProperties, getAllTenants } from "@/app/apiClient/adminApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Calendar, CheckCircle, Clock } from "lucide-react";
+import { Suspense } from "react";
+import SystemHealthSkeleton from "./SystemHealthSkeleton";
 
 interface DashboardStats {
   totalProperties: number;
@@ -13,9 +16,56 @@ interface DashboardStats {
   occupancyRate: number;
 }
 
-export default function SystemHelth({ stats }: { stats: DashboardStats }) {
-  return (
-    <div>
+async function SystemHealthData() {
+  try {
+    // Fetch data in parallel
+    const [propertiesResponse, tenantsResponse] = await Promise.all([
+      getAllProperties(),
+      getAllTenants(),
+    ]);
+
+    const properties =
+      propertiesResponse.success && propertiesResponse.data
+        ? propertiesResponse.data
+        : [];
+    const tenants =
+      tenantsResponse.success && tenantsResponse.data
+        ? tenantsResponse.data
+        : [];
+
+    // Calculate dashboard stats
+    const totalProperties = properties.length;
+    const totalSpots = properties.reduce(
+      (sum, prop) => sum + prop.totalLots,
+      0
+    );
+    const availableSpots = properties.reduce(
+      (sum, prop) => sum + (prop.availableLots || 0),
+      0
+    );
+    const occupiedSpots = totalSpots - availableSpots;
+    const activeTenants = tenants.filter((t) => t.isVerified).length;
+    const pendingApprovals = tenants.filter((t) => !t.isVerified).length;
+    const totalRevenue = tenants.reduce(
+      (sum, t) => sum + parseInt(t.rent || "0"),
+      0
+    );
+    const occupancyRate =
+      totalSpots > 0 ? (occupiedSpots / totalSpots) * 100 : 0;
+
+    const stats: DashboardStats = {
+      totalProperties,
+      totalSpots,
+      occupiedSpots,
+      availableSpots,
+      activeTenants,
+      pendingApprovals,
+      openRequests: 0, // Will be fetched by ServiceRequest component
+      totalRevenue,
+      occupancyRate,
+    };
+
+    return (
       <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-900 to-slate-800 text-white">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-xl font-semibold">
@@ -66,6 +116,33 @@ export default function SystemHelth({ stats }: { stats: DashboardStats }) {
           </div>
         </CardContent>
       </Card>
-    </div>
+    );
+  } catch (error) {
+    console.error("Error fetching system health data:", error);
+    return (
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-xl font-semibold">
+            <div className="p-2 bg-red-500/20 rounded-lg">
+              <Activity className="h-6 w-6 text-red-400" />
+            </div>
+            System Health
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-slate-400">
+            <p>Error loading system health data</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+}
+
+export default function SystemHelth() {
+  return (
+    <Suspense fallback={<SystemHealthSkeleton />}>
+      <SystemHealthData />
+    </Suspense>
   );
 }
