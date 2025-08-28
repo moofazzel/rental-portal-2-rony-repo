@@ -52,7 +52,7 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
     "all" | "active" | "expired" | "pending"
   >("all");
   const [priorityFilter, setPriorityFilter] = useState<
-    "all" | "high" | "medium" | "low"
+    "all" | "urgent" | "high" | "medium" | "low"
   >("all");
   const [sortBy, setSortBy] = useState<"date" | "priority" | "status">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -192,7 +192,7 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
           return sortOrder === "asc" ? aDate - bDate : bDate - aDate;
         }
         if (sortBy === "priority") {
-          const priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+          const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
           const aPriority =
             priorityOrder[a.priority as keyof typeof priorityOrder] || 0;
           const bPriority =
@@ -246,6 +246,8 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
+      case "URGENT":
+        return "bg-red-200 text-red-900 border-red-300";
       case "HIGH":
         return "bg-red-100 text-red-800 border-red-200";
       case "MEDIUM":
@@ -290,7 +292,10 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
   );
   const highPriorityNotices = Object.values(filteredData)?.reduce(
     (acc, property) =>
-      acc + property.notices.filter((n) => n.priority === "HIGH").length,
+      acc +
+      property.notices.filter(
+        (n) => n.priority === "HIGH" || n.priority === "URGENT"
+      ).length,
     0
   );
 
@@ -303,7 +308,9 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
         (n) => n.isCurrentlyActive && !n.isExpired
       ).length,
       highPriorityNotices: propertyData.notices.filter(
-        (n) => n.priority === ("HIGH" as AnnouncementPriority)
+        (n) =>
+          n.priority === ("HIGH" as AnnouncementPriority) ||
+          n.priority === ("URGENT" as AnnouncementPriority)
       ).length,
     })
   );
@@ -348,7 +355,7 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
                 {highPriorityNotices}
               </div>
               <div className="text-xs text-gray-500 font-medium">
-                High Priority
+                High/Urgent
               </div>
             </CardContent>
           </Card>
@@ -451,7 +458,9 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
             <Select
               value={priorityFilter}
               onValueChange={(value) =>
-                setPriorityFilter(value as "all" | "high" | "medium" | "low")
+                setPriorityFilter(
+                  value as "all" | "urgent" | "high" | "medium" | "low"
+                )
               }
             >
               <SelectTrigger>
@@ -459,6 +468,7 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="urgent">Urgent</SelectItem>
                 <SelectItem value="high">High</SelectItem>
                 <SelectItem value="medium">Medium</SelectItem>
                 <SelectItem value="low">Low</SelectItem>
@@ -554,7 +564,15 @@ export default function NoticesPage({ notices }: { notices: INotice[] }) {
                           key={uniqueKey}
                           className={`${
                             index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                          } hover:bg-blue-50 transition-colors duration-200`}
+                          } hover:bg-blue-50 transition-colors duration-200 ${
+                            notice.priority === "URGENT"
+                              ? "border-l-4 border-l-red-500"
+                              : notice.priority === "HIGH"
+                              ? "border-l-4 border-l-orange-500"
+                              : notice.priority === "MEDIUM"
+                              ? "border-l-4 border-l-yellow-500"
+                              : "border-l-4 border-l-green-500"
+                          }`}
                           onClick={() => {
                             setSelectedNotice(notice);
                             setModalOpen(true);
