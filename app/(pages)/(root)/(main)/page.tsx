@@ -102,10 +102,10 @@ export default async function TenantDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-8">
           {/* Left Column - Notices */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+            <div className="bg-gradient-to-br from-blue-100 via-white to-indigo-100 rounded-xl shadow-lg border border-blue-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-blue-200 bg-gradient-to-r from-blue-200/60 to-indigo-100/60">
+                <h2 className="text-lg font-semibold text-blue-900 flex items-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 shadow"></div>
                   Community Notices
                 </h2>
               </div>
@@ -116,18 +116,18 @@ export default async function TenantDashboard() {
           {/* Right Column - Service Requests and Documents */}
           <div className="lg:col-span-2 space-y-8">
             {/* Service Requests */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200">
+            <div className="bg-gradient-to-br from-green-50 via-white to-green-100 rounded-xl shadow-lg border border-green-200 overflow-hidden">
+              <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-green-200 bg-gradient-to-r from-green-200/60 to-white/60">
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 sm:mr-3"></div>
+                  <h2 className="text-base sm:text-lg font-semibold text-green-900 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 sm:mr-3 shadow"></div>
                     Service Requests
                   </h2>
                   <div className="w-full sm:w-auto">
                     <Link href="/services" className="block w-full sm:w-auto">
                       <Button
                         size="sm"
-                        className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                        className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg shadow"
                       >
                         <span className="block sm:hidden">New</span>
                         <span className="hidden sm:block">New Request</span>
@@ -142,10 +142,10 @@ export default async function TenantDashboard() {
             </div>
 
             {/* Documents */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+            <div className="bg-gradient-to-br from-purple-50 via-white to-pink-100 rounded-xl shadow-lg border border-purple-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-purple-200 bg-gradient-to-r from-purple-200/60 to-pink-100/60">
+                <h2 className="text-lg font-semibold text-purple-900 flex items-center">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3 shadow"></div>
                   Community Documents
                 </h2>
               </div>
@@ -165,10 +165,14 @@ export default async function TenantDashboard() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <div className="text-center">
             <p className="text-sm text-gray-500">
-              Need help? Contact the office at (555) 555-0000 or visit the{" "}
+              Need help? Contact the office at{" "}
+              <span className="text-blue-700 font-semibold">
+                (555) 555-0000
+              </span>{" "}
+              or visit the{" "}
               <Link
                 href="/support"
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-purple-600 hover:text-purple-700 font-medium underline"
               >
                 Support page
               </Link>
