@@ -83,7 +83,7 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
       {/* Rent Status Card */}
-      <Card className="bg-gradient-to-br from-white via-blue-50 to-indigo-100 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+      <Card className="bg-gradient-to-br from-white via-blue-50 to-indigo-200 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader className="pb-3 sm:pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <CardTitle className="text-base sm:text-lg font-semibold text-blue-900">

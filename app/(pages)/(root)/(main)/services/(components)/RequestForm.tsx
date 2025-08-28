@@ -115,8 +115,7 @@ export default function RequestForm({ onSuccess }: RequestFormProps) {
     };
 
     try {
-      const res = await createTenantServiceRequest(dto);
-      console.log("🚀 ~ handleSubmit ~ res:", res);
+      await createTenantServiceRequest(dto);
       toast.success("Service request submitted successfully");
       setSubmitted(false);
 

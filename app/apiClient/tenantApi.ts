@@ -32,6 +32,9 @@ export async function createTenantServiceRequest(dto: CreateServiceRequestDto) {
     method: "POST",
     requireToken: true,
     body: JSON.stringify(dto),
+    revalidate: {
+      queryKeys: [["tenant", "requests"]],
+    },
   });
   return res.data;
 }

@@ -91,6 +91,22 @@ export default function EditProfileModal({
     return () => window.removeEventListener("openEditProfileModal", handle);
   }, []);
 
+  // Auto-focus emergency contact input when modal opens
+  useEffect(() => {
+    if (open) {
+      // Small delay to ensure the modal is fully rendered
+      const timer = setTimeout(() => {
+        const phoneInput = document.querySelector(
+          ".react-tel-input input"
+        ) as HTMLInputElement;
+        if (phoneInput) {
+          phoneInput.focus();
+        }
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+
   const {
     register,
     handleSubmit,
@@ -122,7 +138,12 @@ export default function EditProfileModal({
   const emergencyContactField = register("emergencyContact", {
     required: "Emergency contact phone is required",
     validate: (value) => {
-      if (!value || value.length < 10) {
+      if (!value) {
+        return "Emergency contact phone is required";
+      }
+      // Remove any non-digit characters for validation
+      const digitsOnly = value.replace(/\D/g, "");
+      if (digitsOnly.length < 10) {
         return "Phone number must be at least 10 digits";
       }
       return true;
@@ -190,7 +211,7 @@ export default function EditProfileModal({
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-3xl w-full h-[80vh] flex flex-col bg-white p-0 overflow-hidden">
+        <DialogContent className="max-w-3xl w-full flex flex-col bg-white p-0 overflow-hidden">
           {/* Header */}
           <DialogHeader className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-4 py-3">
             <div className="flex items-center gap-2">
@@ -284,7 +305,7 @@ export default function EditProfileModal({
                       )}
 
                       <PhoneInput
-                        key={`emergency-${open}-${emergencyContactValue}`}
+                        key={`emergency-${open}`}
                         country={"us"}
                         value={emergencyContactValue || ""}
                         onChange={(phone) => {
@@ -306,10 +327,7 @@ export default function EditProfileModal({
                         searchPlaceholder="Search country..."
                         inputProps={{
                           required: true,
-                          placeholder: emergencyContactValue
-                            ? ""
-                            : "Enter phone number",
-                          ...emergencyContactField,
+                          placeholder: "Enter phone number",
                         }}
                       />
                       {errors.emergencyContact && (
