@@ -8,7 +8,6 @@ import {
   Building,
   Calendar,
   Car,
-  Clock,
   CreditCard,
   DollarSign,
   Download,
@@ -288,55 +287,43 @@ export default async function MyInfo() {
   })();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white p-8 lg:p-12">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <User className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h1 className="text-4xl lg:text-5xl font-bold">
-                      {tenantData.name}
-                    </h1>
-                    <p className="text-blue-100 text-lg">
-                      {propertyData?.name} • Lot {spotData?.spotNumber}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    <Shield className="w-3 h-3 mr-1" />
-                    {leaseData?.leaseStatus || "Unknown Status"}
-                  </Badge>
-
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    <Clock className="w-3 h-3 mr-1" />
-                    Since {formatDate(leaseData?.leaseStart)}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <EditProfileModal
-                  tenant={tenantData}
-                  tenantInfo={modalTenantInfo}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Lease
-                </Button>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 ">
+        <div className="px-4 md:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center py-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
+                {tenantData.name}
+              </h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                {propertyData?.name} • Lot {spotData?.spotNumber}
+              </p>
+            </div>
+            <div className="flex-1 flex sm:justify-end">
+              <div className="text-left sm:text-right w-full sm:w-auto">
+                <p className="text-xs sm:text-sm text-gray-500">Lease Status</p>
+                <p className="font-medium text-gray-900 text-sm sm:text-base break-words max-w-full sm:max-w-xs truncate">
+                  {leaseData?.leaseStatus || "Unknown Status"}
+                </p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
+        {/* Action Buttons */}
+        <div className="mb-8 flex gap-3">
+          <EditProfileModal tenant={tenantData} tenantInfo={modalTenantInfo} />
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Lease
+          </Button>
         </div>
 
         {/* Account Status Banner */}
@@ -348,7 +335,7 @@ export default async function MyInfo() {
         )}
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-5">
           <Card className="relative overflow-hidden border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
             <CardContent className="p-6 relative z-10">
@@ -419,7 +406,7 @@ export default async function MyInfo() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-5">
           {/* Personal Information */}
           <div className="space-y-6">
             <Card className="shadow-lg border-0">
