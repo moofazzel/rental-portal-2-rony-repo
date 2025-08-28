@@ -287,9 +287,25 @@ export default function UpdatePropertyModal({ property }: Props) {
     };
 
     start(async () => {
+      if (!property?._id) {
+        toast.error("Property ID is required");
+        return;
+      }
+
       try {
-        await updateProperty({ propertyId: property.id || "", data: dto });
-        toast.success("Property updated successfully");
+        const res = await updateProperty({
+          propertyId: property._id,
+          data: dto,
+        });
+        console.log("🚀 ~ res:", res);
+        if (res.statusCode === 404) {
+          toast.error("Something went wrong");
+          return;
+        }
+        if (res.success) {
+          toast.success("Property updated successfully");
+        }
+
         handleOpenChange(false);
         router.refresh();
       } catch {
