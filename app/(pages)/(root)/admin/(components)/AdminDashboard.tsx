@@ -24,7 +24,6 @@ import {
   Mail,
   Phone,
   Plus,
-  Settings,
   TrendingUp,
   Users,
   Wrench,
@@ -32,6 +31,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import SystemHelth from "./SystemHelth";
 
 interface DashboardStats {
   totalProperties: number;
@@ -143,14 +143,14 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
           </div>
         </div>
 
-        {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Top Row - 4 Metric Tiles */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-base font-semibold text-blue-50">
-                Total Properties
+                Number of Properties
               </CardTitle>
               <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
                 <Building className="h-5 w-5 text-blue-100" />
@@ -161,7 +161,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 {stats.totalProperties}
               </div>
               <p className="text-sm text-blue-100 font-medium leading-relaxed">
-                {stats.totalSpots} total spots available
+                {stats.totalSpots} total units
               </p>
             </CardContent>
           </Card>
@@ -182,7 +182,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 {stats.occupancyRate.toFixed(1)}%
               </div>
               <p className="text-sm text-emerald-100 font-medium leading-relaxed">
-                {stats.occupiedSpots} of {stats.totalSpots} spots occupied
+                {stats.availableSpots} available units
               </p>
             </CardContent>
           </Card>
@@ -203,7 +203,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 {stats.activeTenants}
               </div>
               <p className="text-sm text-purple-100 font-medium leading-relaxed">
-                {stats.pendingApprovals} pending approvals
+                {stats.pendingApprovals} pending applicants
               </p>
             </CardContent>
           </Card>
@@ -224,77 +224,17 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                 ${stats.totalRevenue.toLocaleString()}
               </div>
               <p className="text-sm text-amber-100 font-medium leading-relaxed">
-                From {stats.activeTenants} active tenants
+                ${(stats.totalSpots * 1500).toLocaleString()} max revenue
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Secondary Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-700">
-                Open Requests
-              </CardTitle>
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Wrench className="h-4 w-4 text-red-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-slate-900">
-                {stats.openRequests}
-              </div>
-              <p className="text-xs text-slate-600 mt-1">
-                Service requests pending resolution
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-700">
-                Available Spots
-              </CardTitle>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Home className="h-4 w-4 text-green-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-slate-900">
-                {stats.availableSpots}
-              </div>
-              <p className="text-xs text-slate-600 mt-1">
-                Ready for new tenants
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-700">
-                Active Notices
-              </CardTitle>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Bell className="h-4 w-4 text-blue-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-slate-900">
-                {notices.length}
-              </div>
-              <p className="text-xs text-slate-600 mt-1">
-                Community announcements
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main Content Grid */}
+        {/* Main Content Grid - Left Column (Service Requests + Notices) and Right Column (Quick Actions + Pending Invites) */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Left Column - Recent Activity */}
+          {/* Left Column - Service Requests and Notices */}
           <div className="xl:col-span-2 space-y-8">
-            {/* Recent Service Requests */}
+            {/* Service Requests */}
             <Card className="border-0 shadow-lg bg-white">
               <CardHeader className="border-b border-slate-100">
                 <div className="flex items-center justify-between">
@@ -302,7 +242,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                     <div className="p-2 bg-blue-100 rounded-lg">
                       <Wrench className="h-5 w-5 text-blue-600" />
                     </div>
-                    Recent Service Requests
+                    Service Requests
                   </CardTitle>
                   <Link href="/admin/requests">
                     <Button
@@ -364,65 +304,60 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               </CardContent>
             </Card>
 
-            {/* Property Overview */}
+            {/* Notices */}
             <Card className="border-0 shadow-lg bg-white">
               <CardHeader className="border-b border-slate-100">
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-3 text-lg font-semibold text-slate-900">
-                    <div className="p-2 bg-emerald-100 rounded-lg">
-                      <Building className="h-5 w-5 text-emerald-600" />
+                    <div className="p-2 bg-amber-100 rounded-lg">
+                      <Bell className="h-5 w-5 text-amber-600" />
                     </div>
-                    Property Overview
+                    Notices
                   </CardTitle>
-                  <Link href="/admin/property">
+                  <Link href="/admin/notices">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-emerald-600 hover:text-emerald-700"
+                      className="text-amber-600 hover:text-amber-700"
                     >
-                      Manage Properties
-                      <Settings className="w-4 h-4 ml-1" />
+                      View All
+                      <Eye className="w-4 h-4 ml-1" />
                     </Button>
                   </Link>
                 </div>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-slate-100">
-                  {properties.map((property) => (
+                  {notices.slice(0, 5).map((notice) => (
                     <div
-                      key={property.id}
+                      key={notice.id}
                       className="p-6 hover:bg-slate-50 transition-colors"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-slate-900 mb-1">
-                            {property.name}
-                          </h3>
-                          <p className="text-sm text-slate-600 mb-2">
-                            {property.description}
-                          </p>
-                          <p className="text-xs text-slate-500 flex items-center gap-1">
-                            <Home className="w-3 h-3" />
-                            {property.address.street}, {property.address.city}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-slate-900">
-                            {property.totalLots - (property.availableLots || 0)}
-                            /{property.totalLots}
-                          </div>
-                          <div className="text-sm text-slate-600">Occupied</div>
-                          <div className="text-xs text-emerald-600 font-medium">
-                            {property.availableLots} available
-                          </div>
-                        </div>
+                      <div className="flex items-start gap-3 mb-2">
+                        <span className="font-medium text-sm text-slate-900 line-clamp-1">
+                          {notice.title}
+                        </span>
+                        <Badge
+                          className={`${getPriorityColor(
+                            notice.priority
+                          )} border text-xs`}
+                        >
+                          {notice.priority}
+                        </Badge>
                       </div>
+                      <p className="text-sm text-slate-600 line-clamp-2 mb-2">
+                        {notice.content}
+                      </p>
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {notice.date_published}
+                      </p>
                     </div>
                   ))}
-                  {properties.length === 0 && (
-                    <div className="p-8 text-center text-slate-500">
-                      <Building className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                      <p>No properties found</p>
+                  {notices.length === 0 && (
+                    <div className="p-6 text-center text-slate-500">
+                      <Bell className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                      <p className="text-sm">No notices found</p>
                     </div>
                   )}
                 </div>
@@ -430,7 +365,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
             </Card>
           </div>
 
-          {/* Right Sidebar */}
+          {/* Right Column - Quick Actions and Pending Invites */}
           <div className="space-y-8">
             {/* Quick Actions */}
             <Card className="border-0 shadow-lg bg-white">
@@ -485,62 +420,14 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
               </CardContent>
             </Card>
 
-            {/* Recent Notices */}
-            <Card className="border-0 shadow-lg bg-white">
-              <CardHeader className="border-b border-slate-100">
-                <CardTitle className="flex items-center gap-3 text-lg font-semibold text-slate-900">
-                  <div className="p-2 bg-amber-100 rounded-lg">
-                    <Bell className="h-5 w-5 text-amber-600" />
-                  </div>
-                  Recent Notices
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="divide-y divide-slate-100">
-                  {notices.slice(0, 3).map((notice) => (
-                    <div
-                      key={notice.id}
-                      className="p-4 hover:bg-slate-50 transition-colors"
-                    >
-                      <div className="flex items-start gap-3 mb-2">
-                        <span className="font-medium text-sm text-slate-900 line-clamp-1">
-                          {notice.title}
-                        </span>
-                        <Badge
-                          className={`${getPriorityColor(
-                            notice.priority
-                          )} border text-xs`}
-                        >
-                          {notice.priority}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-slate-600 line-clamp-2 mb-2">
-                        {notice.content}
-                      </p>
-                      <p className="text-xs text-slate-500 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {notice.date_published}
-                      </p>
-                    </div>
-                  ))}
-                  {notices.length === 0 && (
-                    <div className="p-6 text-center text-slate-500">
-                      <Bell className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                      <p className="text-sm">No notices found</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pending Approvals */}
+            {/* Pending Invites */}
             <Card className="border-0 shadow-lg bg-white">
               <CardHeader className="border-b border-slate-100">
                 <CardTitle className="flex items-center gap-3 text-lg font-semibold text-slate-900">
                   <div className="p-2 bg-orange-100 rounded-lg">
                     <Clock className="h-5 w-5 text-orange-600" />
                   </div>
-                  Pending Approvals
+                  Pending Invites
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -582,7 +469,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
                   {tenants.filter((t) => !t.isVerified).length === 0 && (
                     <div className="p-6 text-center text-slate-500">
                       <CheckCircle className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                      <p className="text-sm">No pending approvals</p>
+                      <p className="text-sm">No pending invites</p>
                     </div>
                   )}
                 </div>
@@ -601,58 +488,7 @@ export default function AdminDashboard({ initialData }: AdminDashboardProps) {
         </div>
 
         {/* System Health */}
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-900 to-slate-800 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl font-semibold">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <Activity className="h-6 w-6 text-green-400" />
-              </div>
-              System Health
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">All systems operational</p>
-                  <p className="text-xs text-slate-400">Status: Online</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Clock className="h-5 w-5 text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Last backup</p>
-                  <p className="text-xs text-slate-400">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-500/20 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Open requests</p>
-                  <p className="text-xs text-slate-400">
-                    {stats.openRequests} pending
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <Calendar className="h-5 w-5 text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Next maintenance</p>
-                  <p className="text-xs text-slate-400">Tomorrow</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <SystemHelth stats={stats} />
       </div>
     </div>
   );
