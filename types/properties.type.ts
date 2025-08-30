@@ -188,6 +188,7 @@ export interface IPayment {
 }
 
 export interface ISpot {
+  _id?: string;
   id: string;
   spotNumber: string;
   propertyId: string;

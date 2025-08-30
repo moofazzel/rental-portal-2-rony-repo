@@ -11,7 +11,6 @@ export default async function page() {
   const tenants: ITenant[] = Array.isArray(tenantsResponse.data)
     ? tenantsResponse.data
     : [];
-  console.log("🚀 ~ tenants:", tenants);
 
   return (
     <section>

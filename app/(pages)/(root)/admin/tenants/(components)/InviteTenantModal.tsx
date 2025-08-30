@@ -253,8 +253,8 @@ export default function InviteTenantModal({
                           <SelectContent>
                             {properties?.data?.map((property) => (
                               <SelectItem
-                                value={property.id || ""}
-                                key={property.id || ""}
+                                value={property._id || ""}
+                                key={property._id || ""}
                               >
                                 {property.name}
                               </SelectItem>
@@ -304,7 +304,10 @@ export default function InviteTenantModal({
                               </SelectItem>
                             ) : (
                               spots?.data?.map((lot) => (
-                                <SelectItem value={lot.id} key={lot.id}>
+                                <SelectItem
+                                  value={lot._id || ""}
+                                  key={lot._id || ""}
+                                >
                                   {lot.spotNumber}
                                 </SelectItem>
                               ))
