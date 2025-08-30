@@ -5,7 +5,7 @@ import AllPropertiesLoadingSkeleton from "./(components)/AllPropertiesLoadingSke
 import PropertyClient from "./(components)/PropertyClient";
 
 // Force dynamic rendering to prevent build errors with auth
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function PropertyPage() {
   const result = await getAllProperties();

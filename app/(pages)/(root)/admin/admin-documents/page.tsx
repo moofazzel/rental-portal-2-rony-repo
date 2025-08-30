@@ -1,7 +1,7 @@
 import { getAllDocuments, getAllProperties } from "@/app/apiClient/adminApi";
 import AdminDocumentsClient from "./components/AdminDocumentsClient";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function AdminDocuments() {
   // Fetch properties and documents in parallel

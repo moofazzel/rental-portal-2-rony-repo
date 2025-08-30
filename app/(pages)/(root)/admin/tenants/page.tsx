@@ -3,7 +3,7 @@ import { ITenant } from "@/types/tenant.types";
 import TenantsPage from "./(components)/TenantsPage";
 
 // Force dynamic rendering to prevent build errors with auth
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function page() {
   const tenantsResponse = await getAllTenants();
