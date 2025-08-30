@@ -641,7 +641,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         Lease Info
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                        Status
+                        Account
                       </th>
                       {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                         Actions

@@ -21,8 +21,8 @@ import {
   HandCoins,
   History,
   Home,
+  LayoutDashboard,
   User,
-  UserRoundCog,
   Users,
   Wallet,
   Wrench,
@@ -60,7 +60,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       {
         key: "dashboard",
-        icon: <UserRoundCog className="h-5 w-5" />,
+        icon: <LayoutDashboard className="h-5 w-5" />,
         label: "Dashboard",
         href: "/admin",
         tooltip: "Dashboard",

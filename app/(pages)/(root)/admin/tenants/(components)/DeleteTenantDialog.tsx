@@ -14,20 +14,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ITenant } from "@/types/tenant.types";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface DeleteTenantDialogProps {
   tenant: ITenant;
+  onDeleteSuccess?: () => void;
 }
 
 export default function DeleteTenantDialog({
   tenant,
+  onDeleteSuccess,
 }: DeleteTenantDialogProps) {
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const onDelete = async (tenant: { id: string; name: string }) => {
+    setIsDeleting(true);
     try {
       const res = await deleteUserById({ userId: tenant.id });
       console.log("delete tenant respnose:", res);
@@ -42,9 +47,16 @@ export default function DeleteTenantDialog({
 
       // Refresh the page to update the tenants list
       router.refresh();
+
+      // Close the parent modal if callback is provided
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
     } catch (error) {
       console.error("Failed to delete tenant:", error);
       toast.error(`Failed to delete ${tenant.name}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -56,8 +68,13 @@ export default function DeleteTenantDialog({
           size="sm"
           aria-label="Delete tenant"
           className="text-red-600 hover:bg-red-500 hover:text-white border-red-200"
+          disabled={isDeleting}
         >
-          <Trash2 className="w-4 h-4" />
+          {isDeleting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Trash2 className="w-4 h-4" />
+          )}
         </Button>
       </AlertDialogTrigger>
 
@@ -85,12 +102,20 @@ export default function DeleteTenantDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => onDelete({ id: tenant._id!, name: tenant.name })}
             className="bg-red-600 hover:bg-red-700"
+            disabled={isDeleting}
           >
-            Delete Tenant
+            {isDeleting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete Tenant"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1110,7 +1110,10 @@ export default function TenantEditModal({
 
             {/* Actions */}
             <DialogFooter className="sticky bottom-0 z-10 gap-3 px-6 py-4 border-t bg-background sm:flex-row sm:justify-between">
-              <DeleteTenantDialog tenant={tenant} />
+              <DeleteTenantDialog
+                tenant={tenant}
+                onDeleteSuccess={() => onOpenChange(false)}
+              />
               <div className="flex gap-3">
                 <Button
                   type="button"
