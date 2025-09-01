@@ -46,6 +46,8 @@ export interface IProperty {
     isGlobalAccount: boolean;
   } | null;
   hasStripeAccount?: boolean;
+  totalMaxIncome?: number;
+  totalCurrentActiveIncome?: number;
 }
 
 export interface IPropertyFull extends IProperty {

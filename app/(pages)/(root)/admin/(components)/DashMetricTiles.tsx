@@ -46,8 +46,8 @@ async function DashMetricTilesData() {
     const occupiedSpots = totalSpots - availableSpots;
     const activeTenants = tenants.filter((t) => t.isVerified).length;
     const pendingApprovals = tenants.filter((t) => !t.isVerified).length;
-    const totalRevenue = tenants.reduce(
-      (sum, t) => sum + parseInt(t.rent || "0"),
+    const totalRevenue = properties.reduce(
+      (sum, prop) => sum + (prop.totalCurrentActiveIncome || 0),
       0
     );
     const occupancyRate =
@@ -144,7 +144,11 @@ async function DashMetricTilesData() {
               ${stats.totalRevenue.toLocaleString()}
             </div>
             <p className="text-sm text-amber-100 font-medium leading-relaxed">
-              ${(stats.totalSpots * 1500).toLocaleString()} max revenue
+              $
+              {properties
+                .reduce((sum, prop) => sum + (prop.totalMaxIncome || 0), 0)
+                .toLocaleString()}{" "}
+              max revenue
             </p>
           </CardContent>
         </Card>
