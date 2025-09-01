@@ -22,7 +22,6 @@ export default function DeletePropertyModal({
 }: {
   property: IPropertyFull;
 }) {
-  console.log("🚀 ~ property: fff", property);
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
