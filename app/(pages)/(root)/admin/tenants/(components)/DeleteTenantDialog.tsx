@@ -41,7 +41,9 @@ export default function DeleteTenantDialog({
         return;
       }
 
-      toast.success(`${tenant.name} has been removed `);
+      toast.success(
+        `${tenant.name} has been soft deleted successfully. All associated assignments, leases, service requests, and payments have been updated.`
+      );
       router.refresh();
       console.log("Tenant deleted:", tenant.id);
 
