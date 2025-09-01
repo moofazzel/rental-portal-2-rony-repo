@@ -121,7 +121,6 @@ export default function TenantEditModal({
   open,
   onOpenChange,
 }: TenantEditModalProps) {
-  console.log("🚀 ~ tenant:", tenant);
   const router = useRouter();
 
   const form = useForm<FormData>({

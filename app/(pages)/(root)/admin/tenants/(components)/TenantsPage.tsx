@@ -30,6 +30,10 @@ const TenantEditModal = dynamic(() => import("./TenantEditModal"), {
   ssr: false,
 });
 
+const PaymentButton = dynamic(() => import("./TenantPaymentModal"), {
+  ssr: false,
+});
+
 const InviteTenantModal = dynamic(() => import("./InviteTenantModal"), {
   ssr: false,
 });
@@ -149,6 +153,9 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   const [selectedProperty, setSelectedProperty] = useState<string>("all");
   const [selectedTenant, setSelectedTenant] = useState<ITenant | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [lastClickedSource, setLastClickedSource] = useState<
+    "row" | "payment" | null
+  >(null);
 
   // Group tenants by property
   useMemo(() => {
@@ -387,6 +394,33 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
       : "bg-red-100 text-red-800 border-red-200";
   };
 
+  // Function to get rent status based on payment data
+  const getRentStatus = (
+    tenant: ITenant
+  ): { status: string; color: string; badgeColor: string } => {
+    // Check if tenant has payment data with pending payments
+    if (
+      tenant.payments?.pending &&
+      Array.isArray(tenant.payments.pending) &&
+      tenant.payments.pending.length > 0
+    ) {
+      return {
+        status: "Pending",
+        color: "text-yellow-600",
+        badgeColor: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      };
+    }
+
+    // For now, we'll use a simple approach since the ITenant interface doesn't have detailed payment info
+    // In a real implementation, you might want to extend the interface or use a different data source
+    // Default to current if no payment issues
+    return {
+      status: "Current",
+      color: "text-green-600",
+      badgeColor: "bg-green-100 text-green-800 border-green-200",
+    };
+  };
+
   const totalTenants = Object.values(filteredData).reduce(
     (acc, property) => acc + property.tenants.length,
     0
@@ -417,6 +451,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   );
 
   const handleRowClick = (tenant: ITenant) => {
+    setLastClickedSource("row");
     setSelectedTenant(tenant);
     setIsEditModalOpen(true);
   };
@@ -632,6 +667,9 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         Tenant
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                        Account
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                         Contact
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
@@ -641,11 +679,11 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         Lease Info
                       </th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                        Account
+                        Rent Status
                       </th>
-                      {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                         Actions
-                      </th> */}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -665,6 +703,47 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                             </div>
                             <div className="text-sm text-gray-600">
                               {tenant.email}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(tenant.isVerified || false)}
+                            <div className="relative group">
+                              <Badge
+                                className={getStatusColor(
+                                  tenant.isVerified || false
+                                )}
+                              >
+                                {tenant.isVerified ? "Verified" : "Pending"}
+                              </Badge>
+                              {!tenant.tenantStatus && (
+                                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-2 w-64 z-10">
+                                  <div className="font-medium mb-1">
+                                    Missing Fields:
+                                  </div>
+                                  <div className="space-y-1">
+                                    {getMissingFields(tenant)
+                                      .slice(0, 5)
+                                      .map((field, index) => (
+                                        <div
+                                          key={index}
+                                          className="flex items-center gap-1"
+                                        >
+                                          <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                                          {field}
+                                        </div>
+                                      ))}
+                                    {getMissingFields(tenant).length > 5 && (
+                                      <div className="text-gray-300 text-xs">
+                                        +{getMissingFields(tenant).length - 5}{" "}
+                                        more fields
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -725,43 +804,19 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            {getStatusIcon(tenant.isVerified || false)}
-                            <div className="relative group">
-                              <Badge
-                                className={getStatusColor(
-                                  tenant.isVerified || false
-                                )}
-                              >
-                                {tenant.isVerified ? "Verified" : "Pending"}
-                              </Badge>
-                              {!tenant.tenantStatus && (
-                                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg p-2 w-64 z-10">
-                                  <div className="font-medium mb-1">
-                                    Missing Fields:
-                                  </div>
-                                  <div className="space-y-1">
-                                    {getMissingFields(tenant)
-                                      .slice(0, 5)
-                                      .map((field, index) => (
-                                        <div
-                                          key={index}
-                                          className="flex items-center gap-1"
-                                        >
-                                          <span className="w-1 h-1 bg-red-400 rounded-full"></span>
-                                          {field}
-                                        </div>
-                                      ))}
-                                    {getMissingFields(tenant).length > 5 && (
-                                      <div className="text-gray-300 text-xs">
-                                        +{getMissingFields(tenant).length - 5}{" "}
-                                        more fields
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-                                </div>
-                              )}
-                            </div>
+                            <Badge className={getRentStatus(tenant).badgeColor}>
+                              {getRentStatus(tenant).status}
+                            </Badge>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <PaymentButton
+                              tenant={tenant}
+                              onPaymentClick={() =>
+                                setLastClickedSource("payment")
+                              }
+                            />
                           </div>
                         </td>
                       </tr>
@@ -785,7 +840,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
       )}
 
       {/* Edit Modal */}
-      {selectedTenant && (
+      {selectedTenant && lastClickedSource === "row" && (
         <TenantEditModal
           tenant={selectedTenant}
           open={isEditModalOpen}
