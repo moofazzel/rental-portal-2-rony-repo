@@ -84,11 +84,11 @@ export default async function TenantDashboard() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
         {/* Account Status Banner */}
-        {tenantRes?.tenantStatus && (
+        {!tenantRes?.tenantStatus && (
           <div className="mb-8">
             <AccountStatusBanner
-              tenantStatus={tenantRes.tenantStatus || false}
-              tenantName={tenantRes.user.name}
+              tenantStatus={tenantRes?.tenantStatus || false}
+              tenantName={tenantRes?.user?.name || ""}
             />
           </div>
         )}

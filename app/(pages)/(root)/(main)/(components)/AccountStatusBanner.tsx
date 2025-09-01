@@ -15,7 +15,7 @@ export default function AccountStatusBanner({
   }
 
   return (
-    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 shadow-sm">
+    <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 shadow-sm mb-5">
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0">
           <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
