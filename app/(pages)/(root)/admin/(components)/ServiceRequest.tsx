@@ -68,12 +68,19 @@ async function ServiceRequestData() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="font-semibold text-slate-900">
-                        {typeof request.tenantId === "object"
-                          ? request.tenantId.name
-                          : "Unknown Tenant"}
-                      </span>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-slate-900">
+                          {request.title}
+                        </span>
+                        <Badge
+                          className={`${getPriorityColor(
+                            request.priority
+                          )} border text-xs`}
+                        >
+                          {request.priority}
+                        </Badge>
+                      </div>
                       <Badge
                         className={`${getStatusColor(request.status)} border`}
                       >
@@ -83,13 +90,48 @@ async function ServiceRequestData() {
                         </div>
                       </Badge>
                     </div>
-                    <p className="text-sm text-slate-600 mb-1">
-                      <span className="font-medium">{request.type}</span> -{" "}
-                      {request.description}
-                    </p>
+
+                    <div className="space-y-2 mb-3">
+                      <p className="text-sm text-slate-600">
+                        <span className="font-medium text-slate-900">
+                          {request.type}
+                        </span>{" "}
+                        - {request.description}
+                      </p>
+
+                      <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                          <span>
+                            {typeof request.propertyId === "object" &&
+                            request.propertyId
+                              ? request.propertyId.name
+                              : "Unknown Property"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span>
+                            {typeof request.spotId === "object" &&
+                            request.spotId
+                              ? request.spotId.spotNumber
+                              : "Unknown Spot"}
+                          </span>
+                        </div>
+                        {typeof request.tenantId === "object" &&
+                          request.tenantId && (
+                            <div className="flex items-center gap-1">
+                              <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                              <span>{request.tenantId.name}</span>
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
                     <p className="text-xs text-slate-500 flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {new Date(request.createdAt).toLocaleDateString()}
+                      Requested:{" "}
+                      {new Date(request.requestedDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -149,6 +191,19 @@ const getStatusColor = (status: string) => {
       return "bg-blue-50 text-blue-700 border-blue-200";
     case "COMPLETED":
       return "bg-emerald-50 text-emerald-700 border-emerald-200";
+    default:
+      return "bg-gray-50 text-gray-700 border-gray-200";
+  }
+};
+
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case "HIGH":
+      return "bg-red-50 text-red-700 border-red-200";
+    case "MEDIUM":
+      return "bg-yellow-50 text-yellow-700 border-yellow-200";
+    case "LOW":
+      return "bg-green-50 text-green-700 border-green-200";
     default:
       return "bg-gray-50 text-gray-700 border-gray-200";
   }
