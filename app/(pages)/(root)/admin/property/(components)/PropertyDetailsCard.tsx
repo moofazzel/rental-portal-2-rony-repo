@@ -216,7 +216,7 @@ export default function PropertyDetailsCard({
                       </div>
                     </div>
                     <AddLotModal
-                      propertyId={propertyDetails.id || ""}
+                      propertyId={propertyDetails._id as string}
                       amenities={propertyDetails.amenities || []}
                       address={{
                         street: propertyDetails.address.street,
