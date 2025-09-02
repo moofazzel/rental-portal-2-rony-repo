@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { IPropertyFull } from "@/types/properties.type";
-import { Trash2 } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -57,14 +57,27 @@ export default function DeletePropertyModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
+        {/* <Button
           className="bg-red-500 hover:bg-red-600 hover:border-red-500 text-white"
           variant="outline"
           size="icon"
           title="Delete Property"
         >
           <Trash2 className="h-4 w-4" />
-        </Button>
+        </Button> */}
+
+        <button className="group relative overflow-hidden bg-gradient-to-r from-red-50 to-pink-50 rounded-xl px-2 py-2 border border-red-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-500 rounded-lg group-hover:bg-red-600 transition-colors">
+                <XCircle className="h-3 w-3 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Delete Property</p>
+              </div>
+            </div>
+          </div>
+        </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

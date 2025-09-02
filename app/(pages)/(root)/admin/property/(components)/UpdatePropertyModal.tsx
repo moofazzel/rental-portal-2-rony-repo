@@ -32,8 +32,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Building2,
+  CheckCircle,
   Droplets,
-  Edit3,
   Image as ImageIcon,
   List,
   MapPin,
@@ -317,10 +317,23 @@ export default function UpdatePropertyModal({ property }: Props) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size="lg" variant="outline" className="flex items-center gap-2">
+        {/* <Button size="lg" variant="outline" className="flex items-center gap-2">
           <Edit3 className="h-4 w-4" />
           Edit Property
-        </Button>
+        </Button> */}
+
+        <button className="group relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl px-2 py-2 border border-blue-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500 rounded-lg group-hover:bg-blue-600 transition-colors">
+                <CheckCircle className="h-3 w-3 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Update Property</p>
+              </div>
+            </div>
+          </div>
+        </button>
       </DialogTrigger>
 
       <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">

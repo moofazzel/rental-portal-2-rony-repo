@@ -19,12 +19,12 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ICreateSpot, ISpot } from "@/types/properties.type";
 import {
+  Building2,
   CheckCircle,
   DollarSign,
   Droplets,
   Home,
   PawPrint,
-  Plus,
   Ruler,
   Shield,
   Toilet,
@@ -159,13 +159,26 @@ export default function AddLotModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
+        {/* <Button
           size="lg"
           className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
         >
           <Plus className="h-4 w-4" />
           Add Lot
-        </Button>
+        </Button> */}
+
+        <button className="group relative overflow-hidden bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl px-2 py-2 border border-green-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500 rounded-lg group-hover:bg-green-600 transition-colors">
+                <Building2 className="h-3 w-3 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Add New Lot</p>
+              </div>
+            </div>
+          </div>
+        </button>
       </DialogTrigger>
 
       <DialogContent className="max-w-4xl w-full h-[85vh] p-0 overflow-hidden">

@@ -184,73 +184,27 @@ export default function PropertyDetailsCard({
 
               <div className="grid grid-cols-1 gap-3">
                 {/* Update Property */}
-                <div className="group relative overflow-hidden bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-500 rounded-lg group-hover:bg-blue-600 transition-colors">
-                        <CheckCircle2 className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          Update Property
-                        </p>
-                        <p className="text-xs text-gray-600">Modify details</p>
-                      </div>
-                    </div>
-                    <UpdatePropertyModal property={propertyDetails} />
-                  </div>
-                </div>
+
+                <UpdatePropertyModal property={propertyDetails} />
 
                 {/* Add New Lot */}
-                <div className="group relative overflow-hidden bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-green-500 rounded-lg group-hover:bg-green-600 transition-colors">
-                        <Building2 className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          Add New Lot
-                        </p>
-                        <p className="text-xs text-gray-600">Create spots</p>
-                      </div>
-                    </div>
-                    <AddLotModal
-                      propertyId={propertyDetails._id as string}
-                      amenities={propertyDetails.amenities || []}
-                      address={{
-                        street: propertyDetails.address.street,
-                        city: propertyDetails.address.city,
-                        state: propertyDetails.address.state || "",
-                        zip: propertyDetails.address.zip,
-                        country: propertyDetails.address.country || "",
-                      }}
-                      identifierType={
-                        propertyDetails.identifierType || "lotNumber"
-                      }
-                    />
-                  </div>
-                </div>
+
+                <AddLotModal
+                  propertyId={propertyDetails._id as string}
+                  amenities={propertyDetails.amenities || []}
+                  address={{
+                    street: propertyDetails.address.street,
+                    city: propertyDetails.address.city,
+                    state: propertyDetails.address.state || "",
+                    zip: propertyDetails.address.zip,
+                    country: propertyDetails.address.country || "",
+                  }}
+                  identifierType={propertyDetails.identifierType || "lotNumber"}
+                />
 
                 {/* Delete Property */}
-                <div className="group relative overflow-hidden bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-4 border border-red-200 hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-red-500 rounded-lg group-hover:bg-red-600 transition-colors">
-                        <XCircle className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          Delete Property
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          Remove permanently
-                        </p>
-                      </div>
-                    </div>
-                    <DeletePropertyModal property={propertyDetails} />
-                  </div>
-                </div>
+
+                <DeletePropertyModal property={propertyDetails} />
               </div>
             </div>
           </div>
