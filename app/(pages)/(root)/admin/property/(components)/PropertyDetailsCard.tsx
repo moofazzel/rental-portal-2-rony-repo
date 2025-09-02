@@ -5,7 +5,6 @@ import {
   Building2,
   CheckCircle2,
   DollarSign,
-  Hash,
   MapPin,
   Star,
   TrendingUp,
@@ -16,6 +15,7 @@ import {
 import AddLotModal from "./AddLotModal";
 import DeletePropertyModal from "./DeletePropertyModal";
 import ImageModal from "./ImageModal";
+import PropertyNoticesAndDocuments from "./PropertyNoticesAndDocuments";
 import UpdatePropertyModal from "./UpdatePropertyModal";
 
 export default function PropertyDetailsCard({
@@ -335,7 +335,7 @@ export default function PropertyDetailsCard({
       </div>
 
       {/* Lot Identification Type */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+      {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
           <Hash className="h-4 w-4 text-indigo-500" />
           Lot Identification
@@ -352,7 +352,7 @@ export default function PropertyDetailsCard({
             {identifierType === "roadNumber" ? "road numbers" : "lot numbers"}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Rules */}
       {rules && rules.length > 0 && (
@@ -374,6 +374,9 @@ export default function PropertyDetailsCard({
           </ul>
         </div>
       )}
+
+      {/* Property Notices and Documents */}
+      <PropertyNoticesAndDocuments property={propertyDetails} />
     </div>
   );
 }

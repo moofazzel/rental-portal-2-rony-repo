@@ -62,7 +62,7 @@ export default async function PropertyDetailPage({
           <Link href="/admin/property">
             <Button
               variant="ghost"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to properties

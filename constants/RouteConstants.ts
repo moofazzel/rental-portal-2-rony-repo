@@ -11,6 +11,7 @@ export const Route = {
   PropertyPath: "/admin/property",
   RequestsPath: "/admin/requests",
   TenantsPath: "/admin/tenants",
+  AdminDocumentsPath: "/admin/admin-documents",
   // Main Routes
   DocumentsPath: "/documents",
   HistoryPath: "/history",
