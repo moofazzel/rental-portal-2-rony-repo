@@ -77,6 +77,57 @@ export interface IUpdatePayment {
   lateFeeAmount?: number;
 }
 
+// New interface for manual payment recording
+export interface IRecordManualPayment {
+  amount: number;
+  paidDate: string; // ISO string format
+  description?: string;
+  notes?: string;
+}
+
+// Interface for payment update data (matches the API specification)
+export interface PaymentUpdateData {
+  amount: number;
+  paidDate: string;
+  description?: string;
+  notes?: string;
+}
+
+// Response interface for payment update
+export interface IPaymentUpdateResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    type: PaymentType;
+    status: PaymentStatus;
+    amount: number;
+    totalAmount: number;
+    dueDate: string;
+    paidDate: string;
+    paymentMethod: PaymentMethod;
+    description: string;
+    notes: string;
+    tenant: {
+      id: string;
+      name: string;
+      email: string;
+      phoneNumber: string;
+    };
+    property: {
+      id: string;
+      name: string;
+      address: string;
+    };
+    spot: {
+      id: string;
+      spotNumber: string;
+      lotIdentifier: string;
+    };
+  };
+}
+
 export interface IRecordPayment {
   paymentId: string;
   paidAmount: number;

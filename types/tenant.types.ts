@@ -13,6 +13,16 @@ export interface ITenant {
   role?: "TENANT";
   tenantStatus?: boolean; // true if all required data is filled, false otherwise
 
+  // Payment Status
+  paymentStatus?: {
+    currentStatus: "NO_PAYMENTS" | "CURRENT" | "DUE" | "OVERDUE";
+    lastPaymentDate: string | null;
+    nextDueDate: string | null;
+    overdueAmount: number;
+    totalOutstanding: number;
+    paymentHistory: any[];
+  };
+
   // RV Information
   rvInfo?: {
     make: string;

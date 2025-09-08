@@ -17,6 +17,7 @@ import {
   ArrowUp,
   CheckCircle,
   Filter,
+  LockIcon,
   MapPin,
   Phone,
   Search,
@@ -60,6 +61,7 @@ interface GroupedTenants {
 }
 
 export default function TenantsPage({ tenants }: TenantsPageProps) {
+  console.log("🚀 ~ tenants:", tenants);
   const [groupedData, setGroupedData] = useState<GroupedTenants>({});
   const [filteredData, setFilteredData] = useState<GroupedTenants>({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -70,13 +72,6 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   // Use the tenantStatus from API instead of calculating locally
   const isTenantProfileComplete = (tenant: ITenant): boolean => {
     return tenant.tenantStatus === true;
-  };
-
-  // Function to get tenant verification status
-  const getTenantVerificationStatus = (
-    tenant: ITenant
-  ): "verified" | "unverified" => {
-    return isTenantProfileComplete(tenant) ? "verified" : "unverified";
   };
 
   // Function to get missing fields for debugging (simplified since we use API tenantStatus)
@@ -398,27 +393,71 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
   const getRentStatus = (
     tenant: ITenant
   ): { status: string; color: string; badgeColor: string } => {
-    // Check if tenant has payment data with pending payments
+    // Use the new paymentStatus from the tenant data
+    if (tenant.paymentStatus) {
+      const { currentStatus } = tenant.paymentStatus;
+
+      switch (currentStatus) {
+        case "NO_PAYMENTS":
+          return {
+            status: "Due",
+            color: "text-red-600",
+            badgeColor: "bg-red-100 text-red-800 border-red-200",
+          };
+        case "CURRENT":
+          return {
+            status: "Current",
+            color: "text-green-600",
+            badgeColor: "bg-green-100 text-green-800 border-green-200",
+          };
+        case "DUE":
+          return {
+            status: "Due",
+            color: "text-yellow-600",
+            badgeColor: "bg-yellow-100 text-yellow-800 border-yellow-200",
+          };
+        case "OVERDUE":
+          return {
+            status: "Overdue",
+            color: "text-red-600",
+            badgeColor: "bg-red-100 text-red-800 border-red-200",
+          };
+        default:
+          return {
+            status: "Due",
+            color: "text-yellow-600",
+            badgeColor: "bg-yellow-100 text-yellow-800 border-yellow-200",
+          };
+      }
+    }
+
+    // Fallback to old logic if paymentStatus is not available
     if (
       tenant.payments?.pending &&
       Array.isArray(tenant.payments.pending) &&
       tenant.payments.pending.length > 0
     ) {
       return {
-        status: "Pending",
+        status: "Due",
         color: "text-yellow-600",
         badgeColor: "bg-yellow-100 text-yellow-800 border-yellow-200",
       };
     }
 
-    // For now, we'll use a simple approach since the ITenant interface doesn't have detailed payment info
-    // In a real implementation, you might want to extend the interface or use a different data source
-    // Default to current if no payment issues
     return {
       status: "Current",
       color: "text-green-600",
       badgeColor: "bg-green-100 text-green-800 border-green-200",
     };
+  };
+
+  // Function to check if this is the first payment
+  const isFirstPayment = (tenant: ITenant): boolean => {
+    return Boolean(
+      tenant.paymentStatus?.currentStatus === "NO_PAYMENTS" ||
+        (tenant.paymentStatus?.paymentHistory &&
+          tenant.paymentStatus.paymentHistory.length === 0)
+    );
   };
 
   const totalTenants = Object.values(filteredData).reduce(
@@ -450,7 +489,14 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
     })
   );
 
-  const handleRowClick = (tenant: ITenant) => {
+  const handleRowClick = (tenant: ITenant, e: React.MouseEvent) => {
+    // Don't open edit modal if the last click was from payment button
+    if (lastClickedSource === "payment") {
+      setLastClickedSource(null);
+      return;
+    }
+
+    e.stopPropagation();
     setLastClickedSource("row");
     setSelectedTenant(tenant);
     setIsEditModalOpen(true);
@@ -694,7 +740,7 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                           tenant,
                           index
                         )} transition-colors duration-200 cursor-pointer`}
-                        onClick={() => handleRowClick(tenant)}
+                        onClick={(e) => handleRowClick(tenant, e)}
                       >
                         <td className="px-4 py-3">
                           <div>
@@ -811,12 +857,25 @@ export default function TenantsPage({ tenants }: TenantsPageProps) {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <PaymentButton
-                              tenant={tenant}
-                              onPaymentClick={() =>
-                                setLastClickedSource("payment")
-                              }
-                            />
+                            {tenant.tenantStatus ? (
+                              <PaymentButton
+                                tenant={tenant}
+                                isFirstPayment={isFirstPayment(tenant)}
+                                onPaymentClick={() =>
+                                  setLastClickedSource("payment")
+                                }
+                              />
+                            ) : (
+                              <button
+                                type="button"
+                                className="flex items-center gap-1 text-sm text-gray-400 italic cursor-not-allowed bg-gray-100 px-2 py-1 rounded opacity-70"
+                                disabled
+                                title="Payment unavailable"
+                              >
+                                <LockIcon className="w-4 h-4" />
+                                Payment
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

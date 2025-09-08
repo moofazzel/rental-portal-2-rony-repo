@@ -7,7 +7,11 @@ import {
   INotice,
   UpdateNoticeArgs,
 } from "@/types/notices.types";
-import { IAdminPaymentResponse } from "@/types/payment.types";
+import {
+  IAdminPaymentResponse,
+  IPaymentUpdateResponse,
+  PaymentUpdateData,
+} from "@/types/payment.types";
 import {
   ICreateSpot,
   IInviteTenant,
@@ -496,6 +500,26 @@ export async function deleteDocument(documentId: string) {
     requireToken: true,
     revalidate: {
       queryKeys: [["admin", "documents"]],
+    },
+  });
+}
+
+// Record manual payment for a tenant
+export async function recordTenantPayment(
+  tenantId: string,
+  paymentData: PaymentUpdateData
+) {
+  const url = `${API_BASE_URL}/admin/payments/tenant/${tenantId}`;
+  return api<IPaymentUpdateResponse>(url, {
+    method: "PATCH",
+    requireToken: true,
+    body: JSON.stringify(paymentData),
+
+    revalidate: {
+      queryKeys: [
+        ["admin", "payments"],
+        ["admin", "tenants"],
+      ],
     },
   });
 }

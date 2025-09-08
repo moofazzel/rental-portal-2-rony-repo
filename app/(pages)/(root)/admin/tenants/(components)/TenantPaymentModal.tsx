@@ -1,6 +1,8 @@
 "use client";
 
+import { recordTenantPayment } from "@/app/apiClient/adminApi";
 import { Button } from "@/components/ui/button";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +12,20 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PaymentUpdateData } from "@/types/payment.types";
 import { ITenant } from "@/types/tenant.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -25,23 +39,24 @@ import * as z from "zod";
 // Form validation schema
 const paymentFormSchema = z.object({
   amount: z.string().min(1, "Amount is required"),
-  paymentDate: z.string().min(1, "Payment date is required"),
+  paymentDate: z.date({
+    required_error: "Payment date is required",
+  }),
   description: z.string().optional(),
   notes: z.string().optional(),
+  paymentType: z.enum(["rent", "deposit", "both"]).optional(),
 });
 
 type PaymentFormData = z.infer<typeof paymentFormSchema>;
 
-interface TenantPaymentModalProps {
-  tenant: ITenant;
-}
-
 // Payment Button Component (Trigger)
 export function PaymentButton({
   tenant,
+  isFirstPayment = false,
   onPaymentClick,
 }: {
   tenant: ITenant;
+  isFirstPayment?: boolean;
   onPaymentClick?: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -50,6 +65,17 @@ export function PaymentButton({
     e.stopPropagation(); // Prevent row click
     onPaymentClick?.(); // Notify parent that payment button was clicked
     setOpen(true);
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    // Reset the click source when modal closes
+    if (!newOpen) {
+      // Small delay to ensure the modal close event is processed
+      setTimeout(() => {
+        onPaymentClick?.();
+      }, 50);
+    }
   };
 
   return (
@@ -64,7 +90,12 @@ export function PaymentButton({
         <DollarSign className="w-3 h-3" />
         Payment
       </Button>
-      <TenantPaymentModal tenant={tenant} open={open} onOpenChange={setOpen} />
+      <TenantPaymentModal
+        tenant={tenant}
+        isFirstPayment={isFirstPayment}
+        open={open}
+        onOpenChange={handleOpenChange}
+      />
     </>
   );
 }
@@ -72,10 +103,12 @@ export function PaymentButton({
 // Modal Component
 function TenantPaymentModal({
   tenant,
+  isFirstPayment = false,
   open,
   onOpenChange,
 }: {
   tenant: ITenant;
+  isFirstPayment?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -90,29 +123,83 @@ function TenantPaymentModal({
     );
   };
 
+  // Function to calculate amount based on payment type
+  const calculateAmountForPaymentType = (paymentType: string) => {
+    if (!isFirstPayment) return getDefaultAmount();
+
+    const rentAmount =
+      tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
+    const depositAmount = tenant.lease?.depositAmount || 0;
+
+    switch (paymentType) {
+      case "rent":
+        return rentAmount.toString();
+      case "deposit":
+        return depositAmount.toString();
+      case "both":
+        return (rentAmount + depositAmount).toString();
+      default:
+        return getDefaultAmount();
+    }
+  };
+
   const form = useForm<PaymentFormData>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {
-      amount: getDefaultAmount(),
-      paymentDate: new Date().toISOString().split("T")[0],
-      description: "",
+      amount: isFirstPayment
+        ? calculateAmountForPaymentType("both")
+        : getDefaultAmount(),
+      paymentDate:
+        isFirstPayment && tenant.lease?.leaseStart
+          ? new Date(tenant.lease.leaseStart)
+          : new Date(),
+      description: isFirstPayment ? "First payment" : "Monthly rent payment",
       notes: "",
+      paymentType: isFirstPayment ? "both" : "rent",
     },
   });
 
-  // Mock mutation - replace with actual API call
+  // Record payment mutation using real API
   const recordPaymentMutation = useMutation({
     mutationFn: async (paymentData: PaymentFormData) => {
-      // TODO: Replace with actual API call
-      console.log("Recording payment:", paymentData);
+      // Calculate amount based on payment type for first payments
+      let finalAmount = parseFloat(paymentData.amount);
+      let description = paymentData.description || undefined;
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (isFirstPayment && paymentData.paymentType) {
+        const rentAmount =
+          tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
+        const depositAmount = tenant.lease?.depositAmount || 0;
 
-      return {
-        success: true,
-        message: "Payment recorded successfully",
+        switch (paymentData.paymentType) {
+          case "rent":
+            finalAmount = rentAmount;
+            description = "First month rent payment";
+            break;
+          case "deposit":
+            finalAmount = depositAmount;
+            description = "Security deposit payment";
+            break;
+          case "both":
+            finalAmount = rentAmount + depositAmount;
+            description = "First month rent + security deposit";
+            break;
+        }
+      }
+
+      const paymentPayload: PaymentUpdateData = {
+        amount: finalAmount,
+        paidDate: paymentData.paymentDate.toISOString(),
+        description: description,
+        notes: paymentData.notes || undefined,
       };
+
+      if (!tenant._id) {
+        throw new Error("Tenant ID is required");
+      }
+
+      const response = await recordTenantPayment(tenant._id, paymentPayload);
+      return response;
     },
     onSuccess: (data) => {
       if (data.success) {
@@ -141,17 +228,38 @@ function TenantPaymentModal({
   useEffect(() => {
     if (open) {
       form.reset({
-        amount: getDefaultAmount(),
-        paymentDate: new Date().toISOString().split("T")[0],
-        description: "",
+        amount: isFirstPayment
+          ? calculateAmountForPaymentType("both")
+          : getDefaultAmount(),
+        paymentDate:
+          isFirstPayment && tenant.lease?.leaseStart
+            ? new Date(tenant.lease.leaseStart)
+            : new Date(),
+        description: isFirstPayment ? "First payment" : "Monthly rent payment",
         notes: "",
+        paymentType: isFirstPayment ? "both" : "rent",
       });
     }
-  }, [open, form]);
+  }, [
+    open,
+    form,
+    isFirstPayment,
+    tenant.lease?.rentAmount,
+    tenant.lease?.leaseStart,
+    tenant.lotPrice?.monthly,
+  ]);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    onOpenChange(newOpen);
+  };
+
+  const handleDialogClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-w-md" onClick={handleDialogClick}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-green-600" />
@@ -170,7 +278,8 @@ function TenantPaymentModal({
               type="number"
               step="0.01"
               placeholder="Enter payment amount"
-              {...form.register("amount")}
+              value={form.watch("amount")}
+              onChange={(e) => form.setValue("amount", e.target.value)}
             />
             {form.formState.errors.amount && (
               <p className="text-sm text-red-600">
@@ -179,21 +288,78 @@ function TenantPaymentModal({
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="paymentDate" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Payment Date
-            </Label>
-            <Input
-              id="paymentDate"
-              type="date"
-              {...form.register("paymentDate")}
-            />
-            {form.formState.errors.paymentDate && (
-              <p className="text-sm text-red-600">
-                {form.formState.errors.paymentDate.message}
-              </p>
+          <div className="flex gap-2 justify-between">
+            {isFirstPayment && (
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="paymentType">Payment Type</Label>
+                <Select
+                  value={form.watch("paymentType")}
+                  onValueChange={(value) => {
+                    form.setValue(
+                      "paymentType",
+                      value as "rent" | "deposit" | "both"
+                    );
+                    // Update amount based on payment type
+                    const newAmount = calculateAmountForPaymentType(value);
+                    form.setValue("amount", newAmount);
+                    // Trigger form validation and re-render
+                    form.trigger("amount");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select payment type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="rent">Rent Only</SelectItem>
+                    <SelectItem value="deposit">Deposit Only</SelectItem>
+                    <SelectItem value="both">Rent + Deposit</SelectItem>
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.paymentType && (
+                  <p className="text-sm text-red-600">
+                    {form.formState.errors.paymentType.message}
+                  </p>
+                )}
+              </div>
             )}
+            <div className="space-y-2 flex-1">
+              <Label className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Payment Date
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {form.watch("paymentDate") ? (
+                      form.watch("paymentDate").toLocaleDateString()
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={form.watch("paymentDate")}
+                    onSelect={(date) => {
+                      if (date) {
+                        form.setValue("paymentDate", date);
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {form.formState.errors.paymentDate && (
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.paymentDate.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">

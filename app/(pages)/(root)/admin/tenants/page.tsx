@@ -7,7 +7,6 @@ import TenantsPage from "./(components)/TenantsPage";
 
 export default async function page() {
   const tenantsResponse = await getAllTenants();
-  console.log("🚀 ~ tenantsResponse:", tenantsResponse);
 
   const tenants: ITenant[] = Array.isArray(tenantsResponse.data)
     ? tenantsResponse.data

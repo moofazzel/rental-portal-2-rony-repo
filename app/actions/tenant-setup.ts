@@ -97,6 +97,7 @@ export async function setTenantPasswordAction(
         }),
       }
     );
+    console.log("🚀 ~ response:", response);
 
     if (!response.success) {
       return {
