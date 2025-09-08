@@ -231,6 +231,7 @@ export interface ITenantApiResponse {
       url: string;
       uploadedAt?: string;
     }>;
+    leaseAgreement?: string;
     notes?: string;
   };
   rent?: {

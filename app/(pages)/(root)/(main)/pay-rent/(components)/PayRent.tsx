@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import HelpSection from "../../(components)/HelpSection";
 
 export default function PayRent({
   rentData,
@@ -712,15 +711,6 @@ export default function PayRent({
               {renderPaymentButton()}
             </CardContent>
           </Card>
-
-          {/* Additional Info */}
-          <HelpSection
-            title="Need help with your payment?"
-            description="For assistance, contact the office"
-            phone="(555) 555-0000"
-            hours="Payment processing fees may apply. You'll receive a confirmation email once payment is complete."
-            className="shadow-lg border-0"
-          />
         </div>
       </div>
     </div>

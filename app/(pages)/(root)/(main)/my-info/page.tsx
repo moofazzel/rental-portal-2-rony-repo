@@ -10,7 +10,6 @@ import {
   Car,
   CreditCard,
   DollarSign,
-  Download,
   FileText,
   Hash,
   Home,
@@ -21,14 +20,16 @@ import {
   RefreshCw,
   Ruler,
   Settings,
-  Shield,
   User,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import AccountStatusBanner from "../(components)/AccountStatusBanner";
-import HelpSection from "../(components)/HelpSection";
 import AmenitiesList from "./components/AmenitiesList";
+import {
+  DownloadLeaseButton,
+  LeaseAgreementSection,
+} from "./components/DownloadLeaseButton";
 import EditProfileModal from "./components/EditProfileModal";
 import { OpenEditProfileTrigger } from "./components/OpenEditProfileTrigger";
 
@@ -297,7 +298,7 @@ export default async function MyInfo() {
                 {tenantData.name}
               </h1>
               <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                {propertyData?.name} • Lot {spotData?.spotNumber}
+                {propertyData?.name} • {spotData?.spotNumber}
               </p>
             </div>
             <div className="flex-1 flex sm:justify-end">
@@ -316,14 +317,6 @@ export default async function MyInfo() {
         {/* Action Buttons */}
         <div className="mb-8 flex gap-3">
           <EditProfileModal tenant={tenantData} tenantInfo={modalTenantInfo} />
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Lease
-          </Button>
         </div>
 
         {/* Account Status Banner */}
@@ -518,13 +511,21 @@ export default async function MyInfo() {
           {/* Lease & RV Information */}
           <div className="space-y-6">
             <Card className="shadow-lg border-0">
-              <CardHeader className="!pb-3 border-b border-gray-100">
+              <CardHeader className="!pb-3 flex items-center justify-between border-b border-gray-100">
                 <CardTitle className="flex items-center gap-3 text-xl">
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-white" />
                   </div>
                   Lease Information
                 </CardTitle>
+                <DownloadLeaseButton
+                  leaseAgreement={leaseData?.leaseAgreement}
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Lease
+                </DownloadLeaseButton>
               </CardHeader>
               <CardContent className=" space-y-4">
                 <div className="space-y-4">
@@ -541,6 +542,11 @@ export default async function MyInfo() {
                       </p>
                     </div>
                   </div>
+
+                  {/* Download Lease Button */}
+                  <LeaseAgreementSection
+                    leaseAgreement={leaseData?.leaseAgreement}
+                  />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
@@ -700,56 +706,23 @@ export default async function MyInfo() {
                 <AmenitiesList amenities={spotData?.amenities} />
               </CardContent>
             </Card>
-
-            <Card className="shadow-lg border-0 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
-              <CardHeader className="!pb-3 border-b border-gray-100">
-                <CardTitle className="text-xl flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                    <Settings className="w-4 h-4" />
-                  </div>
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  variant="outline"
-                  className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 h-12"
-                >
-                  <Download className="w-4 h-4 mr-3" />
-                  Download Lease
-                </Button>
-                <Link href="tel:+1234567890" passHref className="block">
-                  <Button
-                    variant="outline"
-                    className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 h-12"
-                  >
-                    <Phone className="w-4 h-4 mr-3" />
-                    Contact Office
-                  </Button>
-                </Link>
-                <Link href="/support" className="block">
-                  <Button
-                    variant="outline"
-                    className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 h-12"
-                  >
-                    <AlertCircle className="w-4 h-4 mr-3" />
-                    Report Issue
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
           </div>
         </div>
 
-        {/* Footer Info */}
-        <HelpSection
-          icon={<Shield className="w-4 h-4 text-gray-600" />}
-          title="Secure & Private"
-          description="Your information is securely stored and only accessible to authorized personnel."
-          phone="(555) 555-0000"
-          hours="All changes to your profile will be reviewed and approved by management. For immediate assistance, contact the office at (555) 555-0000."
-          className="shadow-lg border-0 bg-white/90 backdrop-blur-sm"
-        />
+        {/* Footer */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              Need help? Contact the office at or visit the{" "}
+              <Link
+                href="/support"
+                className="text-purple-600 hover:text-purple-700 font-medium underline"
+              >
+                Support page
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

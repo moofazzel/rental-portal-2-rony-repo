@@ -59,22 +59,25 @@ export default async function TenantDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 ">
         <div className="px-4 md:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center py-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-                Welcome back, {session?.user?.name?.split(" ")[0] || "Tenant"}!
+                {tenantRes?.user?.name || session?.user?.name || "Tenant"}
               </h1>
               <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                Here's what's happening with your rental today
+                {tenantRes?.property?.name || "Property"} •{" "}
+                {typeof tenantRes?.user?.spot === "object"
+                  ? tenantRes?.user?.spot?.spotNumber
+                  : "Spot"}
               </p>
             </div>
             <div className="flex-1 flex sm:justify-end">
               <div className="text-left sm:text-right w-full sm:w-auto">
-                <p className="text-xs sm:text-sm text-gray-500">Property</p>
+                <p className="text-xs sm:text-sm text-gray-500">Lease Status</p>
                 <p className="font-medium text-gray-900 text-sm sm:text-base break-words max-w-full sm:max-w-xs truncate">
-                  {tenantRes?.property?.name || "Loading..."}
+                  {tenantRes?.user?.lease?.leaseStatus || "Unknown Status"}
                 </p>
               </div>
             </div>
@@ -165,11 +168,7 @@ export default async function TenantDashboard() {
         <div className="mt-12 pt-8 border-t border-gray-200">
           <div className="text-center">
             <p className="text-sm text-gray-500">
-              Need help? Contact the office at{" "}
-              <span className="text-blue-700 font-semibold">
-                (555) 555-0000
-              </span>{" "}
-              or visit the{" "}
+              Need help? Contact the office at or visit the{" "}
               <Link
                 href="/support"
                 className="text-purple-600 hover:text-purple-700 font-medium underline"
