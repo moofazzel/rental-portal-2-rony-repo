@@ -35,10 +35,10 @@ import {
   type InviteTenantFormData,
 } from "@/zod/tenant.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserPlus2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -54,6 +54,7 @@ export default function InviteTenantModal({
   const [selectedProperty, setSelectedProperty] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<InviteTenantFormData>({
     resolver: zodResolver(inviteTenantSchema),
@@ -83,6 +84,16 @@ export default function InviteTenantModal({
     refetchOnMount: true,
     staleTime: 0,
   });
+
+  // Force refetch fresh data when modal opens
+  useEffect(() => {
+    if (open) {
+      // Invalidate and refetch properties
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
+      // Invalidate spots for all properties to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ["spots"] });
+    }
+  }, [open, queryClient]);
 
   const resetModal = () => {
     form.reset();
