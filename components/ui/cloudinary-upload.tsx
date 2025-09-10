@@ -32,7 +32,7 @@ export function CloudinaryUpload({
         maxFiles: 1,
         resourceType: resourceType,
         folder: folder,
-        maxFileSize: maxFileSize,
+        maxRawFileSize: maxFileSize, // Use maxRawFileSize for PDFs and other raw files
         sources: ["local"],
         showAdvancedOptions: false,
         cropping: false,
