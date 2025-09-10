@@ -71,6 +71,8 @@ export default function InviteTenantModal({
   const { data: properties, isLoading: isPropertiesLoading } = useQuery({
     queryKey: ["properties"],
     queryFn: getAllProperties,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   // get all available spots/lots for selected property
@@ -78,6 +80,8 @@ export default function InviteTenantModal({
     queryKey: ["spots", selectedProperty],
     queryFn: () => getAllSpots({ propertyId: selectedProperty }),
     enabled: !!selectedProperty,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   const resetModal = () => {

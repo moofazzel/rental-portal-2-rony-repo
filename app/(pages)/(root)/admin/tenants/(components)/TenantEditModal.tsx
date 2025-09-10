@@ -424,7 +424,6 @@ export default function TenantEditModal({
           notes: data.notes,
         },
       };
-      console.log("🚀 ~ payload:", payload);
 
       const res = await editTenantMutation({
         userId: tenant._id!,

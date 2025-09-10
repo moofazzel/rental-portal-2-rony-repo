@@ -125,7 +125,11 @@ export async function createSpot(data: ICreateSpot) {
     requireToken: true,
     body: JSON.stringify(data),
     revalidate: {
-      queryKeys: [["admin", "properties", "tenants"], ["properties"]],
+      queryKeys: [
+        ["admin", "properties", "tenants"],
+        ["properties"],
+        ["admin", "tenants"],
+      ],
     },
   });
 }

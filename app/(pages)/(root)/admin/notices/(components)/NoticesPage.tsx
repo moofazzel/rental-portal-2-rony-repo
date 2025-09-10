@@ -41,7 +41,6 @@ interface GroupedNotices {
 }
 
 export default function NoticesPage({ notices }: { notices: INotice[] }) {
-  console.log("🚀 ~ notices:", notices);
   const [groupedData, setGroupedData] = useState<GroupedNotices>({});
   const [filteredData, setFilteredData] = useState<GroupedNotices>({});
   const [searchTerm, setSearchTerm] = useState("");

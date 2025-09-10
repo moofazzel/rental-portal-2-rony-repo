@@ -219,6 +219,8 @@ export default function PaymentsPage({ payments }: PaymentsPageProps) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -289,9 +291,9 @@ export default function PaymentsPage({ payments }: PaymentsPageProps) {
               </div>
             </CardContent>
           </Card>
-          <Card className="min-w-[90px] p-0 border-l-4 border-l-green-500">
+          <Card className="min-w-[120px] p-0 border-l-4 border-l-green-500">
             <CardContent className="p-3">
-              <div className="text-xl font-bold text-green-600">
+              <div className="text-lg font-bold text-green-600 break-words">
                 {formatCurrency(totalAmount)}
               </div>
               <div className="text-xs text-gray-500 font-medium">
@@ -305,14 +307,6 @@ export default function PaymentsPage({ payments }: PaymentsPageProps) {
                 {pendingPayments}
               </div>
               <div className="text-xs text-gray-500 font-medium">Pending</div>
-            </CardContent>
-          </Card>
-          <Card className="min-w-[90px] p-0 border-l-4 border-l-red-500">
-            <CardContent className="p-3">
-              <div className="text-xl font-bold text-red-600">
-                {overduePayments}
-              </div>
-              <div className="text-xs text-gray-500 font-medium">Overdue</div>
             </CardContent>
           </Card>
         </div>
