@@ -38,7 +38,6 @@ export default async function ServicesRequestsPage({
 
   const result =
     (await getAllTenantServiceRequests()) as ApiResponse<IServiceRequest>;
-  console.log("🚀 ~ result:", result);
   const serviceRequests = (result?.data?.serviceRequests ||
     []) as IServiceRequest[];
 
