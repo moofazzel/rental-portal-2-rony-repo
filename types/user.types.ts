@@ -10,6 +10,7 @@ export interface AuthUser {
 
 export interface ISetTenantPassword {
   email: string;
+  tenantId: string;
   password: string;
   confirmPassword: string;
 }

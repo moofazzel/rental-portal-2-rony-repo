@@ -49,6 +49,7 @@ export async function setTenantPasswordAction(
   formData: FormData
 ): Promise<TenantSetupFormState> {
   const email = formData.get("email") as string;
+  const tenantId = formData.get("tenantId") as string;
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
@@ -57,6 +58,10 @@ export async function setTenantPasswordAction(
 
   if (!email) {
     errors.email = ["Email is required"];
+  }
+
+  if (!tenantId) {
+    errors.tenantId = ["Tenant ID is required"];
   }
 
   if (!password) {
@@ -92,11 +97,13 @@ export async function setTenantPasswordAction(
         requireToken: true,
         body: JSON.stringify({
           email,
+          tenantId,
           password,
           confirmPassword,
         }),
       }
     );
+    console.log("🚀 ~ tenantId:", tenantId);
     console.log("🚀 ~ response:", response);
 
     if (!response.success) {

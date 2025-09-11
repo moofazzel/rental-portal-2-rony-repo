@@ -178,6 +178,10 @@ const TenantSetupForm = () => {
 
           {/* Form Content */}
           <div className="p-4 sm:p-8">
+            {/* Hidden fields for form submission */}
+            <input type="hidden" name="email" value={tenantData?.email || ""} />
+            <input type="hidden" name="tenantId" value={tenantData?.id || ""} />
+
             <div className="space-y-6 sm:space-y-8">
               {/* Personal Information Section */}
               <div>
