@@ -156,13 +156,13 @@ const NAV_SECTIONS: NavSection[] = [
         href: "/services",
         tooltip: "Services",
       },
-      {
-        key: "Notices",
-        icon: <BellPlus className="h-5 w-5" />,
-        label: "Notices",
-        href: "/notices",
-        tooltip: "Notices",
-      },
+      // {
+      //   key: "Notices",
+      //   icon: <BellPlus className="h-5 w-5" />,
+      //   label: "Notices",
+      //   href: "/notices",
+      //   tooltip: "Notices",
+      // },
     ],
   },
 ];

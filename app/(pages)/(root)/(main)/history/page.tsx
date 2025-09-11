@@ -2,6 +2,7 @@ import { getPaymentsHistory } from "@/app/apiClient/tenantApi";
 import { auth } from "@/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
+import TenantPageHeader from "../(components)/TenantPageHeader";
 import HistoryClient from "./components/HistoryClinet";
 
 // Loading component for Suspense
@@ -50,6 +51,7 @@ async function HistoryContent() {
 
   // @ts-expect-error: ignore type error for _id
   const paymentsResponse = await getPaymentsHistory(session.user._id);
+  console.log("🚀 ~ paymentsResponse:", paymentsResponse);
 
   // Check if the API call was successful
   if (!paymentsResponse.success) {
@@ -73,6 +75,7 @@ export default function HistoryPage() {
   return (
     <section>
       <Suspense fallback={<HistoryLoading />}>
+        <TenantPageHeader />
         <HistoryContent />
       </Suspense>
     </section>

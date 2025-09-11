@@ -66,7 +66,6 @@ interface HistoryClientProps {
 }
 
 export default function HistoryClient({ payments, error }: HistoryClientProps) {
-  console.log("🚀 ~ payments history client:", payments);
   const [sortedBy, setSortedBy] = useState<"date" | "amount" | "status">(
     "date"
   );

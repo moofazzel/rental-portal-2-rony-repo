@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import AccountStatusBanner from "../(components)/AccountStatusBanner";
+import TenantPageHeader from "../(components)/TenantPageHeader";
 import AmenitiesList from "./components/AmenitiesList";
 import {
   DownloadLeaseButton,
@@ -290,28 +291,7 @@ export default async function MyInfo() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 ">
-        <div className="px-4 md:px-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center py-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
-                {tenantData.name}
-              </h1>
-              <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                {propertyData?.name} • {spotData?.spotNumber}
-              </p>
-            </div>
-            <div className="flex-1 flex sm:justify-end">
-              <div className="text-left sm:text-right w-full sm:w-auto">
-                <p className="text-xs sm:text-sm text-gray-500">Lease Status</p>
-                <p className="font-medium text-gray-900 text-sm sm:text-base break-words max-w-full sm:max-w-xs truncate">
-                  {leaseData?.leaseStatus || "Unknown Status"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TenantPageHeader />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
         {/* Action Buttons */}
