@@ -131,6 +131,53 @@ export interface ITenant {
     leaseAgreement?: string;
     notes?: string;
   };
+
+  // Rent Summary for payment processing
+  rentSummary?: {
+    hasActiveLease: boolean;
+    tenantStatus: boolean;
+    propertyName: string;
+    propertyAddress: {
+      street: string;
+      city: string;
+      state: string;
+      zip: string;
+    };
+    spotNumber: string;
+    rentAmount: number;
+    depositAmount: number;
+    leaseStart: string;
+    isLeaseExpiringSoon: boolean;
+    isFirstTimePayment: boolean;
+    currentMonthAmount: number;
+    currentMonthDescription: string;
+    totalOverdueAmount: number;
+    totalDue: number;
+    nextMonthDueDate: string;
+    overduePaymentsDetails: Array<{
+      dueDate: string;
+      amount: number;
+      description: string;
+      daysOverdue: number;
+    }>;
+    canPayCurrentAndOverdue: boolean;
+    paymentOptions: Array<{
+      type: string;
+      amount: number;
+      description: string;
+      dueDate: string;
+    }>;
+    isProRated: boolean;
+    proRatedDays: number;
+    proRatedRentAmount: number;
+    fullMonthRentAmount: number;
+    paymentAction: string;
+    canPayNextMonth: boolean;
+    warningMessage: string;
+    hasOverduePayments: boolean;
+    overdueCount: number;
+    leaseExpirationWarning: string | null;
+  };
 }
 
 // declares exactly the envelope you get back

@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { PaymentUpdateData } from "@/types/payment.types";
+import { PaymentType, PaymentUpdateData } from "@/types/payment.types";
 import { ITenant } from "@/types/tenant.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -42,9 +42,13 @@ const paymentFormSchema = z.object({
   paymentDate: z.date({
     required_error: "Payment date is required",
   }),
+  dueDate: z.date({
+    required_error: "Due date is required",
+  }),
   description: z.string().optional(),
   notes: z.string().optional(),
   paymentType: z.enum(["rent", "deposit", "both"]).optional(),
+  type: z.enum(["RENT", "DEPOSIT", "BOTH"]).optional(),
 });
 
 type PaymentFormData = z.infer<typeof paymentFormSchema>;
@@ -112,9 +116,29 @@ function TenantPaymentModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  console.log("🚀 ~ tenant:", tenant);
   const router = useRouter();
 
   const getDefaultAmount = () => {
+    // Use rentSummary data first, then fallback to legacy fields
+    if (tenant.rentSummary) {
+      // If there are payment options, use the first one's amount
+      if (
+        tenant.rentSummary.paymentOptions &&
+        tenant.rentSummary.paymentOptions.length > 0
+      ) {
+        return tenant.rentSummary.paymentOptions[0].amount.toString();
+      }
+      // If it's pro-rated, use the pro-rated amount
+      if (
+        tenant.rentSummary.isProRated &&
+        tenant.rentSummary.proRatedRentAmount > 0
+      ) {
+        return tenant.rentSummary.proRatedRentAmount.toString();
+      }
+      // Otherwise use the rent amount
+      return tenant.rentSummary.rentAmount?.toString() || "";
+    }
     return (
       tenant.lease?.rentAmount?.toString() ||
       tenant.lotPrice?.monthly?.toString() ||
@@ -127,9 +151,17 @@ function TenantPaymentModal({
   const calculateAmountForPaymentType = (paymentType: string) => {
     if (!isFirstPayment) return getDefaultAmount();
 
-    const rentAmount =
-      tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
-    const depositAmount = tenant.lease?.depositAmount || 0;
+    // Use rentSummary data first, then fallback to legacy fields
+    let rentAmount = 0;
+    let depositAmount = 0;
+
+    if (tenant.rentSummary) {
+      rentAmount = tenant.rentSummary.rentAmount || 0;
+      depositAmount = tenant.rentSummary.depositAmount || 0;
+    } else {
+      rentAmount = tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
+      depositAmount = tenant.lease?.depositAmount || 0;
+    }
 
     switch (paymentType) {
       case "rent":
@@ -150,26 +182,50 @@ function TenantPaymentModal({
         ? calculateAmountForPaymentType("both")
         : getDefaultAmount(),
       paymentDate:
-        isFirstPayment && tenant.lease?.leaseStart
-          ? new Date(tenant.lease.leaseStart)
+        isFirstPayment &&
+        (tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart)
+          ? new Date(
+              tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart!
+            )
           : new Date(),
-      description: isFirstPayment ? "First payment" : "Monthly rent payment",
+      dueDate: tenant.rentSummary?.nextMonthDueDate
+        ? new Date(tenant.rentSummary.nextMonthDueDate)
+        : new Date(),
+      description: isFirstPayment
+        ? tenant.rentSummary?.isProRated
+          ? `Pro-rated First Month Rent (${tenant.rentSummary.proRatedDays} days)`
+          : "First payment"
+        : tenant.rentSummary?.paymentOptions &&
+          tenant.rentSummary.paymentOptions.length > 0
+        ? tenant.rentSummary.paymentOptions[0].description
+        : "Monthly rent payment",
       notes: "",
       paymentType: isFirstPayment ? "both" : "rent",
+      type: isFirstPayment ? "BOTH" : "RENT",
     },
   });
 
   // Record payment mutation using real API
   const recordPaymentMutation = useMutation({
     mutationFn: async (paymentData: PaymentFormData) => {
+      console.log("🚀 ~ paymentData:", paymentData);
       // Calculate amount based on payment type for first payments
       let finalAmount = parseFloat(paymentData.amount);
       let description = paymentData.description || undefined;
 
       if (isFirstPayment && paymentData.paymentType) {
-        const rentAmount =
-          tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
-        const depositAmount = tenant.lease?.depositAmount || 0;
+        // Use rentSummary data first, then fallback to legacy fields
+        let rentAmount = 0;
+        let depositAmount = 0;
+
+        if (tenant.rentSummary) {
+          rentAmount = tenant.rentSummary.rentAmount || 0;
+          depositAmount = tenant.rentSummary.depositAmount || 0;
+        } else {
+          rentAmount =
+            tenant.lease?.rentAmount || tenant.lotPrice?.monthly || 0;
+          depositAmount = tenant.lease?.depositAmount || 0;
+        }
 
         switch (paymentData.paymentType) {
           case "rent":
@@ -187,10 +243,20 @@ function TenantPaymentModal({
         }
       }
 
+      // Map the form type to PaymentType
+      let paymentType: PaymentType = "RENT";
+      if (paymentData.type === "DEPOSIT") {
+        paymentType = "DEPOSIT";
+      } else if (paymentData.type === "BOTH") {
+        paymentType = "RENT"; // Default to RENT for combined payments
+      }
+
       const paymentPayload: PaymentUpdateData = {
         amount: finalAmount,
         paidDate: paymentData.paymentDate.toISOString(),
+        dueDate: paymentData.dueDate.toISOString(),
         description: description,
+        type: paymentType,
         notes: paymentData.notes || undefined,
       };
 
@@ -232,18 +298,35 @@ function TenantPaymentModal({
           ? calculateAmountForPaymentType("both")
           : getDefaultAmount(),
         paymentDate:
-          isFirstPayment && tenant.lease?.leaseStart
-            ? new Date(tenant.lease.leaseStart)
+          isFirstPayment &&
+          (tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart)
+            ? new Date(
+                tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart!
+              )
             : new Date(),
-        description: isFirstPayment ? "First payment" : "Monthly rent payment",
+        dueDate: tenant.rentSummary?.nextMonthDueDate
+          ? new Date(tenant.rentSummary.nextMonthDueDate)
+          : new Date(),
+        description: isFirstPayment
+          ? tenant.rentSummary?.isProRated
+            ? `Pro-rated First Month Rent (${tenant.rentSummary.proRatedDays} days)`
+            : "First payment"
+          : tenant.rentSummary?.paymentOptions &&
+            tenant.rentSummary.paymentOptions.length > 0
+          ? tenant.rentSummary.paymentOptions[0].description
+          : "Monthly rent payment",
         notes: "",
         paymentType: isFirstPayment ? "both" : "rent",
+        type: isFirstPayment ? "BOTH" : "RENT",
       });
     }
   }, [
     open,
     form,
     isFirstPayment,
+    tenant.rentSummary?.rentAmount,
+    tenant.rentSummary?.leaseStart,
+    tenant.rentSummary?.nextMonthDueDate,
     tenant.lease?.rentAmount,
     tenant.lease?.leaseStart,
     tenant.lotPrice?.monthly,
@@ -259,161 +342,388 @@ function TenantPaymentModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md" onClick={handleDialogClick}>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+      <DialogContent
+        className="max-w-md h-[80vh] flex flex-col p-0"
+        onClick={handleDialogClick}
+      >
+        {/* Sticky Header */}
+        <DialogHeader className="sticky top-0 bg-white border-b p-6 pb-4 z-10">
+          <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
             <DollarSign className="w-5 h-5 text-green-600" />
-            Manual Payment - {tenant.name}
+            Record Payment - {tenant.name}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4" />
-              Amount
-            </Label>
-            <Input
-              id="amount"
-              type="number"
-              step="0.01"
-              placeholder="Enter payment amount"
-              value={form.watch("amount")}
-              onChange={(e) => form.setValue("amount", e.target.value)}
-            />
-            {form.formState.errors.amount && (
-              <p className="text-sm text-red-600">
-                {form.formState.errors.amount.message}
-              </p>
-            )}
-          </div>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 py-4"
+          >
+            {/* Rent Summary Information */}
+            {tenant.rentSummary && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg space-y-3 border">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Property:</span>
+                    <span className="font-medium text-gray-900">
+                      {tenant.rentSummary.propertyName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Spot:</span>
+                    <span className="font-medium text-gray-900">
+                      {tenant.rentSummary.spotNumber}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Monthly Rent:</span>
+                  <span className="font-semibold text-green-600">
+                    ${tenant.rentSummary.rentAmount}
+                  </span>
+                </div>
 
-          <div className="flex gap-2 justify-between">
-            {isFirstPayment && (
-              <div className="space-y-2 flex-1">
-                <Label htmlFor="paymentType">Payment Type</Label>
-                <Select
-                  value={form.watch("paymentType")}
-                  onValueChange={(value) => {
-                    form.setValue(
-                      "paymentType",
-                      value as "rent" | "deposit" | "both"
-                    );
-                    // Update amount based on payment type
-                    const newAmount = calculateAmountForPaymentType(value);
-                    form.setValue("amount", newAmount);
-                    // Trigger form validation and re-render
-                    form.trigger("amount");
-                  }}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select payment type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rent">Rent Only</SelectItem>
-                    <SelectItem value="deposit">Deposit Only</SelectItem>
-                    <SelectItem value="both">Rent + Deposit</SelectItem>
-                  </SelectContent>
-                </Select>
-                {form.formState.errors.paymentType && (
-                  <p className="text-sm text-red-600">
-                    {form.formState.errors.paymentType.message}
-                  </p>
+                {/* Payment Type Indicators */}
+                <div className="flex flex-wrap gap-2">
+                  {tenant.rentSummary.isFirstTimePayment && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                      First Payment
+                    </span>
+                  )}
+
+                  {tenant.rentSummary.isProRated && (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+                      Pro-Rated Payment
+                    </span>
+                  )}
+                </div>
+
+                {tenant.rentSummary.isProRated && (
+                  <div className="space-y-2 p-3 bg-white rounded border">
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Pro-rated Days:</span>
+                        <span className="font-medium">
+                          {tenant.rentSummary.proRatedDays} days
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Pro-rated Amount:</span>
+                        <span className="font-medium text-orange-600">
+                          ${tenant.rentSummary.proRatedRentAmount}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-600">Full Month Amount:</span>
+                      <span className="font-medium">
+                        ${tenant.rentSummary.fullMonthRentAmount}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {tenant.rentSummary.totalOverdueAmount > 0 && (
+                  <div className="flex justify-between text-sm p-2 bg-red-50 rounded border border-red-200">
+                    <span className="text-red-700 font-medium">
+                      Overdue Amount:
+                    </span>
+                    <span className="font-bold text-red-600">
+                      ${tenant.rentSummary.totalOverdueAmount}
+                    </span>
+                  </div>
+                )}
+                {tenant.rentSummary.warningMessage && (
+                  <div className="text-xs text-amber-700 bg-amber-50 p-3 rounded border border-amber-200">
+                    {tenant.rentSummary.warningMessage}
+                  </div>
                 )}
               </div>
             )}
-            <div className="space-y-2 flex-1">
-              <Label className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Payment Date
+
+            {/* Payment Options from rentSummary */}
+            {tenant.rentSummary?.paymentOptions &&
+              tenant.rentSummary.paymentOptions.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-gray-600" />
+                    <h3 className="font-medium text-gray-900">
+                      Available Payment Options
+                    </h3>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Click on any option below to auto-fill the payment form
+                  </p>
+                  <div className="space-y-2">
+                    {tenant.rentSummary.paymentOptions.map((option, index) => (
+                      <div
+                        key={index}
+                        className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-green-300 transition-all duration-200 group"
+                        onClick={() => {
+                          form.setValue("amount", option.amount.toString());
+                          form.setValue("description", option.description);
+                          if (option.dueDate) {
+                            form.setValue("dueDate", new Date(option.dueDate));
+                          }
+                          // Set payment type based on option type
+                          if (option.type === "NEXT_MONTH") {
+                            form.setValue("type", "RENT");
+                          }
+                        }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm text-gray-900 group-hover:text-green-800">
+                              {option.description}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Due:{" "}
+                              {option.dueDate
+                                ? new Date(option.dueDate).toLocaleDateString()
+                                : "N/A"}
+                            </p>
+                          </div>
+                          <div className="text-right ml-4">
+                            <p className="font-bold text-green-600 text-lg">
+                              ${option.amount}
+                            </p>
+                            <p className="text-xs text-gray-500 capitalize">
+                              {option.type.replace("_", " ")}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="amount"
+                className="flex items-center gap-2 font-medium text-gray-700"
+              >
+                <DollarSign className="w-4 h-4 text-green-600" />
+                Payment Amount
               </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {form.watch("paymentDate") ? (
-                      form.watch("paymentDate").toLocaleDateString()
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={form.watch("paymentDate")}
-                    onSelect={(date) => {
-                      if (date) {
-                        form.setValue("paymentDate", date);
-                      }
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {form.formState.errors.paymentDate && (
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                placeholder="Enter payment amount"
+                value={form.watch("amount")}
+                onChange={(e) => form.setValue("amount", e.target.value)}
+                className="text-lg font-medium cursor-pointer"
+                readOnly
+              />
+              {form.formState.errors.amount && (
                 <p className="text-sm text-red-600">
-                  {form.formState.errors.paymentDate.message}
+                  {form.formState.errors.amount.message}
                 </p>
               )}
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Description
-            </Label>
-            <Input
-              id="description"
-              placeholder="e.g., Monthly rent for January 2024"
-              {...form.register("description")}
-            />
-            {form.formState.errors.description && (
-              <p className="text-sm text-red-600">
-                {form.formState.errors.description.message}
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {isFirstPayment && (
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="paymentType"
+                    className="font-medium text-gray-700"
+                  >
+                    Payment Type
+                  </Label>
+                  <Select
+                    value={form.watch("paymentType")}
+                    onValueChange={(value) => {
+                      form.setValue(
+                        "paymentType",
+                        value as "rent" | "deposit" | "both"
+                      );
+                      // Update amount based on payment type
+                      const newAmount = calculateAmountForPaymentType(value);
+                      form.setValue("amount", newAmount);
+                      // Trigger form validation and re-render
+                      form.trigger("amount");
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select payment type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="rent">Rent Only</SelectItem>
+                      <SelectItem value="deposit">Deposit Only</SelectItem>
+                      <SelectItem value="both">Rent + Deposit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.formState.errors.paymentType && (
+                    <p className="text-sm text-red-600">
+                      {form.formState.errors.paymentType.message}
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 font-medium text-gray-700">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                  Payment Received Date
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal h-10"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      {form.watch("paymentDate") ? (
+                        form.watch("paymentDate").toLocaleDateString()
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={form.watch("paymentDate")}
+                      onSelect={(date) => {
+                        if (date) {
+                          form.setValue("paymentDate", date);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {form.formState.errors.paymentDate && (
+                  <p className="text-sm text-red-600">
+                    {form.formState.errors.paymentDate.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 font-medium text-gray-700">
+                <Calendar className="w-4 h-4 text-purple-600" />
+                Due Date
+                {tenant.rentSummary?.isFirstTimePayment && (
+                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                    Fixed for first payment
+                  </span>
+                )}
+              </Label>
+              {tenant.rentSummary?.isFirstTimePayment ? (
+                <div className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg bg-gray-50">
+                  <Calendar className="h-5 w-5 text-gray-500" />
+                  <span className="text-sm font-semibold text-gray-900">
+                    {form.watch("dueDate")?.toLocaleDateString()}
+                  </span>
+                </div>
+              ) : (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal h-10"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
+                      {form.watch("dueDate") ? (
+                        form.watch("dueDate").toLocaleDateString()
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={form.watch("dueDate")}
+                      onSelect={(date) => {
+                        if (date) {
+                          form.setValue("dueDate", date);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+              {form.formState.errors.dueDate && (
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.dueDate.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="description"
+                className="flex items-center gap-2 font-medium text-gray-700"
+              >
+                <FileText className="w-4 h-4 text-indigo-600" />
+                Payment Description
+              </Label>
+              <Input
+                id="description"
+                placeholder="e.g., Monthly rent for January 2024"
+                {...form.register("description")}
+                className="h-10"
+              />
+              {form.formState.errors.description && (
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.description.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="font-medium text-gray-700">
+                Admin Notes (Optional)
+              </Label>
+              <Textarea
+                id="notes"
+                placeholder="Additional notes about this payment recording..."
+                {...form.register("notes")}
+                rows={3}
+                className="resize-none"
+              />
+              {form.formState.errors.notes && (
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.notes.message}
+                </p>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* Sticky Footer */}
+        <DialogFooter className=" bg-white border-t p-6 pt-4 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={recordPaymentMutation.isPending}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={recordPaymentMutation.isPending}
+            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium"
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            {recordPaymentMutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Recording Payment...
+              </div>
+            ) : (
+              "Record Payment"
             )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes (Optional)</Label>
-            <Textarea
-              id="notes"
-              placeholder="Additional notes about this payment..."
-              {...form.register("notes")}
-              rows={3}
-            />
-            {form.formState.errors.notes && (
-              <p className="text-sm text-red-600">
-                {form.formState.errors.notes.message}
-              </p>
-            )}
-          </div>
-
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={recordPaymentMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={recordPaymentMutation.isPending}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {recordPaymentMutation.isPending
-                ? "Recording..."
-                : "Record Payment"}
-            </Button>
-          </DialogFooter>
-        </form>
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

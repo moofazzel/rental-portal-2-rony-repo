@@ -61,7 +61,6 @@ interface GroupedTenants {
 }
 
 export default function TenantsPage({ tenants }: TenantsPageProps) {
-  console.log("🚀 ~ tenants:", tenants);
   const [groupedData, setGroupedData] = useState<GroupedTenants>({});
   const [filteredData, setFilteredData] = useState<GroupedTenants>({});
   const [searchTerm, setSearchTerm] = useState("");

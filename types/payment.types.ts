@@ -89,7 +89,9 @@ export interface IRecordManualPayment {
 export interface PaymentUpdateData {
   amount: number;
   paidDate: string;
+  dueDate: string;
   description?: string;
+  type?: PaymentType;
   notes?: string;
 }
 
