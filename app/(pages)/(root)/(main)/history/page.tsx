@@ -45,27 +45,8 @@ function HistoryLoading() {
 async function HistoryContent() {
   const session = await auth();
 
-  if (!session?.user?.id) {
-    return <HistoryClient payments={null} error="User not authenticated" />;
-  }
-
   // @ts-expect-error: ignore type error for _id
-  const paymentsResponse = await getPaymentsHistory(session.user._id);
-
-  // Check if the API call was successful
-  if (!paymentsResponse.success) {
-    return (
-      <HistoryClient
-        payments={null}
-        error={paymentsResponse.message || "Failed to load payment history"}
-      />
-    );
-  }
-
-  // Check if data exists
-  if (!paymentsResponse.data) {
-    return <HistoryClient payments={null} error="No payment data available" />;
-  }
+  const paymentsResponse = await getPaymentsHistory(session?.user?._id);
 
   return <HistoryClient payments={paymentsResponse.data} />;
 }
