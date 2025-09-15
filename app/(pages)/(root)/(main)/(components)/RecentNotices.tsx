@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { INotice } from "@/types/notices.types";
-import Link from "next/link";
 
 interface RecentNoticesProps {
   notices: INotice[];
@@ -44,13 +42,13 @@ export default function RecentNotices({ notices }: RecentNoticesProps) {
                 </div>
               ))}
             </div>
-            <div className="p-6 border-t border-slate-100">
+            {/* <div className="p-6 border-t border-slate-100">
               <Link href="/notices">
                 <Button variant="outline" className="w-full text-sm">
                   View All Notices
                 </Button>
               </Link>
-            </div>
+            </div> */}
           </>
         ) : (
           <div className="p-6 text-center">

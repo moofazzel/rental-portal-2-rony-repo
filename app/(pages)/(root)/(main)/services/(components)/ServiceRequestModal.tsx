@@ -34,7 +34,7 @@ export default function ServiceRequestModal({
         {trigger || (
           <Button
             size="lg"
-            className={`bg-white/10 border-white/20 text-white hover:bg-white/20 ${className}`}
+            className={`bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 border-0 text-white hover:from-blue-700 hover:to-purple-700 ${className}`}
           >
             <Plus className="w-4 h-4 mr-2" />
             New Request

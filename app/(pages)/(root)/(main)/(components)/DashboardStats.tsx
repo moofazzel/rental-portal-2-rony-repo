@@ -12,6 +12,7 @@ interface TenantProps {
 
 export default function DashboardStats({ tenantRes }: TenantProps) {
   const rent = tenantRes?.rent;
+  console.log("🚀 ~ rent:", rent);
   const payments = tenantRes?.payments;
   const spot = tenantRes?.spot;
 
@@ -238,36 +239,34 @@ export default function DashboardStats({ tenantRes }: TenantProps) {
                 </div>
               )}
 
-              {rent?.depositAmount &&
-                rent.depositAmount > 0 &&
-                !isFirstTimePayment && (
-                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <svg
-                          className="w-4 h-4 text-green-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span className="text-sm font-medium text-green-800">
-                          Security Deposit
-                        </span>
+              {isFirstTimePayment && (
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <svg
+                        className="w-4 h-4 text-green-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium text-green-800">
+                        Security Deposit
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-semibold text-green-900">
+                        {formatCurrency(rent.depositAmount)}
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-green-900">
-                          {formatCurrency(rent.depositAmount)}
-                        </div>
-                        <div className="text-xs text-green-600">Paid</div>
-                      </div>
+                      <div className="text-xs text-green-600">Paid</div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
               {rent?.isProRated === true &&
                 rent?.proRatedDays > 0 &&

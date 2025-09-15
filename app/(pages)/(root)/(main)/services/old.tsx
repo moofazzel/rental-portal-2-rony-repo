@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Clock,
   FileText,
-  Phone,
   Plus,
   Search,
   Shield,
@@ -20,6 +19,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const services = [
@@ -700,31 +700,20 @@ export default function Services() {
           </div>
         )}
 
-        {/* Help Section */}
-        <Card className="max-w-7xl mx-auto shadow-lg border-0 text-white">
-          <CardContent className="p-4">
-            <div className="text-center space-y-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                <Phone className="w-4 h-4 text-gray-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-md text-gray-500 mb-2">
-                  Need Immediate Assistance?
-                </h3>
-                <p className="text-slate-500 text-sm mb-4">
-                  For urgent issues or emergency situations, contact the office
-                  directly
-                </p>
-                <div className="space-y-1">
-                  <p className="font-bold text-xl text-gray-600">(555) 555-0000</p>
-                  <p className="text-slate-600">
-                    Office Hours: 9 AM - 5 PM (Emergency: 24/7)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Footer */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              Need help? Contact the office at or visit the{" "}
+              <Link
+                href="/support"
+                className="text-purple-600 hover:text-purple-700 font-medium underline"
+              >
+                Support page
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

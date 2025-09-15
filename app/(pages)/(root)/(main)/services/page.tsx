@@ -7,11 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApiResponse } from "@/types/api.types";
 import { IServiceRequest } from "@/types/tenantServiceRequest.types";
 import {
-  AlertTriangle,
   ArrowRight,
   Bug,
   Calendar,
-  CheckCircle,
   CheckCircle2,
   Clock,
   Droplets,
@@ -25,7 +23,6 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import HelpSection from "../(components)/HelpSection";
 import TenantPageHeader from "../(components)/TenantPageHeader";
 import ServiceRequestModal from "./(components)/ServiceRequestModal";
 
@@ -120,61 +117,28 @@ export default async function ServicesRequestsPage({
 
       <div className="container mx-auto p-6 space-y-8">
         {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-700 to-blue-800 text-white p-8 lg:p-12">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <Wrench className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h1 className="text-4xl lg:text-5xl font-bold">
-                      Service Requests
-                    </h1>
-                    <p className="text-indigo-100 text-lg">
-                      Manage and track your maintenance requests
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    <FileText className="w-3 h-3 mr-1" />
-                    {serviceRequests.length} Total Requests
-                  </Badge>
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    <Clock className="w-3 h-3 mr-1" />
-                    {
-                      serviceRequests.filter((r) => r.status === "PENDING")
-                        .length
-                    }{" "}
-                    Pending
-                  </Badge>
-                  <Badge className="bg-white/20 text-white border-white/30">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    {
-                      serviceRequests.filter((r) => r.status === "COMPLETED")
-                        .length
-                    }{" "}
-                    Completed
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <ServiceRequestModal />
-                <Link href="?tab=history">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    View History
-                  </Button>
-                </Link>
-              </div>
-            </div>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
+              Service Requests
+            </h1>
+            <p className="text-black text-lg ">
+              Manage and track your maintenance requests
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <ServiceRequestModal />
+            <Link href="?tab=history">
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-gradient-to-r from-green-500 via-teal-400 to-blue-400 border-0 text-white hover:from-green-600 hover:to-blue-500"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                View History
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -370,15 +334,20 @@ export default async function ServicesRequestsPage({
           </Card>
         </div>
 
-        {/* Help Section */}
-        <HelpSection
-          icon={<AlertTriangle className="w-4 h-4 text-gray-600" />}
-          title="Need Immediate Assistance?"
-          description="For urgent issues or emergency situations, contact the office directly"
-          phone="(555) 555-0000"
-          hours="Office Hours: 9 AM - 5 PM (Emergency: 24/7)"
-          className="shadow-lg border-0 bg-white/90 backdrop-blur-sm"
-        />
+        {/* Footer */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
+              Need help? Contact the office at or visit the{" "}
+              <Link
+                href="/support"
+                className="text-purple-600 hover:text-purple-700 font-medium underline"
+              >
+                Support page
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
