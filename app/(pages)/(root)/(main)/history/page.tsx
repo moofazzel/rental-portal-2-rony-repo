@@ -1,5 +1,4 @@
 import { getPaymentsHistory } from "@/app/apiClient/tenantApi";
-import { auth } from "@/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
 import TenantPageHeader from "../(components)/TenantPageHeader";
@@ -43,47 +42,9 @@ function HistoryLoading() {
 
 // Async component that fetches data
 async function HistoryContent() {
-  const session = await auth();
-  console.log("🚀 ~ session:", session);
-  console.log("🚀 ~ session.user:", session?.user);
-  console.log("🚀 ~ session.user.token:", session?.user?.token);
-  console.log("🚀 ~ session.user._id:", session?.user?._id);
+  const paymentsResponse = await getPaymentsHistory();
 
-  if (!session?.user?.id) {
-    return <HistoryClient payments={null} error="User not authenticated" />;
-  }
-
-  if (!session?.user?.token) {
-    return (
-      <HistoryClient payments={null} error="Authentication token missing" />
-    );
-  }
-
-  try {
-    // @ts-expect-error: ignore type error for _id
-    const paymentsResponse = await getPaymentsHistory(session.user._id);
-
-    if (!paymentsResponse.success) {
-      return (
-        <HistoryClient
-          payments={null}
-          error={`API Error: ${paymentsResponse.message} (Status: ${paymentsResponse.statusCode})`}
-        />
-      );
-    }
-
-    return <HistoryClient payments={paymentsResponse.data} />;
-  } catch (error) {
-    console.error("Payment history fetch error:", error);
-    return (
-      <HistoryClient
-        payments={null}
-        error={`Network error: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`}
-      />
-    );
-  }
+  return <HistoryClient payments={paymentsResponse.data} />;
 }
 
 export default function HistoryPage() {

@@ -39,7 +39,7 @@ export async function createTenantServiceRequest(dto: CreateServiceRequestDto) {
   return res.data;
 }
 
-export async function getPaymentsHistory(tenantId: string) {
+export async function getPaymentsHistory() {
   const res = await api<{
     payments: Array<{
       id: string;
@@ -59,7 +59,7 @@ export async function getPaymentsHistory(tenantId: string) {
       successRate: number;
       overdueAmount: number;
     };
-  }>(`${API_BASE_URL}/payments/tenants/${tenantId}/payment-history`, {
+  }>(`${API_BASE_URL}/payments/payment-history`, {
     method: "GET",
     requireToken: true,
   });
@@ -166,14 +166,11 @@ export async function getPaymentBySessionId(
 //   });
 // }
 
-export async function getTenantDocuments(tenantId: string) {
-  const res = await api<IDocument[]>(
-    `${API_BASE_URL}/documents/tenant/${tenantId}`,
-    {
-      method: "GET",
-      requireToken: true,
-    }
-  );
+export async function getTenantDocuments() {
+  const res = await api<IDocument[]>(`${API_BASE_URL}/documents/tenant`, {
+    method: "GET",
+    requireToken: true,
+  });
   return res;
 }
 

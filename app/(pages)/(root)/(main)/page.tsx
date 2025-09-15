@@ -48,7 +48,7 @@ export default async function TenantDashboard() {
   const tenantData = await getTenant();
   const tenantRes = tenantData?.data;
 
-  const documentsResponse = await getTenantDocuments(session?.user?._id || "");
+  const documentsResponse = await getTenantDocuments();
   const documentLoadError =
     documentsResponse?.success === false
       ? documentsResponse.message || "Failed to load documents"
