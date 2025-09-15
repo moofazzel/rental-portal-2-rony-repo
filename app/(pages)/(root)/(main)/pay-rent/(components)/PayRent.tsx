@@ -429,44 +429,46 @@ export default function PayRent({
                 </div>
               </div>
 
-              {/* Lease Info */}
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Lease Start</span>
-                  <span className="font-medium text-blue-900">
-                    {rentInfo.leaseStart
-                      ? new Date(rentInfo.leaseStart).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )
-                      : "Not set"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-sm text-gray-600">Lease End</span>
-                  <span className="font-medium text-blue-900">
-                    {rentInfo.leaseEnd
-                      ? new Date(rentInfo.leaseEnd).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )
-                      : "Not set"}
-                  </span>
-                </div>
-                {rentInfo.isLeaseExpiringSoon && (
-                  <div className="mt-2 p-2 bg-amber-100 rounded text-amber-800 text-xs">
-                    ⚠️ Lease expires soon
+              {/* Lease Info - Only show for first time payment */}
+              {rentInfo.isFirstTimePayment && (
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Lease Start</span>
+                    <span className="font-medium text-blue-900">
+                      {rentInfo.leaseStart
+                        ? new Date(rentInfo.leaseStart).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )
+                        : "Not set"}
+                    </span>
                   </div>
-                )}
-              </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-sm text-gray-600">Lease End</span>
+                    <span className="font-medium text-blue-900">
+                      {rentInfo.leaseEnd
+                        ? new Date(rentInfo.leaseEnd).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )
+                        : "Not set"}
+                    </span>
+                  </div>
+                  {rentInfo.isLeaseExpiringSoon && (
+                    <div className="mt-2 p-2 bg-amber-100 rounded text-amber-800 text-xs">
+                      ⚠️ Lease expires soon
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Due Dates Info */}
               {rentInfo.currentMonthDueDate && (
