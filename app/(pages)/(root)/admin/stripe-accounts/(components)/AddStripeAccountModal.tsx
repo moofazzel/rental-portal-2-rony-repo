@@ -62,16 +62,16 @@ const formSchema = z
   )
   .refine(
     (data) => {
-      // Validate stripe secret key format
+      // Validate stripe secret key format (supports both regular and restricted keys)
       if (data.stripeSecretKey) {
-        const secretKeyRegex = /^sk_(test|live)_[a-zA-Z0-9]{24,}$/;
+        const secretKeyRegex = /^(sk|rk)_(test|live)_[a-zA-Z0-9]{24,}$/;
         return secretKeyRegex.test(data.stripeSecretKey);
       }
       return true;
     },
     {
       message:
-        "Please enter a valid Stripe secret key (starts with sk_test_ or sk_live_)",
+        "Please enter a valid Stripe secret key (starts with sk_test_, sk_live_, rk_test_, or rk_live_)",
       path: ["stripeSecretKey"],
     }
   )
@@ -109,7 +109,6 @@ export default function AddStripeAccountModal() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("🚀 ~ data:", data);
     setLoading(true);
 
     try {
@@ -121,7 +120,6 @@ export default function AddStripeAccountModal() {
         accountType: data.accountType,
         description: data.description,
       });
-      console.log("🚀 ~ result:", result);
 
       if (!result.success) {
         toast.error(result.error || "Failed to create account");
@@ -323,7 +321,7 @@ export default function AddStripeAccountModal() {
                         <div className="relative">
                           <Input
                             type={showSecretKey ? "text" : "password"}
-                            placeholder="sk_test_..."
+                            placeholder="sk_test_... or rk_test_..."
                             {...field}
                           />
                           <Button
@@ -342,7 +340,8 @@ export default function AddStripeAccountModal() {
                         </div>
                       </FormControl>
                       <FormDescription>
-                        Your Stripe secret key for this account
+                        Your Stripe secret key or restricted key for this
+                        account
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

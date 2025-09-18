@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function PayRent({
   rentData,
@@ -119,13 +120,16 @@ export default function PayRent({
       const response = await createPaymentLink(paymentData);
 
       if (response.data?.paymentLink?.url) {
-        // Redirect to the new payment link
-        window.open(response.data.paymentLink.url, "_blank");
+        // Redirect to payment page in same window
+        toast.success("Redirecting to payment page...");
+        window.location.href = response.data.paymentLink.url;
       } else {
         console.error("No payment link URL received");
+        toast.error("Failed to create payment link. Please try again.");
       }
     } catch (error) {
       console.error("Error creating payment link:", error);
+      toast.error("Failed to create payment link. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -692,12 +696,14 @@ export default function PayRent({
                     </div>
                   )}
 
-                <div className="border-t pt-3 flex items-center justify-between text-lg font-bold">
-                  <span>Total Due</span>
-                  <span className="text-blue-600">
-                    ${rentInfo.totalDue.toFixed(2)}
-                  </span>
-                </div>
+                {rentInfo.isFirstTimePayment && (
+                  <div className="border-t pt-3 flex items-center justify-between text-lg font-bold">
+                    <span>Total Due</span>
+                    <span className="text-blue-600">
+                      ${rentInfo.totalDue.toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Current Month Description */}
