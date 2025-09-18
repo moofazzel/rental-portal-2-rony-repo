@@ -117,6 +117,7 @@ function TenantPaymentModal({
   onOpenChange: (open: boolean) => void;
 }) {
   console.log("🚀 ~ tenant:", tenant);
+  console.log("🚀 ~ tenant:", tenant);
   const router = useRouter();
 
   const getDefaultAmount = () => {
@@ -208,7 +209,6 @@ function TenantPaymentModal({
   // Record payment mutation using real API
   const recordPaymentMutation = useMutation({
     mutationFn: async (paymentData: PaymentFormData) => {
-      console.log("🚀 ~ paymentData:", paymentData);
       // Calculate amount based on payment type for first payments
       let finalAmount = parseFloat(paymentData.amount);
       let description = paymentData.description || undefined;
@@ -293,7 +293,7 @@ function TenantPaymentModal({
   // Reset form when modal opens
   useEffect(() => {
     if (open) {
-      form.reset({
+      const resetData: PaymentFormData = {
         amount: isFirstPayment
           ? calculateAmountForPaymentType("both")
           : getDefaultAmount(),
@@ -304,9 +304,23 @@ function TenantPaymentModal({
                 tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart!
               )
             : new Date(),
-        dueDate: tenant.rentSummary?.nextMonthDueDate
-          ? new Date(tenant.rentSummary.nextMonthDueDate)
-          : new Date(),
+        dueDate: (() => {
+          // For first time payments, use lease start date
+          if (
+            isFirstPayment &&
+            (tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart)
+          ) {
+            return new Date(
+              tenant.rentSummary?.leaseStart || tenant.lease?.leaseStart!
+            );
+          }
+          // For regular payments, use next month due date
+          if (tenant.rentSummary?.nextMonthDueDate) {
+            return new Date(tenant.rentSummary.nextMonthDueDate);
+          }
+          // Fallback to current date
+          return new Date();
+        })(),
         description: isFirstPayment
           ? tenant.rentSummary?.isProRated
             ? `Pro-rated First Month Rent (${tenant.rentSummary.proRatedDays} days)`
@@ -318,7 +332,14 @@ function TenantPaymentModal({
         notes: "",
         paymentType: isFirstPayment ? "both" : "rent",
         type: isFirstPayment ? "BOTH" : "RENT",
-      });
+      };
+
+      form.reset(resetData);
+
+      // Trigger form validation and re-rendering to ensure UI updates
+      setTimeout(() => {
+        form.trigger(["amount", "paymentDate", "dueDate", "description"]);
+      }, 0);
     }
   }, [
     open,
@@ -363,21 +384,21 @@ function TenantPaymentModal({
             {/* Rent Summary Information */}
             {tenant.rentSummary && (
               <div className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg space-y-3 border">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="flex justify-between">
+                <div className="grid grid-cols-2 justify gap-3 text-sm">
+                  <div className="flex justie gap-3">
                     <span className="text-gray-600">Property:</span>
                     <span className="font-medium text-gray-900">
                       {tenant.rentSummary.propertyName}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex gap-3">
                     <span className="text-gray-600">Spot:</span>
                     <span className="font-medium text-gray-900">
                       {tenant.rentSummary.spotNumber}
                     </span>
                   </div>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex gap-3 text-sm">
                   <span className="text-gray-600">Monthly Rent:</span>
                   <span className="font-semibold text-green-600">
                     ${tenant.rentSummary.rentAmount}
@@ -397,6 +418,13 @@ function TenantPaymentModal({
                       Pro-Rated Payment
                     </span>
                   )}
+
+                  {tenant.rentSummary.isFirstTimePayment &&
+                    tenant.rentSummary.depositAmount > 0 && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        Security Deposit
+                      </span>
+                    )}
                 </div>
 
                 {tenant.rentSummary.isProRated && (
@@ -412,6 +440,12 @@ function TenantPaymentModal({
                         <span className="text-gray-600">Pro-rated Amount:</span>
                         <span className="font-medium text-orange-600">
                           ${tenant.rentSummary.proRatedRentAmount}
+                        </span>
+                      </div>
+                      <div className="flex justify-between col-span-2">
+                        <span className="text-gray-600">Security Deposit:</span>
+                        <span className="font-medium text-blue-600">
+                          ${tenant.rentSummary.depositAmount}
                         </span>
                       </div>
                     </div>
@@ -575,11 +609,12 @@ function TenantPaymentModal({
                       className="w-full justify-start text-left font-normal h-10"
                     >
                       <Calendar className="mr-2 h-4 w-4" />
-                      {form.watch("paymentDate") ? (
-                        form.watch("paymentDate").toLocaleDateString()
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {(() => {
+                        const paymentDate = form.watch("paymentDate");
+                        return paymentDate
+                          ? paymentDate.toLocaleDateString()
+                          : "Pick a date";
+                      })()}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -589,6 +624,8 @@ function TenantPaymentModal({
                       onSelect={(date) => {
                         if (date) {
                           form.setValue("paymentDate", date);
+                          // Trigger form validation to ensure UI updates
+                          form.trigger("paymentDate");
                         }
                       }}
                       initialFocus
@@ -617,7 +654,12 @@ function TenantPaymentModal({
                 <div className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg bg-gray-50">
                   <Calendar className="h-5 w-5 text-gray-500" />
                   <span className="text-sm font-semibold text-gray-900">
-                    {form.watch("dueDate")?.toLocaleDateString()}
+                    {(() => {
+                      const dueDate = form.watch("dueDate");
+                      return dueDate
+                        ? dueDate.toLocaleDateString()
+                        : "No date set";
+                    })()}
                   </span>
                 </div>
               ) : (
@@ -628,11 +670,12 @@ function TenantPaymentModal({
                       className="w-full justify-start text-left font-normal h-10"
                     >
                       <Calendar className="mr-2 h-4 w-4" />
-                      {form.watch("dueDate") ? (
-                        form.watch("dueDate").toLocaleDateString()
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {(() => {
+                        const dueDate = form.watch("dueDate");
+                        return dueDate
+                          ? dueDate.toLocaleDateString()
+                          : "Pick a date";
+                      })()}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -642,6 +685,8 @@ function TenantPaymentModal({
                       onSelect={(date) => {
                         if (date) {
                           form.setValue("dueDate", date);
+                          // Trigger form validation to ensure UI updates
+                          form.trigger("dueDate");
                         }
                       }}
                       initialFocus
