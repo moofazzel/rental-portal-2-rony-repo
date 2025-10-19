@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import PecanLandingFaq from "./PecanLandingFaq";
 
 export default function PecanRidgePage() {
   const features = [
@@ -913,25 +914,7 @@ export default function PecanRidgePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-6 mb-16">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                  FAQ
-                </span>
-              </div>
-              <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-xl text-slate-600">
-                Everything you need to know about Pecan Ridge
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PecanLandingFaq />
 
       {/* Community Lifestyle Section - Split Screen */}
       <section className="py-32 bg-white relative overflow-hidden">
