@@ -1,22 +1,17 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   ArrowRight,
-  Award,
   Bell,
   Calendar,
-  CalendarCheck,
   Car,
-  Check,
   CheckCircle2,
   ChevronRight,
-  Clock,
   CreditCard,
   Droplets,
   FileText,
@@ -25,21 +20,18 @@ import {
   MapPin,
   PawPrint,
   Phone,
-  Quote,
   Shield,
   Sparkles,
-  Star,
-  Sun,
   TreePine,
-  Users,
-  UtensilsCrossed,
   Wifi,
   Wrench,
   Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import PecanLandingFaq from "./PecanLandingFaq";
+import ApplicationModal from "./Components/ApplicationModal";
+import Footer from "./Components/Footer";
+import Navbar from "./Components/Navbar";
 
 export default function PecanRidgePage() {
   const features = [
@@ -80,6 +72,7 @@ export default function PecanRidgePage() {
     {
       icon: Shield,
       title: "Secure & Safe",
+
       description:
         "Gated community with 24/7 security monitoring for peace of mind",
       color: "from-violet-500 to-purple-500",
@@ -148,102 +141,6 @@ export default function PecanRidgePage() {
     },
   ];
 
-  const pricingPlans = [
-    {
-      id: "shortTerm",
-      name: "Short-Term",
-      price: "$55",
-      period: "per night",
-      description: "Perfect for travelers and weekend getaways",
-      features: [
-        "Full hookups (50/30 AMP)",
-        "WiFi included",
-        "All amenities access",
-        "Flexible stay duration",
-        "No long-term commitment",
-      ],
-      highlight: false,
-    },
-    {
-      id: "longTerm",
-      name: "Long-Term",
-      price: "$650",
-      period: "per month",
-      description: "Best value for seasonal residents",
-      features: [
-        "Everything in Short-Term",
-        "Priority site selection",
-        "Dedicated parking",
-        "Package receiving",
-        "24/7 support priority",
-        "Discounted rates",
-      ],
-      highlight: true,
-    },
-    {
-      id: "annual",
-      name: "Annual",
-      price: "$7,200",
-      period: "per year",
-      description: "Ultimate savings for year-round residents",
-      features: [
-        "Everything in Long-Term",
-        "2 months free",
-        "Premium site guarantee",
-        "Storage included",
-        "VIP community events",
-        "Concierge services",
-      ],
-      highlight: false,
-    },
-  ];
-
-  const amenities = [
-    { icon: Zap, text: "Full RV Hookups (50/30 AMP)" },
-    { icon: Wifi, text: "Free WiFi & Cable TV" },
-    { icon: Sparkles, text: "Laundry Facilities" },
-    { icon: PawPrint, text: "Pet-Friendly Park" },
-    { icon: TreePine, text: "Shaded Picnic Areas" },
-    { icon: UtensilsCrossed, text: "BBQ Grills" },
-    { icon: Sun, text: "Playground Area" },
-    { icon: Droplets, text: "Propane Filling Station" },
-    { icon: Award, text: "Dump Station" },
-    { icon: Mail, text: "Mail Service" },
-    { icon: Home, text: "Package Receiving" },
-    { icon: Clock, text: "On-Site Management" },
-  ];
-
-  const stats = [
-    { icon: Home, value: "100+", label: "RV Sites", color: "emerald" },
-    { icon: Users, value: "500+", label: "Happy Residents", color: "blue" },
-    { icon: Star, value: "4.9/5", label: "Average Rating", color: "amber" },
-    { icon: CalendarCheck, value: "365", label: "Days Open", color: "teal" },
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah & Mike Thompson",
-      location: "Full-time RVers",
-      image: "https://i.pravatar.cc/150?img=1",
-      rating: 5,
-      text: "Pecan Ridge has been our home for 2 years now. The management is fantastic, facilities are always clean, and the community is welcoming. It's truly paradise!",
-    },
-    {
-      name: "Robert Martinez",
-      location: "Snowbird from Minnesota",
-      image: "https://i.pravatar.cc/150?img=33",
-      rating: 5,
-      text: "Best RV park in Alabama! The amenities are top-notch, and the location is perfect. We return every winter and wouldn't stay anywhere else.",
-    },
-    {
-      name: "Linda & Tom Baker",
-      location: "Retired Travelers",
-      image: "https://i.pravatar.cc/150?img=26",
-      rating: 5,
-      text: "We've stayed at over 100 RV parks across the country, and Pecan Ridge is hands down our favorite. The attention to detail and customer service is exceptional.",
-    },
-  ];
-
   const gallery = [
     {
       url: "https://images.unsplash.com/photo-1525811902-f2342640856e?q=80&w=2400&auto=format&fit=crop",
@@ -283,93 +180,13 @@ export default function PecanRidgePage() {
     },
   ];
 
-  const communityFeatures = [
-    {
-      title: "Weekly Events",
-      description:
-        "Join our vibrant community for BBQs, movie nights, and seasonal celebrations",
-      icon: Users,
-    },
-    {
-      title: "Pet Paradise",
-      description:
-        "Dedicated dog park and walking trails for your furry family members",
-      icon: PawPrint,
-    },
-    {
-      title: "Family Friendly",
-      description:
-        "Safe playground, game room, and activities designed for all ages",
-      icon: Home,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="bg-white/95 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <Link href="/pecan-ridge" className="flex items-center gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <TreePine className="text-white size-7" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-slate-900">
-                    Pecan Ridge
-                  </div>
-                  <div className="text-xs text-slate-600 font-medium">
-                    RV PARK
-                  </div>
-                </div>
-              </div>
-            </Link>
-            <div className="hidden md:flex items-center gap-8">
-              <a
-                href="#features"
-                className="text-slate-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#gallery"
-                className="text-slate-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Gallery
-              </a>
-              <a
-                href="#testimonials"
-                className="text-slate-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Reviews
-              </a>
-              <a
-                href="#contact"
-                className="text-slate-700 hover:text-emerald-600 font-medium transition-colors"
-              >
-                Contact
-              </a>
-            </div>
-            <div className="flex gap-3">
-              <Link href="/auth/signin">
-                <Button
-                  variant="outline"
-                  className="border-slate-300 hover:bg-slate-50 hidden sm:inline-flex"
-                >
-                  Resident Login
-                </Button>
-              </Link>
-              <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all">
-                Book Your Stay
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section with Background Image */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
@@ -390,58 +207,54 @@ export default function PecanRidgePage() {
         <div className="container mx-auto px-6 relative z-10 pt-20 pb-32">
           <div className="max-w-6xl mx-auto text-center space-y-10">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-xl text-white rounded-full text-sm font-bold border border-white/20 shadow-2xl hover:bg-white/15 transition-all">
-              <Sparkles className="size-5 text-emerald-300" />
-              <span>Alabama&apos;s Premier RV Resort</span>
-              <Star className="size-4 fill-amber-300 text-amber-300" />
+              <Home className="size-5 text-emerald-300" />
+              <span>Affordable RV Living in Dothan, Alabama</span>
             </div>
 
             <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white leading-none tracking-tight">
-              Your Sanctuary
+              Your Home at
               <span className="block bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-3 animate-gradient">
-                in Dothan, Alabama
+                Pecan Ridge RV Park
               </span>
             </h1>
 
             <p className="text-xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-              Discover the perfect blend of{" "}
-              <span className="font-semibold text-emerald-300">
-                Southern hospitality
-              </span>{" "}
-              and{" "}
-              <span className="font-semibold text-teal-300">modern luxury</span>
-              .
-              <span className="block mt-4 text-lg md:text-2xl">
-                Your adventure begins on Cottonwood Road, where comfort meets
-                community.
-              </span>
+              Affordable long-term RV and tiny house living in a quiet country
+              setting. Safe, clean, and peaceful.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-10">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl text-xl px-12 py-8 h-auto font-bold group hover:scale-105 transition-all"
+              <ApplicationModal variant="default" />
+              {/* TODO: Replace with real phone number */}
+              <a
+                href="tel:5551234567"
+                tabIndex={0}
+                className="inline-block focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400 rounded-xl"
               >
-                Claim Your Spot Today
-                <ArrowRight className="ml-3 size-6 group-hover:translate-x-2 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-xl px-12 py-8 h-auto font-bold hover:scale-105 transition-all"
-              >
-                <Phone className="mr-3 size-6" />
-                (555) 123-4567
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-xl px-12 py-8 h-auto font-bold hover:scale-105 transition-all"
+                >
+                  <Phone className="mr-3 size-6" />
+                  (555) 123-4567 {/* PLACEHOLDER - Update with real number */}
+                </Button>
+              </a>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 pt-8">
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
                 <CheckCircle2 className="text-emerald-300 size-5" />
-                <span className="font-medium">Move In This Week</span>
+                <span className="font-medium">Background Checks Required</span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
                 <CheckCircle2 className="text-emerald-300 size-5" />
-                <span className="font-medium">100+ 5-Star Reviews</span>
+                <span className="font-medium">Pet-Friendly (2 Pets)</span>
+              </div>
+
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
+                <CheckCircle2 className="text-emerald-300 size-5" />
+                <span className="font-medium">Full Hookups</span>
               </div>
             </div>
           </div>
@@ -460,28 +273,188 @@ export default function PecanRidgePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+      {/* About Pecan Ridge Section */}
+      <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="text-center space-y-4 group hover:scale-105 transition-transform duration-300"
-              >
-                <div
-                  className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-${stat.color}-100 to-${stat.color}-200 rounded-3xl shadow-lg group-hover:shadow-xl transition-shadow`}
-                >
-                  <stat.icon className={`text-${stat.color}-600 size-10`} />
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Left - Content */}
+              <div className="space-y-8">
+                <div className="inline-block">
+                  <span className="px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide border border-emerald-200">
+                    About Us
+                  </span>
                 </div>
-                <div className="text-5xl font-black text-slate-900">
-                  {stat.value}
+
+                <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-tight">
+                  Welcome to
+                  <span className="block text-emerald-600 mt-2">
+                    Pecan Ridge RV Park
+                  </span>
+                </h2>
+
+                <div className="space-y-6 text-lg text-slate-600 leading-relaxed">
+                  <p>
+                    Located in a quiet country setting in Dothan, Alabama, Pecan
+                    Ridge RV Park provides{" "}
+                    <span className="font-bold text-slate-900">
+                      affordable long-term housing
+                    </span>{" "}
+                    for individuals and families seeking a safe, peaceful
+                    community. We&apos;re a family-owned and operated park that
+                    puts cleanliness and safety first.
+                  </p>
+                  <p>
+                    <span className="font-bold text-emerald-600">
+                      What makes a community is the people that live there.
+                    </span>{" "}
+                    All tenants must pass a background check before approval.
+                    This screening process provides peace of mind for everyone
+                    and ensures a safe, quiet environment where you can live
+                    life relaxed.
+                  </p>
+                  <p>
+                    Whether you&apos;re a traveling professional, seasonal
+                    worker, or looking for an affordable housing alternative in
+                    Dothan, Pecan Ridge offers spacious RV lots with full
+                    hookups at an honest price.
+                  </p>
                 </div>
-                <div className="text-slate-600 font-semibold uppercase text-sm tracking-wide">
-                  {stat.label}
+
+                <div className="grid sm:grid-cols-3 gap-6 pt-6">
+                  <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                    <div className="text-4xl font-black text-emerald-600 mb-2">
+                      ✓
+                    </div>
+                    <div className="text-sm font-semibold text-slate-600 uppercase">
+                      Background Checks
+                    </div>
+                  </div>
+                  <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                    <div className="text-4xl font-black text-emerald-600 mb-2">
+                      100%
+                    </div>
+                    <div className="text-sm font-semibold text-slate-600 uppercase">
+                      Family Owned
+                    </div>
+                  </div>
+                  <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                    <div className="text-4xl font-black text-emerald-600 mb-2">
+                      Safe
+                    </div>
+                    <div className="text-sm font-semibold text-slate-600 uppercase">
+                      & Peaceful
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
+
+              {/* Right - Image */}
+              <div className="relative">
+                <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop"
+                    alt="Beautiful Pecan Ridge RV Park entrance"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                </div>
+
+                {/* Floating badge */}
+                <div className="absolute -bottom-8 -left-8 bg-white rounded-3xl shadow-2xl p-8 border-4 border-emerald-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center">
+                      <Shield className="text-white size-8" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-slate-600 font-semibold uppercase">
+                        Safe &
+                      </div>
+                      <div className="text-2xl font-black text-slate-900">
+                        Screened
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* At a Glance - Key Info Section */}
+      <section className="py-20 bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
+                A Community Feel
+              </h2>
+              <p className="text-xl text-white/90">
+                Long-term tenants go through a quick and easy screening process
+                for everyone&apos;s peace of mind
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <PawPrint className="text-white size-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Pet Friendly
+                </h3>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  Up to 2 pets welcome. No size restrictions. No additional pet
+                  fees.
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <CreditCard className="text-white size-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  What&apos;s Included
+                </h3>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  Electric, water, sewer, WiFi, cable TV, trash service, and all
+                  amenities.
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <Shield className="text-white size-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Background Check
+                </h3>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  All tenants pass a background check. This keeps everybody safe
+                  and provides peace of mind.
+                </p>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border-2 border-white/20">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <Calendar className="text-white size-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Minimum Stay
+                </h3>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  1 month minimum for monthly plans. Flexible move-in dates
+                  available.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -490,17 +463,11 @@ export default function PecanRidgePage() {
       <section id="features" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center space-y-4 mb-20">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                World-Class Amenities
-              </span>
-            </div>
             <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
-              Everything You Need
+              Community Amenities
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Premium features designed for your ultimate comfort and
-              convenience
+              Everything you need for comfortable long-term living
             </p>
           </div>
 
@@ -529,6 +496,106 @@ export default function PecanRidgePage() {
         </div>
       </section>
 
+      {/* Park Map Section */}
+      <section className="py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(16,185,129,0.05),transparent_50%)]"></div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center space-y-6 mb-16">
+              <div className="inline-block">
+                <span className="px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide border border-blue-200">
+                  Park Layout
+                </span>
+              </div>
+              <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
+                Choose Your
+                <span className="block text-emerald-600 mt-2">
+                  Perfect Spot
+                </span>
+              </h2>
+              <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
+                Explore our park layout and find the ideal location for your new
+                home
+              </p>
+            </div>
+
+            {/* Park Map Display */}
+            <div className="relative group">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                <Image
+                  src="/PecanRidge/Park%20Map%2002-01.jpg"
+                  alt="Pecan Ridge RV Park Map showing all lots and amenities"
+                  width={2000}
+                  height={1500}
+                  className="w-full h-auto"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Map Legend */}
+              <div className="mt-8 grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div className="flex items-center gap-4 bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Droplets className="text-white size-6" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 text-lg">
+                      Laundry Room
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      24/7 Access Available
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Home className="text-white size-6" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 text-lg">
+                      RV Lots
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      Full Hookup Sites
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Call to Action */}
+              <div className="text-center mt-12">
+                <p className="text-lg text-slate-600 mb-6">
+                  Interested in a specific lot? Contact us to check availability
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  {/* TODO: Replace with real phone number */}
+                  <a href="tel:5551234567">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-7 h-auto font-bold"
+                    >
+                      <Phone className="mr-2 size-5" />
+                      Call (555) 123-4567 {/* PLACEHOLDER */}
+                    </Button>
+                  </a>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-slate-300 hover:border-emerald-500 hover:bg-emerald-50 text-slate-900 text-lg px-10 py-7 h-auto font-bold"
+                  >
+                    <Mail className="mr-2 size-5" />
+                    Email for Details
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Gallery Section - Modern Bento Grid */}
       <section
         id="gallery"
@@ -545,9 +612,9 @@ export default function PecanRidgePage() {
               Life at Pecan Ridge
             </h2>
             <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
-              Where every day feels like a{" "}
-              <span className="text-emerald-600 font-semibold">vacation</span>{" "}
-              and every view takes your breath away
+              Where comfortable living meets{" "}
+              <span className="text-emerald-600 font-semibold">community</span>{" "}
+              in a place you&apos;ll proudly call home
             </p>
           </div>
 
@@ -619,80 +686,6 @@ export default function PecanRidgePage() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-16">
-            <Button
-              size="lg"
-              className="bg-slate-900 hover:bg-slate-800 text-white text-lg px-10 py-7 h-auto font-bold group"
-            >
-              View Full Gallery
-              <ArrowRight className="ml-2 size-5 group-hover:translate-x-2 transition-transform" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-4 mb-16">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                Testimonials
-              </span>
-            </div>
-            <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
-              What Our Residents Say
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Don&apos;t just take our word for it - hear from our happy
-              community
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card
-                key={index}
-                className="border-slate-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white"
-              >
-                <CardContent className="p-8 space-y-6">
-                  <div className="flex gap-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="size-5 fill-amber-400 text-amber-400"
-                      />
-                    ))}
-                  </div>
-
-                  <Quote className="size-10 text-emerald-200" />
-
-                  <p className="text-slate-700 text-lg leading-relaxed italic">
-                    &ldquo;{testimonial.text}&rdquo;
-                  </p>
-
-                  <div className="flex items-center gap-4 pt-4 border-t border-slate-200">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      width={56}
-                      height={56}
-                      className="rounded-full ring-4 ring-emerald-100"
-                    />
-                    <div>
-                      <div className="font-bold text-slate-900">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-sm text-slate-600">
-                        {testimonial.location}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             ))}
           </div>
         </div>
@@ -832,274 +825,166 @@ export default function PecanRidgePage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-32 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white">
         <div className="container mx-auto px-6">
           <div className="text-center space-y-6 mb-16">
             <div className="inline-block">
               <span className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                Flexible Plans
+                Transparent Pricing
               </span>
             </div>
             <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
-              Choose Your Stay
+              Simple, Affordable
+              <span className="block text-emerald-600 mt-2">
+                Long-Term Living
+              </span>
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              From overnight to year-round living, we have a plan for everyone
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Choose the plan that fits your lifestyle. No hidden fees, no
+              surprises—just honest pricing for your new home.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <Card
-                key={plan.id}
-                className={`relative ${
-                  plan.highlight
-                    ? "border-4 border-emerald-500 shadow-2xl scale-105 bg-gradient-to-b from-white to-emerald-50"
-                    : "border-slate-200 hover:border-emerald-300"
-                } transition-all duration-500 hover:-translate-y-2 overflow-hidden`}
-              >
-                {plan.highlight && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center py-2 text-sm font-bold uppercase tracking-wide">
-                    <Sparkles className="inline size-4 mr-2" />
-                    Most Popular
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Monthly Plan */}
+            <Card className="relative border-2 border-slate-200 hover:border-emerald-300 transition-all duration-500 hover:-translate-y-2 overflow-hidden bg-white">
+              <CardHeader className="p-8 space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-3xl font-bold text-slate-900">
+                    Monthly Plan
+                  </h3>
+                  <p className="text-slate-600 text-lg">
+                    Perfect for seasonal residents and those seeking flexibility
+                  </p>
+                  <div className="flex items-end gap-2">
+                    <span className="text-6xl font-black text-slate-900">
+                      $300
+                    </span>
+                    <span className="text-slate-600 mb-3 text-xl">
+                      per month
+                    </span>
                   </div>
-                )}
+                </div>
 
-                <CardContent
-                  className={`p-8 ${
-                    plan.highlight ? "pt-16" : "pt-8"
-                  } space-y-8`}
-                >
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-bold text-slate-900">
-                      {plan.name}
-                    </h3>
-                    <p className="text-slate-600">{plan.description}</p>
-                    <div className="flex items-end gap-2">
-                      <span className="text-5xl font-black text-slate-900">
-                        {plan.price}
-                      </span>
-                      <span className="text-slate-600 mb-2">{plan.period}</span>
-                    </div>
+                <ApplicationModal variant="full-width" />
+
+                <div className="space-y-4 pt-6 border-t border-slate-200">
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Full hookups (50 AMP, water, sewer)</span>
                   </div>
-
-                  <Button
-                    size="lg"
-                    className={`w-full ${
-                      plan.highlight
-                        ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl"
-                        : "bg-slate-900 hover:bg-slate-800 text-white"
-                    }`}
-                  >
-                    Select Plan
-                    <ChevronRight className="ml-2 size-5" />
-                  </Button>
-
-                  <div className="space-y-4 pt-6 border-t border-slate-200">
-                    {plan.features.map((feature, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start gap-3 text-slate-700"
-                      >
-                        <Check className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>High-speed WiFi & cable TV included</span>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>All amenities access (laundry, showers)</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Trash service included</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Priority site selection available</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Month-to-month flexibility</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Online payment portal access</span>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Annual Plan - Highlighted */}
+            <Card className="relative border-4 border-emerald-500 shadow-2xl scale-105 bg-gradient-to-b from-white to-emerald-50 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center py-3 text-sm font-bold uppercase tracking-wide">
+                <Sparkles className="inline size-4 mr-2" />
+                Best Value - Save $600/Year
+              </div>
+
+              <CardHeader className="p-8 pt-16 space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-3xl font-bold text-slate-900">
+                    Annual Plan
+                  </h3>
+                  <p className="text-slate-600 text-lg">
+                    Maximum savings for year-round residents
+                  </p>
+                  <div className="flex items-end gap-2">
+                    <span className="text-6xl font-black text-emerald-600">
+                      $7,200
+                    </span>
+                    <span className="text-slate-600 mb-3 text-xl">
+                      per year
+                    </span>
+                  </div>
+                  <div className="inline-block px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold">
+                    Just $600/month — Save 2 months rent!
+                  </div>
+                </div>
+
+                <ApplicationModal variant="full-width" />
+
+                <div className="space-y-4 pt-6 border-t border-emerald-200">
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span className="font-semibold">
+                      Everything in Monthly Plan
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Save $600 annually</strong> (equivalent to 2 free
+                      months)
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Guaranteed rate lock for 12 months</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Premium site guarantee</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Priority maintenance requests</span>
+                  </div>
+                  <div className="flex items-start gap-3 text-slate-700">
+                    <CheckCircle2 className="size-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <span>Community event VIP access</span>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
           </div>
-        </div>
-      </section>
 
-      {/* FAQ Section */}
-      <PecanLandingFaq />
-
-      {/* Community Lifestyle Section - Split Screen */}
-      <section className="py-32 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
-            {/* Left - Content */}
-            <div className="space-y-8">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-bold uppercase tracking-wide border border-purple-200">
-                  Community Life
-                </span>
-              </div>
-
-              <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-tight">
-                More Than a Park.
-                <span className="block text-emerald-600 mt-2">
-                  It&apos;s a Lifestyle.
-                </span>
-              </h2>
-
-              <p className="text-2xl text-slate-600 leading-relaxed font-light">
-                Join a vibrant community where neighbors become lifelong friends
-                and every season brings new adventures.
-              </p>
-
-              <div className="space-y-6 pt-4">
-                {communityFeatures.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex gap-5 p-6 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group"
-                  >
-                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all">
-                      <feature.icon className="text-white size-7" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-slate-900">
-                        {feature.title}
-                      </h3>
-                      <p className="text-slate-600 leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl text-lg px-10 py-7 h-auto font-bold group mt-6"
-              >
-                Join Our Community
-                <ArrowRight className="ml-2 size-6 group-hover:translate-x-2 transition-transform" />
-              </Button>
-            </div>
-
-            {/* Right - Image Collage */}
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  <div className="relative h-64 rounded-3xl overflow-hidden shadow-2xl">
-                    <Image
-                      src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=800&auto=format&fit=crop"
-                      alt="Community BBQ event"
-                      fill
-                      className="object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="relative h-80 rounded-3xl overflow-hidden shadow-2xl">
-                    <Image
-                      src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=60&w=400&auto=format&fit=crop"
-                      alt="Families enjoying the park"
-                      fill
-                      className="object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-6 mt-12">
-                  <div className="relative h-80 rounded-3xl overflow-hidden shadow-2xl">
-                    <Image
-                      src="https://images.unsplash.com/photo-1668452593870-aa82ee3ee689?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fEV2ZW5pbmclMjBnYXRoZXJpbmdzfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=400"
-                      alt="Evening gatherings"
-                      fill
-                      className="object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="relative h-64 rounded-3xl overflow-hidden shadow-2xl">
-                    <Image
-                      src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=60&w=400&auto=format&fit=crop"
-                      alt="Pet-friendly spaces"
-                      fill
-                      className="object-cover hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating badge */}
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-3xl shadow-2xl p-6 border-4 border-emerald-100">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center">
-                    <Users className="text-white size-8" />
-                  </div>
-                  <div>
-                    <div className="text-3xl font-black text-slate-900">
-                      500+
-                    </div>
-                    <div className="text-sm text-slate-600 font-medium">
-                      Happy Families
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Virtual Tour / Video Section */}
-      <section className="py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center space-y-6 mb-16">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-white/10 backdrop-blur-xl text-emerald-300 rounded-full text-sm font-bold uppercase tracking-wide border border-white/20">
-                  Virtual Experience
-                </span>
-              </div>
-              <h2 className="text-5xl lg:text-7xl font-black">
-                Take a Virtual Tour
-              </h2>
-              <p className="text-2xl text-slate-300 max-w-3xl mx-auto font-light">
-                Experience Pecan Ridge from anywhere. See what makes our
-                community special.
-              </p>
-            </div>
-
-            {/* Video Placeholder / Image */}
-            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl group cursor-pointer">
-              <Image
-                src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2400&auto=format&fit=crop"
-                alt="Virtual tour of Pecan Ridge RV Park"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-1000"
-              />
-              <div className="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/20 transition-colors"></div>
-
-              {/* Play Button */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                  <div className="w-0 h-0 border-l-[20px] border-l-emerald-600 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-2"></div>
-                </div>
-              </div>
-
-              {/* Duration Badge */}
-              <div className="absolute bottom-8 right-8 bg-black/60 backdrop-blur-xl px-4 py-2 rounded-full text-white font-semibold">
-                3:45 min tour
-              </div>
-            </div>
-
-            {/* Call to Action */}
-            <div className="text-center mt-12">
-              <p className="text-slate-300 mb-6 text-lg">
-                Can&apos;t visit in person? Schedule a live video walkthrough
-                with our team.
-              </p>
-              <Button
-                size="lg"
-                className="bg-white text-slate-900 hover:bg-slate-100 shadow-2xl text-lg px-10 py-7 h-auto font-bold group"
-              >
-                Schedule Live Tour
-                <Calendar className="ml-2 size-6 group-hover:scale-110 transition-transform" />
-              </Button>
-            </div>
+          {/* Pricing Note */}
+          <div className="text-center mt-12 space-y-3">
+            <p className="text-slate-600 text-base max-w-2xl mx-auto">
+              <strong>
+                We accept RVs regardless of age, as long as they are in good
+                condition.
+              </strong>
+            </p>
+            <p className="text-slate-500 text-sm max-w-2xl mx-auto">
+              * Security deposit required. All utilities included (electric,
+              water, sewer, WiFi, cable TV, trash). Background check required
+              for all applicants.
+            </p>
           </div>
         </div>
       </section>
 
       {/* Location & Nearby Attractions */}
-      <section className="py-32 bg-white">
+      <section className="pb-32 bg-white">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center space-y-6 mb-20">
@@ -1124,31 +1009,35 @@ export default function PecanRidgePage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
               {[
                 {
+                  name: "Publix Super Market",
+                  distance: "3.5 miles",
+                  type: "Grocery",
+                },
+                {
+                  name: "Walmart Supercenter",
+                  distance: "4.0 miles",
+                  type: "Shopping",
+                },
+                {
+                  name: "Southeast Health Medical Center",
+                  distance: "6.0 miles",
+                  type: "Healthcare",
+                },
+                {
                   name: "Downtown Dothan",
-                  distance: "10 min",
+                  distance: "6.0 miles",
                   type: "Entertainment",
                 },
                 {
-                  name: "Adventureland Theme Park",
-                  distance: "15 min",
-                  type: "Recreation",
-                },
-                {
                   name: "Wiregrass Commons Mall",
-                  distance: "12 min",
+                  distance: "5.5 miles",
                   type: "Shopping",
                 },
                 {
                   name: "Ross Clark Circle",
-                  distance: "10 min",
+                  distance: "5.0 miles",
                   type: "Retail",
                 },
-                {
-                  name: "Southeast Health Medical Center",
-                  distance: "12 min",
-                  type: "Healthcare",
-                },
-                { name: "Landmark Park", distance: "8 min", type: "Nature" },
               ].map((location, index) => (
                 <div
                   key={index}
@@ -1160,7 +1049,7 @@ export default function PecanRidgePage() {
                         {location.name}
                       </h3>
                       <p className="text-emerald-600 font-semibold text-lg">
-                        {location.distance} drive
+                        {location.distance}
                       </p>
                     </div>
                     <div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase">
@@ -1176,351 +1065,59 @@ export default function PecanRidgePage() {
               ))}
             </div>
 
-            {/* Map Placeholder */}
-            <div className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2400&auto=format&fit=crop"
-                alt="Map showing Pecan Ridge location"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-10">
-                <div className="flex items-start justify-between">
+            {/* Google Maps Embed */}
+            <div className="space-y-6">
+              <div className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3400.123!2d-85.456789!3d31.289123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDE3JzIwLjgiTiA4NcKwMjcnMjQuNCJX!5e0!3m2!1sen!2sus!4v1234567890"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Pecan Ridge RV Park Location Map"
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+
+              {/* Address and CTA */}
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-10 text-white shadow-2xl">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                   <div>
-                    <h3 className="text-3xl font-black text-white mb-2">
+                    <div className="flex items-center gap-3 mb-3">
+                      <MapPin className="size-8 text-white" />
+                      <h3 className="text-3xl font-black">Visit Us Today</h3>
+                    </div>
+                    <p className="text-2xl font-bold mb-2">
                       8676 Cottonwood Road, Dothan, AL 36301
-                    </h3>
-                    <p className="text-white/80 text-lg">
+                    </p>
+                    <p className="text-white/90 text-lg">
                       Easy access from US-431 and Ross Clark Circle
                     </p>
                   </div>
-                  <Button className="bg-white text-slate-900 hover:bg-slate-100 font-bold">
-                    Open in Maps
-                  </Button>
+                  <a
+                    href="https://www.google.com/maps/dir//8676+Cottonwood+Road+Dothan+AL+36301"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      size="lg"
+                      className="bg-white text-emerald-600 hover:bg-slate-50 font-bold text-lg px-8 py-6 h-auto shadow-xl"
+                    >
+                      <MapPin className="mr-2 size-5" />
+                      Get Directions
+                    </Button>
+                  </a>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Amenities Grid Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center space-y-4 mb-16">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide">
-                  Full Service
-                </span>
-              </div>
-              <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
-                Complete Amenities
-              </h2>
-              <p className="text-xl text-slate-600">
-                Everything included for your perfect stay
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {amenities.map((amenity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 p-6 bg-white rounded-2xl border-2 border-slate-100 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <amenity.icon className="text-emerald-600 size-6" />
-                  </div>
-                  <span className="text-slate-800 font-semibold">
-                    {amenity.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section - Ultra Modern */}
-      <section id="contact" className="relative py-40 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2400&auto=format&fit=crop"
-            alt="Stunning sunset at Pecan Ridge RV Park"
-            fill
-            className="object-cover scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/95 via-teal-900/90 to-slate-900/95"></div>
-
-          {/* Animated gradient orbs */}
-          <div className="absolute top-20 right-20 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-6xl mx-auto text-center space-y-12">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-xl text-white rounded-full text-sm font-bold border border-white/20 shadow-2xl">
-                <Sparkles className="size-5 text-emerald-300 animate-pulse" />
-                <span className="uppercase tracking-wide">
-                  Only 3 Premium Spots Left
-                </span>
-              </div>
-
-              <h2 className="text-5xl md:text-6xl lg:text-8xl font-black text-white leading-none">
-                Your New Home
-                <span className="block bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-200 bg-clip-text text-transparent mt-4">
-                  Starts Here
-                </span>
-              </h2>
-
-              <p className="text-2xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-                Don&apos;t just visit paradise.{" "}
-                <span className="font-bold text-emerald-300">Live in it.</span>
-                <span className="block mt-4 text-xl md:text-2xl">
-                  Join 500+ families who&apos;ve already made Pecan Ridge their
-                  forever home.
-                </span>
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-6">
-              <Button
-                size="lg"
-                className="bg-white text-slate-900 hover:bg-emerald-50 shadow-2xl text-xl px-14 py-9 h-auto font-black group hover:scale-105 transition-all"
-              >
-                Secure Your Spot Now
-                <ArrowRight className="ml-3 size-7 group-hover:translate-x-2 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white/40 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-xl px-14 py-9 h-auto font-black hover:scale-105 transition-all"
-              >
-                <Calendar className="mr-3 size-7" />
-                Book a Visit
-              </Button>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-8 pt-12">
-              <div className="flex items-center gap-3 text-white/90">
-                <CheckCircle2 className="text-emerald-300 size-7 flex-shrink-0" />
-                <span className="font-semibold text-lg">
-                  Move In This Month
-                </span>
-              </div>
-              <div className="flex items-center gap-3 text-white/90">
-                <CheckCircle2 className="text-emerald-300 size-7 flex-shrink-0" />
-                <span className="font-semibold text-lg">
-                  Flexible Lease Terms
-                </span>
-              </div>
-              <div className="flex items-center gap-3 text-white/90">
-                <CheckCircle2 className="text-emerald-300 size-7 flex-shrink-0" />
-                <span className="font-semibold text-lg">No Hidden Fees</span>
-              </div>
-            </div>
-
-            {/* Contact Cards - Modern Glass Design */}
-            <div className="pt-16 grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <a href="tel:5551234567" className="block group">
-                <div className="p-8 bg-white/10 backdrop-blur-2xl rounded-3xl border-2 border-white/20 hover:border-emerald-300 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all">
-                      <Phone className="text-white size-8" />
-                    </div>
-                    <div className="text-left flex-1">
-                      <div className="text-sm text-white/70 font-semibold uppercase tracking-wide mb-1">
-                        Call Now
-                      </div>
-                      <div className="font-black text-2xl text-white group-hover:text-emerald-300 transition-colors">
-                        (555) 123-4567
-                      </div>
-                    </div>
-                    <ArrowRight className="text-white/60 group-hover:text-emerald-300 size-6 group-hover:translate-x-2 transition-all" />
-                  </div>
-                </div>
-              </a>
-
-              <a href="mailto:info@pecanridge.com" className="block group">
-                <div className="p-8 bg-white/10 backdrop-blur-2xl rounded-3xl border-2 border-white/20 hover:border-teal-300 hover:bg-white/15 transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all">
-                      <Mail className="text-white size-8" />
-                    </div>
-                    <div className="text-left flex-1">
-                      <div className="text-sm text-white/70 font-semibold uppercase tracking-wide mb-1">
-                        Email Us
-                      </div>
-                      <div className="font-black text-2xl text-white group-hover:text-teal-300 transition-colors">
-                        info@pecanridge.com
-                      </div>
-                    </div>
-                    <ArrowRight className="text-white/60 group-hover:text-teal-300 size-6 group-hover:translate-x-2 transition-all" />
-                  </div>
-                </div>
-              </a>
-            </div>
-
-            {/* Emergency Notice */}
-            <div className="pt-8">
-              <p className="text-white/70 text-lg">
-                <span className="font-semibold text-white">🔥 Hot Deal:</span>{" "}
-                Book in the next 48 hours and receive{" "}
-                <span className="text-emerald-300 font-bold">
-                  first month 50% off
-                </span>
-              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white">
-        <div className="container mx-auto px-6 py-16">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-            <div className="space-y-6 lg:col-span-2">
-              <div className="flex items-center gap-3">
-                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <TreePine className="text-white size-8" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold">Pecan Ridge</div>
-                  <div className="text-xs text-slate-400 font-medium">
-                    RV PARK
-                  </div>
-                </div>
-              </div>
-              <p className="text-slate-300 text-lg leading-relaxed max-w-md">
-                Your premier destination for luxury RV living in the heart of
-                Alabama&apos;s Wiregrass Region. Where Southern hospitality
-                meets modern comfort.
-              </p>
-              <div className="flex gap-4">
-                <Link
-                  href="#"
-                  className="w-12 h-12 bg-slate-800 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition-colors"
-                >
-                  <svg
-                    className="size-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
-                </Link>
-                <Link
-                  href="#"
-                  className="w-12 h-12 bg-slate-800 hover:bg-emerald-600 rounded-xl flex items-center justify-center transition-colors"
-                >
-                  <svg
-                    className="size-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold">Quick Links</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link
-                    href="/auth/signin"
-                    className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full group-hover:scale-150 transition-transform"></span>
-                    Resident Portal
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="#features"
-                    className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full group-hover:scale-150 transition-transform"></span>
-                    Features & Amenities
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#gallery"
-                    className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full group-hover:scale-150 transition-transform"></span>
-                    Photo Gallery
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    href="/privacy-policy"
-                    className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center gap-2 group"
-                  >
-                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full group-hover:scale-150 transition-transform"></span>
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold">Contact Us</h3>
-              <div className="space-y-4 text-slate-300">
-                <div className="flex items-start gap-3">
-                  <MapPin className="size-5 text-emerald-500 flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-semibold">8676 Cottonwood Road</p>
-                    <p>Dothan, AL 36301</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="size-5 text-emerald-500 flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-semibold">Office Hours</p>
-                    <p>Mon-Fri: 9AM - 6PM</p>
-                    <p>Sat-Sun: 10AM - 4PM</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-800 pt-8 mt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-slate-400 text-sm">
-                &copy; 2025 Pecan Ridge RV Park. All rights reserved.
-              </p>
-              <div className="flex gap-6 text-sm">
-                <Link
-                  href="#"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Terms of Service
-                </Link>
-                <Link
-                  href="/privacy-policy"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Privacy Policy
-                </Link>
-                <Link
-                  href="#"
-                  className="text-slate-400 hover:text-emerald-400 transition-colors"
-                >
-                  Sitemap
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
