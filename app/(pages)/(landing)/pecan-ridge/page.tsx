@@ -8,7 +8,6 @@ import {
 import {
   ArrowRight,
   Bell,
-  Calendar,
   Car,
   CheckCircle2,
   ChevronRight,
@@ -18,7 +17,6 @@ import {
   Home,
   Mail,
   MapPin,
-  PawPrint,
   Phone,
   Shield,
   Sparkles,
@@ -384,7 +382,7 @@ export default function PecanRidgePage() {
       </section>
 
       {/* At a Glance - Key Info Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 relative overflow-hidden">
+      {/* <section className="py-20 bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
@@ -457,7 +455,7 @@ export default function PecanRidgePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section id="features" className="py-24 bg-white">
@@ -491,201 +489,6 @@ export default function PecanRidgePage() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Park Map Section */}
-      <section className="py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(16,185,129,0.05),transparent_50%)]"></div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center space-y-6 mb-16">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide border border-blue-200">
-                  Park Layout
-                </span>
-              </div>
-              <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
-                Choose Your
-                <span className="block text-emerald-600 mt-2">
-                  Perfect Spot
-                </span>
-              </h2>
-              <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
-                Explore our park layout and find the ideal location for your new
-                home
-              </p>
-            </div>
-
-            {/* Park Map Display */}
-            <div className="relative group">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                <Image
-                  src="/PecanRidge/Park%20Map%2002-01.jpg"
-                  alt="Pecan Ridge RV Park Map showing all lots and amenities"
-                  width={2000}
-                  height={1500}
-                  className="w-full h-auto"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-
-              {/* Map Legend */}
-              <div className="mt-8 grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                <div className="flex items-center gap-4 bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Droplets className="text-white size-6" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-slate-900 text-lg">
-                      Laundry Room
-                    </div>
-                    <div className="text-sm text-slate-600">
-                      24/7 Access Available
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-lg">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Home className="text-white size-6" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-slate-900 text-lg">
-                      RV Lots
-                    </div>
-                    <div className="text-sm text-slate-600">
-                      Full Hookup Sites
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Call to Action */}
-              <div className="text-center mt-12">
-                <p className="text-lg text-slate-600 mb-6">
-                  Interested in a specific lot? Contact us to check availability
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  {/* TODO: Replace with real phone number */}
-                  <a href="tel:5551234567">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-7 h-auto font-bold"
-                    >
-                      <Phone className="mr-2 size-5" />
-                      Call (555) 123-4567 {/* PLACEHOLDER */}
-                    </Button>
-                  </a>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-slate-300 hover:border-emerald-500 hover:bg-emerald-50 text-slate-900 text-lg px-10 py-7 h-auto font-bold"
-                  >
-                    <Mail className="mr-2 size-5" />
-                    Email for Details
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Section - Modern Bento Grid */}
-      <section
-        id="gallery"
-        className="py-32 bg-gradient-to-b from-slate-50 via-white to-slate-50"
-      >
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-6 mb-20">
-            <div className="inline-block">
-              <span className="px-4 py-2 bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-700 rounded-full text-sm font-bold uppercase tracking-wide border border-teal-200">
-                Visual Experience
-              </span>
-            </div>
-            <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
-              Life at Pecan Ridge
-            </h2>
-            <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
-              Where comfortable living meets{" "}
-              <span className="text-emerald-600 font-semibold">community</span>{" "}
-              in a place you&apos;ll proudly call home
-            </p>
-          </div>
-
-          {/* Bento Grid Layout */}
-          <div className="grid grid-cols-12 gap-4 lg:gap-6 max-w-7xl mx-auto">
-            {/* Large featured image */}
-            <div className="col-span-12 lg:col-span-8 row-span-2">
-              <div className="group relative overflow-hidden rounded-3xl shadow-2xl h-full min-h-[400px] lg:min-h-[600px]">
-                <Image
-                  src={gallery[0].url}
-                  alt={gallery[0].alt}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-1000"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-10">
-                  <div className="space-y-3">
-                    <h3 className="text-4xl font-black text-white">
-                      {gallery[0].title}
-                    </h3>
-                    <p className="text-xl text-white/80 max-w-2xl">
-                      {gallery[0].description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Two medium images */}
-            {gallery.slice(1, 3).map((image, index) => (
-              <div key={index} className="col-span-12 lg:col-span-4">
-                <div className="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 h-full min-h-[280px]">
-                  <Image
-                    src={image.url}
-                    alt={image.alt}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-2xl font-bold text-white mb-1">
-                      {image.title}
-                    </h3>
-                    <p className="text-sm text-white/80">{image.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Three small images */}
-            {gallery.slice(3, 6).map((image, index) => (
-              <div
-                key={index}
-                className="col-span-12 sm:col-span-6 lg:col-span-4"
-              >
-                <div className="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 h-full min-h-[250px]">
-                  <Image
-                    src={image.url}
-                    alt={image.alt}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-xl font-bold text-white mb-1">
-                      {image.title}
-                    </h3>
-                    <p className="text-sm text-white/80">{image.description}</p>
-                  </div>
-                </div>
-              </div>
             ))}
           </div>
         </div>
@@ -765,8 +568,7 @@ export default function PecanRidgePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-32 bg-white relative overflow-hidden">
-        {/* Background Pattern */}
+      {/* <section className="py-32 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(16,185,129,0.05),transparent_50%)]"></div>
 
         <div className="container mx-auto px-6 relative z-10">
@@ -788,7 +590,6 @@ export default function PecanRidgePage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {howItWorks.map((step, index) => (
                 <div key={index} className="relative group">
-                  {/* Connector Line */}
                   {index < howItWorks.length - 1 && (
                     <div className="hidden lg:block absolute top-24 left-[60%] w-full h-0.5 bg-gradient-to-r from-emerald-300 to-teal-300 z-0">
                       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-teal-400 rounded-full animate-pulse"></div>
@@ -796,14 +597,12 @@ export default function PecanRidgePage() {
                   )}
 
                   <div className="relative z-10 text-center space-y-6">
-                    {/* Step Number */}
                     <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                       <span className="text-white text-3xl font-black">
                         {step.step}
                       </span>
                     </div>
 
-                    {/* Icon Badge */}
                     <div className="inline-flex items-center justify-center w-14 h-14 bg-white border-4 border-emerald-100 rounded-2xl shadow-lg -mt-7">
                       <step.icon className="text-emerald-600 size-7" />
                     </div>
@@ -822,10 +621,10 @@ export default function PecanRidgePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Pricing Section */}
-      <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white">
+      {/* <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white">
         <div className="container mx-auto px-6">
           <div className="text-center space-y-6 mb-16">
             <div className="inline-block">
@@ -846,7 +645,6 @@ export default function PecanRidgePage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Monthly Plan */}
             <Card className="relative border-2 border-slate-200 hover:border-emerald-300 transition-all duration-500 hover:-translate-y-2 overflow-hidden bg-white">
               <CardHeader className="p-8 space-y-6">
                 <div className="space-y-4">
@@ -901,7 +699,6 @@ export default function PecanRidgePage() {
               </CardHeader>
             </Card>
 
-            {/* Annual Plan - Highlighted */}
             <Card className="relative border-4 border-emerald-500 shadow-2xl scale-105 bg-gradient-to-b from-white to-emerald-50 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center py-3 text-sm font-bold uppercase tracking-wide">
                 <Sparkles className="inline size-4 mr-2" />
@@ -966,7 +763,6 @@ export default function PecanRidgePage() {
             </Card>
           </div>
 
-          {/* Pricing Note */}
           <div className="text-center mt-12 space-y-3">
             <p className="text-slate-600 text-base max-w-2xl mx-auto">
               <strong>
@@ -981,10 +777,10 @@ export default function PecanRidgePage() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Location & Nearby Attractions */}
-      <section className="pb-32 bg-white">
+      <section className="py-32 bg-white">
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center space-y-6 mb-20">
@@ -1064,6 +860,76 @@ export default function PecanRidgePage() {
                 </div>
               ))}
             </div>
+
+            {/* Park Map Section */}
+            <section className="py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(16,185,129,0.05),transparent_50%)]"></div>
+
+              <div className="container mx-auto px-6 relative z-10">
+                <div className="max-w-7xl mx-auto">
+                  <div className="text-center space-y-6 mb-16">
+                    <div className="inline-block">
+                      <span className="px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide border border-blue-200">
+                        Park Layout
+                      </span>
+                    </div>
+                    <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
+                      Choose Your
+                      <span className="block text-emerald-600 mt-2">
+                        Perfect Spot
+                      </span>
+                    </h2>
+                    <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
+                      Explore our park layout and find the ideal location for
+                      your new home
+                    </p>
+                  </div>
+
+                  {/* Park Map Display */}
+                  <div className="relative group">
+                    <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                      <Image
+                        src="/PecanRidge/Park%20Map%2002-01.jpg"
+                        alt="Pecan Ridge RV Park Map showing all lots and amenities"
+                        width={2000}
+                        height={1500}
+                        className="w-full h-auto"
+                        priority
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+
+                    {/* Call to Action */}
+                    <div className="text-center mt-12">
+                      <p className="text-lg text-slate-600 mb-6">
+                        Interested in a specific lot? Contact us to check
+                        availability
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        {/* TODO: Replace with real phone number */}
+                        <a href="tel:5551234567">
+                          <Button
+                            size="lg"
+                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-7 h-auto font-bold"
+                          >
+                            <Phone className="mr-2 size-5" />
+                            Call (555) 123-4567 {/* PLACEHOLDER */}
+                          </Button>
+                        </a>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="border-2 border-slate-300 hover:border-emerald-500 hover:bg-emerald-50 text-slate-900 text-lg px-10 py-7 h-auto font-bold"
+                        >
+                          <Mail className="mr-2 size-5" />
+                          Email for Details
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             {/* Google Maps Embed */}
             <div className="space-y-6">
