@@ -45,18 +45,7 @@ export default function Footer() {
             >
               Resident Portal
             </Link>
-            <a
-              href="#features"
-              className="text-slate-100 hover:text-emerald-300 transition-colors"
-            >
-              Features
-            </a>
-            <a
-              href="#gallery"
-              className="text-slate-100 hover:text-emerald-300 transition-colors"
-            >
-              Gallery
-            </a>
+
             <Link
               href="/privacy-policy"
               className="text-slate-100 hover:text-emerald-300 transition-colors"

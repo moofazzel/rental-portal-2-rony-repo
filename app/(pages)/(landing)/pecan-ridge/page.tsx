@@ -15,7 +15,6 @@ import {
   Droplets,
   FileText,
   Home,
-  Mail,
   MapPin,
   Phone,
   Shield,
@@ -44,35 +43,35 @@ export default function PecanRidgePage() {
       icon: Zap,
       title: "Full Hookups",
       description:
-        "50 AMP electric, water, and sewer connections at every site",
+        "30/50 AMP electric, water, and sewer connections at every site",
       color: "from-amber-500 to-orange-500",
     },
     {
       icon: Droplets,
-      title: "Modern Facilities",
+      title: "Showers Facilities",
       description:
-        "Clean restrooms, hot showers, and laundry facilities available 24/7",
+        "Clean, modern shower facilities available 24/7 for all residents",
       color: "from-cyan-500 to-blue-500",
     },
     {
       icon: TreePine,
       title: "Natural Setting",
       description:
-        "Beautiful landscaping with mature pecan trees providing shade",
+        "Beautiful landscaping with mature pecan trees providing natural shade",
       color: "from-emerald-500 to-teal-500",
     },
     {
       icon: Car,
       title: "Easy Access",
-      description: "Pull-through sites with paved roads and ample parking",
+      description:
+        "Convenient pull-through sites with paved roads and ample parking",
       color: "from-slate-500 to-gray-500",
     },
     {
       icon: Shield,
-      title: "Secure & Safe",
-
+      title: "Security & Safety",
       description:
-        "Gated community with 24/7 security monitoring for peace of mind",
+        "All tenants pass background checks with 24/7 security monitoring for safety",
       color: "from-violet-500 to-purple-500",
     },
   ];
@@ -217,7 +216,7 @@ export default function PecanRidgePage() {
             </h1>
 
             <p className="text-xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
-              Affordable long-term RV and tiny house living in a quiet country
+              Affordable long-term RV and tiny home living in a quiet country
               setting. Safe, clean, and peaceful.
             </p>
 
@@ -238,22 +237,6 @@ export default function PecanRidgePage() {
                   (555) 123-4567 {/* PLACEHOLDER - Update with real number */}
                 </Button>
               </a>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 pt-8">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
-                <CheckCircle2 className="text-emerald-300 size-5" />
-                <span className="font-medium">Background Checks Required</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
-                <CheckCircle2 className="text-emerald-300 size-5" />
-                <span className="font-medium">Pet-Friendly (2 Pets)</span>
-              </div>
-
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl px-5 py-3 rounded-full border border-white/20">
-                <CheckCircle2 className="text-emerald-300 size-5" />
-                <span className="font-medium">Full Hookups</span>
-              </div>
             </div>
           </div>
         </div>
@@ -293,8 +276,8 @@ export default function PecanRidgePage() {
 
                 <div className="space-y-6 text-lg text-slate-600 leading-relaxed">
                   <p>
-                    Located in a quiet country setting in Dothan, Alabama, Pecan
-                    Ridge RV Park provides{" "}
+                    Located in a quiet country setting South of Dothan, Alabama,
+                    Pecan Ridge RV Park provides{" "}
                     <span className="font-bold text-slate-900">
                       affordable long-term housing
                     </span>{" "}
@@ -338,10 +321,10 @@ export default function PecanRidgePage() {
                   </div>
                   <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
                     <div className="text-4xl font-black text-emerald-600 mb-2">
-                      Safe
+                      Clean
                     </div>
                     <div className="text-sm font-semibold text-slate-600 uppercase">
-                      & Peaceful
+                      & Well-Maintained
                     </div>
                   </div>
                 </div>
@@ -544,10 +527,6 @@ export default function PecanRidgePage() {
                       {feature.description}
                     </p>
                   </div>
-
-                  <div className="flex items-center gap-2 text-emerald-400 font-semibold opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                    Learn More <ArrowRight className="size-5" />
-                  </div>
                 </div>
               </div>
             ))}
@@ -557,7 +536,7 @@ export default function PecanRidgePage() {
             <Link href="/auth/signin">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl text-lg px-12 py-8 h-auto font-bold group"
+                className="bg-gradient-to-r w-full max-w-xs sm:w-[300px] from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl text-lg py-8 h-auto font-bold group transition-transform duration-300 hover:scale-105"
               >
                 Access Resident Portal
                 <ChevronRight className="ml-2 size-6 group-hover:translate-x-2 transition-transform" />
@@ -780,85 +759,168 @@ export default function PecanRidgePage() {
       </section> */}
 
       {/* Location & Nearby Attractions */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-6">
+      <section className="py-32 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center space-y-6 mb-20">
-              <div className="inline-block">
-                <span className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide">
+            {/* Enhanced Header */}
+            <div className="text-center space-y-8 mb-24">
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500/10 to-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-200">
+                <MapPin className="size-5 text-emerald-600 animate-pulse" />
+                <span className="text-base font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent uppercase tracking-wide">
                   Prime Location
                 </span>
               </div>
-              <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
-                Where Convenience
-                <span className="block text-emerald-600 mt-2">
+
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-slate-900 leading-tight">
+                Where{" "}
+                <span className="relative inline-block">
+                  <span className="relative z-10 bg-gradient-to-r from-blue-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    Convenience
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-200 to-emerald-200 blur-2xl opacity-30 -z-10" />
+                </span>
+                <span className="block mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                   Meets Adventure
                 </span>
               </h2>
-              <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
-                Perfectly positioned in the Wiregrass Region with easy access to
-                everything Southeast Alabama has to offer
+
+              <p className="text-xl sm:text-2xl lg:text-3xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed">
+                Perfectly positioned in the{" "}
+                <span className="font-semibold text-emerald-700">
+                  Wiregrass Region
+                </span>{" "}
+                with easy access to everything Southeast Alabama has to offer
               </p>
             </div>
 
-            {/* Nearby Attractions Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {/* Enhanced Nearby Attractions Grid */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-20">
               {[
                 {
+                  name: "Wiregrass Commons Mall",
+                  distance: "1.3 miles",
+                  type: "Shopping",
+                  icon: "🛍️",
+                },
+                {
                   name: "Publix Super Market",
-                  distance: "3.5 miles",
+                  distance: "7.4 miles",
                   type: "Grocery",
+                  icon: "🛒",
                 },
                 {
                   name: "Walmart Supercenter",
-                  distance: "4.0 miles",
+                  distance: "9.0 miles",
                   type: "Shopping",
+                  icon: "🏪",
                 },
                 {
                   name: "Southeast Health Medical Center",
-                  distance: "6.0 miles",
+                  distance: "9.0 miles",
                   type: "Healthcare",
+                  icon: "🏥",
                 },
                 {
                   name: "Downtown Dothan",
-                  distance: "6.0 miles",
+                  distance: "9.5 miles",
                   type: "Entertainment",
-                },
-                {
-                  name: "Wiregrass Commons Mall",
-                  distance: "5.5 miles",
-                  type: "Shopping",
+                  icon: "🎭",
                 },
                 {
                   name: "Ross Clark Circle",
-                  distance: "5.0 miles",
+                  distance: "7.0 miles",
                   type: "Retail",
+                  icon: "🏬",
                 },
               ].map((location, index) => (
                 <div
                   key={index}
-                  className="group p-8 bg-gradient-to-br from-slate-50 to-white rounded-3xl border-2 border-slate-200 hover:border-emerald-400 hover:shadow-xl transition-all duration-300"
+                  className="group relative p-8 bg-white rounded-3xl border-2 border-slate-200 hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                        {location.name}
-                      </h3>
-                      <p className="text-emerald-600 font-semibold text-lg">
-                        {location.distance}
-                      </p>
-                    </div>
-                    <div className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase">
-                      {location.type}
+                  {/* Background Gradient on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Icon Badge */}
+                  <div className="relative mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl shadow-md group-hover:shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:from-emerald-100 group-hover:to-teal-100 transition-all duration-500">
+                      <span className="text-3xl">{location.icon}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-600 group-hover:text-emerald-600 transition-colors">
-                    <MapPin className="size-5" />
-                    <span className="font-medium">Get Directions</span>
-                    <ArrowRight className="size-4 group-hover:translate-x-2 transition-transform" />
+
+                  {/* Content */}
+                  <div className="relative space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
+                          {location.name}
+                        </h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="size-5 text-emerald-600" />
+                          <p className="text-lg font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">
+                            {location.distance}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Type Badge */}
+                    <div className="flex items-center justify-between">
+                      <div className="px-4 py-2 bg-slate-100 group-hover:bg-emerald-50 rounded-full transition-colors duration-300">
+                        <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 uppercase tracking-wide transition-colors">
+                          {location.type}
+                        </span>
+                      </div>
+
+                      {/* Directions Arrow */}
+                      <div className="flex items-center gap-2 text-slate-400 group-hover:text-emerald-600 transition-colors">
+                        <ArrowRight className="size-5 group-hover:translate-x-2 transition-transform duration-300" />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Corner Decoration */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
               ))}
+            </div>
+
+            {/* Additional Info Banner */}
+            <div className="max-w-5xl mx-auto mt-16">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 p-1">
+                <div className="bg-white rounded-3xl p-8 lg:p-12">
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                    <div className="flex-1 text-center lg:text-left">
+                      <h3 className="text-3xl lg:text-4xl font-black text-slate-900 mb-4">
+                        Everything Within Reach
+                      </h3>
+                      <p className="text-lg text-slate-600 leading-relaxed">
+                        From shopping and dining to healthcare and
+                        entertainment, you're never far from what you need.
+                        Experience the perfect balance of peaceful living and
+                        convenient access to city amenities.
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center gap-4 px-8 py-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl border-2 border-emerald-200">
+                        <div className="text-center">
+                          <p className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                            &lt;15min
+                          </p>
+                          <p className="text-sm font-semibold text-slate-600 mt-1">
+                            Average Drive
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Park Map Section */}
@@ -906,24 +968,16 @@ export default function PecanRidgePage() {
                         availability
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        {/* TODO: Replace with real phone number */}
                         <a href="tel:5551234567">
                           <Button
                             size="lg"
-                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-7 h-auto font-bold"
+                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-8 h-auto font-bold"
                           >
                             <Phone className="mr-2 size-5" />
                             Call (555) 123-4567 {/* PLACEHOLDER */}
                           </Button>
                         </a>
-                        <Button
-                          size="lg"
-                          variant="outline"
-                          className="border-2 border-slate-300 hover:border-emerald-500 hover:bg-emerald-50 text-slate-900 text-lg px-10 py-7 h-auto font-bold"
-                        >
-                          <Mail className="mr-2 size-5" />
-                          Email for Details
-                        </Button>
+                        <ApplicationModal variant="default" />
                       </div>
                     </div>
                   </div>
@@ -935,7 +989,7 @@ export default function PecanRidgePage() {
             <div className="space-y-6">
               <div className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3400.123!2d-85.456789!3d31.289123!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDE3JzIwLjgiTiA4NcKwMjcnMjQuNCJX!5e0!3m2!1sen!2sus!4v1234567890"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3397.7866555778544!2d-85.39844612397174!3d31.508988374232747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x889067f7e5a5b7f5%3A0x5a1e9c4e3e4e4e4e!2s8676%20Cottonwood%20Rd%2C%20Dothan%2C%20AL%2036301!5e0!3m2!1sen!2sus!4v1730000000000!5m2!1sen!2sus"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
