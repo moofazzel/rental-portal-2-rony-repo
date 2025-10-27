@@ -128,12 +128,12 @@ export default function ApplicationModal({
         <Button
           size={variant === "compact" ? "default" : "lg"}
           className={cn(
-            "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all",
+            "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl",
             variant === "default"
               ? "text-xl px-12 py-8 h-auto font-bold group hover:scale-105"
               : variant === "full-width"
               ? "w-full text-lg py-7 h-auto font-bold"
-              : "font-semibold"
+              : "font-semibold rounded-lg"
           )}
         >
           Apply Now
