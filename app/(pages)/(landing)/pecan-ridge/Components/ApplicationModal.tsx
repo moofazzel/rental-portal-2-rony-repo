@@ -104,15 +104,15 @@ export default function ApplicationModal({
   if (isSubmitted) {
     return (
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] p-0 overflow-hidden">
-          <div className="flex flex-col items-center justify-center py-16 px-8 text-center bg-gradient-to-br from-emerald-50 to-teal-50">
-            <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mb-8 shadow-lg">
-              <CheckCircle2 className="w-14 h-14 text-white" />
+        <DialogContent className="w-[95vw] sm:max-w-[600px] max-h-[90vh] p-0 overflow-hidden">
+          <div className="flex flex-col items-center justify-center py-12 sm:py-16 px-6 sm:px-8 text-center bg-gradient-to-br from-emerald-50 to-teal-50">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mb-6 sm:mb-8 shadow-lg">
+              <CheckCircle2 className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
             </div>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
               Application Submitted!
             </h2>
-            <p className="text-slate-600 text-lg leading-relaxed max-w-md">
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-md">
               Thank you for applying to Pecan Ridge RV Park. We&apos;ll review
               your application and get back to you within 24 hours.
             </p>
@@ -139,14 +139,14 @@ export default function ApplicationModal({
           Apply Now
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="w-[97vw] sm:max-w-[800px] max-h-[90vh] p-0 overflow-hidden flex flex-col">
         {/* Fixed Header */}
-        <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-emerald-50">
+        <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-emerald-50">
           <DialogHeader>
-            <DialogTitle className="text-3xl font-bold text-slate-900 mb-2">
+            <DialogTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">
               Apply to Pecan Ridge RV Park
             </DialogTitle>
-            <DialogDescription className="text-base text-slate-600 leading-relaxed">
+            <DialogDescription className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Fill out the form below to start your application. All fields are
               required. We&apos;ll review your application and contact you
               within 24 hours.
@@ -155,7 +155,7 @@ export default function ApplicationModal({
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-8 py-6">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6">
           <Form {...form}>
             <form
               id="application-form"
@@ -169,7 +169,7 @@ export default function ApplicationModal({
                   Personal Information
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="firstName"
@@ -198,7 +198,7 @@ export default function ApplicationModal({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="email"
@@ -260,7 +260,7 @@ export default function ApplicationModal({
                   RV Information
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="rvYear"
@@ -311,7 +311,7 @@ export default function ApplicationModal({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="rvMake"
@@ -389,7 +389,7 @@ export default function ApplicationModal({
                   Occupancy & Pets
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="numOccupants"
@@ -469,7 +469,7 @@ export default function ApplicationModal({
                   Stay Details
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="moveInDate"
@@ -642,13 +642,13 @@ export default function ApplicationModal({
         </div>
 
         {/* Fixed Footer */}
-        <div className="px-8 py-6 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-emerald-50">
-          <div className="flex gap-4">
+        <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-emerald-50">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsModalOpen(false)}
-              className="flex-1 h-12 text-base font-medium"
+              className="flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium"
               disabled={isSubmitting}
             >
               Cancel
@@ -656,12 +656,12 @@ export default function ApplicationModal({
             <Button
               type="submit"
               form="application-form"
-              className="flex-1 h-12 text-base font-medium bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
+              className="flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                   Submitting...
                 </>
               ) : (

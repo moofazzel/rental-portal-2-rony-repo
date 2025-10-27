@@ -183,7 +183,7 @@ export default function PecanRidgePage() {
       <Navbar />
 
       {/* Hero Section with Background Image */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
@@ -196,43 +196,45 @@ export default function PecanRidgePage() {
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900/70 via-emerald-900/50 to-slate-900/70"></div>
 
           {/* Floating gradient orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
         {/* Hero Content */}
-        <div className="container mx-auto px-6 relative z-10 pt-20 pb-32">
-          <div className="max-w-6xl mx-auto text-center space-y-10">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-xl text-white rounded-full text-sm font-bold border border-white/20 shadow-2xl hover:bg-white/15 transition-all">
-              <Home className="size-5 text-emerald-300" />
-              <span>Affordable RV Living in Dothan, Alabama</span>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 pt-10 sm:pt-20 pb-24 sm:pb-32">
+          <div className="max-w-6xl mx-auto text-center space-y-6 sm:space-y-8 md:space-y-10">
+            <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/10 backdrop-blur-xl text-white rounded-full text-xs sm:text-sm font-bold border border-white/20 shadow-2xl hover:bg-white/15 transition-all">
+              <Home className="size-4 sm:size-5 text-emerald-300" />
+              <span className="whitespace-nowrap">
+                Affordable RV Living in Dothan, Alabama
+              </span>
             </div>
 
-            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white leading-none tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-none tracking-tight px-4 sm:px-0">
               Your Home at
-              <span className="block bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-3 animate-gradient">
+              <span className="block bg-gradient-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-2 sm:mt-3 animate-gradient">
                 Pecan Ridge RV Park
               </span>
             </h1>
 
-            <p className="text-xl md:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed font-light px-4 sm:px-0">
               Affordable long-term RV and tiny home living in a quiet country
               setting. Safe, clean, and peaceful.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-10">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-stretch sm:items-center pt-6 sm:pt-10 px-4 sm:px-0">
               <ApplicationModal variant="default" />
               <a
                 href="tel:3342007299"
                 tabIndex={0}
-                className="inline-block focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400 rounded-xl"
+                className="inline-block focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400 rounded-xl w-full sm:w-auto"
               >
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-2 border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-xl px-12 py-8 h-auto font-bold hover:scale-105 transition-all rounded-2xl"
+                  className="w-full sm:w-auto border-2 border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-base sm:text-lg md:text-xl px-8 sm:px-12 py-6 sm:py-8 h-auto font-bold hover:scale-105 transition-all rounded-2xl"
                 >
-                  <Phone className="mr-3 size-6" />
+                  <Phone className="mr-2 sm:mr-3 size-5 sm:size-6" />
                   (334) 200-7299
                 </Button>
               </a>
@@ -241,7 +243,7 @@ export default function PecanRidgePage() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+        <div className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 hidden sm:block">
           <div className="flex flex-col items-center gap-3 animate-bounce">
             <span className="text-white/60 text-sm font-medium">
               Scroll to explore
@@ -254,25 +256,25 @@ export default function PecanRidgePage() {
       </section>
 
       {/* About Pecan Ridge Section */}
-      <section className="py-32 bg-gradient-to-b from-white via-slate-50 to-white">
-        <div className="container mx-auto px-4 md:px-0">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <section className="py-16 sm:py-24 md:py-32 bg-gradient-to-b from-white via-slate-50 to-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
             {/* Left - Content */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <div className="inline-block">
-                <span className="px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 rounded-full text-sm font-bold uppercase tracking-wide border border-emerald-200">
+                <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide border border-emerald-200">
                   About Us
                 </span>
               </div>
 
-              <h2 className="text-5xl lg:text-6xl font-black text-slate-900 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-tight">
                 Welcome to
                 <span className="block text-emerald-600 mt-2">
                   Pecan Ridge RV Park
                 </span>
               </h2>
 
-              <div className="space-y-6 text-lg text-slate-600 leading-relaxed">
+              <div className="space-y-4 sm:space-y-6 text-base sm:text-lg text-slate-600 leading-relaxed">
                 <p>
                   Located in a quiet country setting South of Dothan, Alabama,
                   Pecan Ridge RV Park provides{" "}
@@ -300,28 +302,28 @@ export default function PecanRidgePage() {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-3 gap-6 pt-6">
-                <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
-                  <div className="text-4xl font-black text-emerald-600 mb-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-4 sm:pt-6">
+                <div className="text-center p-4 sm:p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 mb-2">
                     ✓
                   </div>
-                  <div className="text-sm font-semibold text-slate-600 uppercase">
+                  <div className="text-xs sm:text-sm font-semibold text-slate-600 uppercase">
                     Background Checks
                   </div>
                 </div>
-                <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
-                  <div className="text-4xl font-black text-emerald-600 mb-2">
+                <div className="text-center p-4 sm:p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 mb-2">
                     100%
                   </div>
-                  <div className="text-sm font-semibold text-slate-600 uppercase">
+                  <div className="text-xs sm:text-sm font-semibold text-slate-600 uppercase">
                     Family Owned
                   </div>
                 </div>
-                <div className="text-center p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
-                  <div className="text-4xl font-black text-emerald-600 mb-2">
+                <div className="text-center p-4 sm:p-6 bg-white rounded-2xl border-2 border-emerald-100 shadow-lg">
+                  <div className="text-3xl sm:text-4xl font-black text-emerald-600 mb-2">
                     Clean
                   </div>
-                  <div className="text-sm font-semibold text-slate-600 uppercase">
+                  <div className="text-xs sm:text-sm font-semibold text-slate-600 uppercase">
                     & Well-Maintained
                   </div>
                 </div>
@@ -329,8 +331,8 @@ export default function PecanRidgePage() {
             </div>
 
             {/* Right - Image */}
-            <div className="relative">
-              <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative mt-8 lg:mt-0">
+              <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=1200&auto=format&fit=crop"
                   alt="Beautiful Pecan Ridge RV Park entrance"
@@ -341,16 +343,16 @@ export default function PecanRidgePage() {
               </div>
 
               {/* Floating badge */}
-              <div className="absolute -bottom-8 -left-8 bg-white rounded-3xl shadow-2xl p-8 border-4 border-emerald-100">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center">
-                    <Shield className="text-white size-8" />
+              <div className="absolute -bottom-4 sm:-bottom-8 left-4 sm:-left-8 bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 border-2 sm:border-4 border-emerald-100 max-w-[calc(100%-2rem)] sm:max-w-none">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Shield className="text-white size-6 sm:size-8" />
                   </div>
                   <div>
-                    <div className="text-sm text-slate-600 font-semibold uppercase">
+                    <div className="text-xs sm:text-sm text-slate-600 font-semibold uppercase">
                       Safe &
                     </div>
-                    <div className="text-2xl font-black text-slate-900">
+                    <div className="text-xl sm:text-2xl font-black text-slate-900">
                       Screened
                     </div>
                   </div>
@@ -438,33 +440,33 @@ export default function PecanRidgePage() {
       </section> */}
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-white">
-        <div className="container mx-auto px-4 md:px-0">
-          <div className="text-center space-y-4 mb-20">
-            <h2 className="text-5xl lg:text-6xl font-black text-slate-900">
+      <section id="features" className="py-16 sm:py-20 md:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16 md:mb-20">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900">
               Community Amenities
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mx-auto px-4">
               Everything you need for comfortable long-term living
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
                 className="border-slate-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white overflow-hidden group"
               >
-                <CardHeader className="space-y-4">
+                <CardHeader className="space-y-3 sm:space-y-4">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}
                   >
-                    <feature.icon className="text-white size-8" />
+                    <feature.icon className="text-white size-7 sm:size-8" />
                   </div>
-                  <CardTitle className="text-2xl text-slate-900 font-bold">
+                  <CardTitle className="text-xl sm:text-2xl text-slate-900 font-bold">
                     {feature.title}
                   </CardTitle>
-                  <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  <CardDescription className="text-slate-600 text-sm sm:text-base leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardHeader>
@@ -475,52 +477,52 @@ export default function PecanRidgePage() {
       </section>
 
       {/* Resident Portal Features Section - SPLIT LAYOUT */}
-      <section className="py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-teal-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-teal-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        <div className="container mx-auto px-4 md:px-0 relative z-10">
-          <div className="text-center space-y-6 mb-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center space-y-4 sm:space-y-6 mb-12 sm:mb-16 md:mb-20">
             <div className="inline-block">
-              <span className="px-4 py-2 bg-emerald-500/20 backdrop-blur-md text-emerald-300 rounded-full text-sm font-bold uppercase tracking-wide border border-emerald-500/30">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-500/20 backdrop-blur-md text-emerald-300 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide border border-emerald-500/30">
                 Resident Portal
               </span>
             </div>
-            <h2 className="text-5xl lg:text-6xl font-black">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black px-4 sm:px-0">
               Your Digital Home
               <span className="block bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent mt-2">
                 Management At Your Fingertips
               </span>
             </h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
               Everything you need to manage your rental, make payments, and
               communicate with management—all in one seamless platform.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
             {portalFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="group relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-emerald-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
+                className="group relative bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/10 hover:border-emerald-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-                <div className="relative z-10 space-y-6">
+                <div className="relative z-10 space-y-4 sm:space-y-6">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}
                   >
-                    <feature.icon className="text-white size-8" />
+                    <feature.icon className="text-white size-7 sm:size-8" />
                   </div>
 
                   <div>
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-emerald-300 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 group-hover:text-emerald-300 transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="text-slate-300 text-lg leading-relaxed">
+                    <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -529,14 +531,14 @@ export default function PecanRidgePage() {
             ))}
           </div>
 
-          <div className="text-center mt-16">
-            <Link href="/auth/signin">
+          <div className="text-center mt-12 sm:mt-16 px-4 sm:px-0">
+            <Link href="/auth/signin" className="inline-block w-full sm:w-auto">
               <Button
                 size="lg"
-                className="bg-gradient-to-r w-full max-w-xs sm:w-[300px] from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl text-lg py-8 h-auto font-bold group transition-transform duration-300 hover:scale-105 rounded-2xl"
+                className="bg-gradient-to-r w-full sm:w-auto sm:min-w-[300px] from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl text-base sm:text-lg py-6 sm:py-8 h-auto font-bold group transition-transform duration-300 hover:scale-105 rounded-2xl"
               >
                 Access Resident Portal
-                <ChevronRight className="ml-2 size-6 group-hover:translate-x-2 transition-transform" />
+                <ChevronRight className="ml-2 size-5 sm:size-6 group-hover:translate-x-2 transition-transform" />
               </Button>
             </Link>
           </div>
@@ -544,24 +546,24 @@ export default function PecanRidgePage() {
       </section>
 
       {/* Location & Nearby Attractions */}
-      <section className="py-32 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 bg-gradient-to-br from-slate-50 via-white to-emerald-50 relative overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl" />
+          <div className="absolute top-10 sm:top-20 left-5 sm:left-10 w-48 h-48 sm:w-72 sm:h-72 bg-emerald-200/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 w-64 h-64 sm:w-96 sm:h-96 bg-blue-200/20 rounded-full blur-3xl" />
         </div>
 
-        <div className="container mx-auto px-4 md:px-0 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Enhanced Header */}
-          <div className="text-center space-y-8 mb-24">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500/10 to-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-200">
-              <MapPin className="size-5 text-emerald-600 animate-pulse" />
-              <span className="text-base font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent uppercase tracking-wide">
+          <div className="text-center space-y-6 sm:space-y-8 mb-16 sm:mb-20 md:mb-24">
+            <div className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500/10 to-emerald-500/10 backdrop-blur-sm rounded-full border border-emerald-200">
+              <MapPin className="size-4 sm:size-5 text-emerald-600 animate-pulse" />
+              <span className="text-xs sm:text-base font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent uppercase tracking-wide">
                 Prime Location
               </span>
             </div>
 
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-slate-900 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 leading-tight px-4 sm:px-0">
               Where{" "}
               <span className="relative inline-block">
                 <span className="relative z-10 bg-gradient-to-r from-blue-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -569,12 +571,12 @@ export default function PecanRidgePage() {
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-200 to-emerald-200 blur-2xl opacity-30 -z-10" />
               </span>
-              <span className="block mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+              <span className="block mt-2 sm:mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 Meets Adventure
               </span>
             </h2>
 
-            <p className="text-xl sm:text-2xl lg:text-3xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed px-4 sm:px-0">
               Perfectly positioned in the{" "}
               <span className="font-semibold text-emerald-700">
                 Wiregrass Region
@@ -584,7 +586,7 @@ export default function PecanRidgePage() {
           </div>
 
           {/* Enhanced Nearby Attractions Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16 sm:mb-20">
             {[
               {
                 name: "Dollar General",
@@ -625,28 +627,30 @@ export default function PecanRidgePage() {
             ].map((location, index) => (
               <div
                 key={index}
-                className="group relative p-8 bg-white rounded-3xl border-2 border-slate-200 hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
+                className="group relative p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl border-2 border-slate-200 hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer overflow-hidden"
               >
                 {/* Background Gradient on Hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Icon Badge */}
-                <div className="relative mb-6">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl shadow-md group-hover:shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:from-emerald-100 group-hover:to-teal-100 transition-all duration-500">
-                    <span className="text-3xl">{location.icon}</span>
+                <div className="relative mb-4 sm:mb-6">
+                  <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl sm:rounded-2xl shadow-md group-hover:shadow-lg group-hover:scale-110 group-hover:rotate-6 group-hover:from-emerald-100 group-hover:to-teal-100 transition-all duration-500">
+                    <span className="text-2xl sm:text-3xl">
+                      {location.icon}
+                    </span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="relative space-y-4">
+                <div className="relative space-y-3 sm:space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
+                      <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-emerald-700 transition-colors">
                         {location.name}
                       </h3>
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="size-5 text-emerald-600" />
-                        <p className="text-lg font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">
+                        <MapPin className="size-4 sm:size-5 text-emerald-600 flex-shrink-0" />
+                        <p className="text-base sm:text-lg font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">
                           {location.distance}
                         </p>
                       </div>
@@ -655,35 +659,35 @@ export default function PecanRidgePage() {
 
                   {/* Type Badge */}
                   <div className="flex items-center justify-between">
-                    <div className="px-4 py-2 bg-slate-100 group-hover:bg-emerald-50 rounded-full transition-colors duration-300">
-                      <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 uppercase tracking-wide transition-colors">
+                    <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-100 group-hover:bg-emerald-50 rounded-full transition-colors duration-300">
+                      <span className="text-xs sm:text-sm font-bold text-slate-700 group-hover:text-emerald-700 uppercase tracking-wide transition-colors">
                         {location.type}
                       </span>
                     </div>
 
                     {/* Directions Arrow */}
                     <div className="flex items-center gap-2 text-slate-400 group-hover:text-emerald-600 transition-colors">
-                      <ArrowRight className="size-5 group-hover:translate-x-2 transition-transform duration-300" />
+                      <ArrowRight className="size-4 sm:size-5 group-hover:translate-x-2 transition-transform duration-300" />
                     </div>
                   </div>
                 </div>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-emerald-400/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             ))}
           </div>
 
           {/* Additional Info Banner */}
-          <div className="mt-16">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 p-1">
-              <div className="bg-white rounded-3xl p-8 lg:p-12">
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="mt-12 sm:mt-16">
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 p-1">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
                   <div className="flex-1 text-center lg:text-left">
-                    <h3 className="text-3xl lg:text-4xl font-black text-slate-900 mb-4">
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 mb-3 sm:mb-4">
                       Everything Within Reach
                     </h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
+                    <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
                       From shopping and dining to healthcare and entertainment,
                       you're never far from what you need. Experience the
                       perfect balance of peaceful living and convenient access
@@ -691,12 +695,12 @@ export default function PecanRidgePage() {
                     </p>
                   </div>
                   <div className="flex-shrink-0">
-                    <div className="flex items-center gap-4 px-8 py-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-2xl border-2 border-emerald-200">
+                    <div className="flex items-center gap-3 sm:gap-4 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl sm:rounded-2xl border-2 border-emerald-200">
                       <div className="text-center">
-                        <p className="text-4xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                        <p className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
                           &lt;15min
                         </p>
-                        <p className="text-sm font-semibold text-slate-600 mt-1">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-1">
                           Average Drive
                         </p>
                       </div>
@@ -708,57 +712,66 @@ export default function PecanRidgePage() {
           </div>
 
           {/* Park Map Section */}
-          <section className="py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+          <section className="py-16 sm:py-24 md:py-32 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(16,185,129,0.05),transparent_50%)]"></div>
 
-            <div className="container mx-auto px-6 relative z-10">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="max-w-7xl mx-auto">
-                <div className="text-center space-y-6 mb-16">
+                <div className="text-center space-y-4 sm:space-y-6 mb-12 sm:mb-16">
                   <div className="inline-block">
-                    <span className="px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 rounded-full text-sm font-bold uppercase tracking-wide border border-blue-200">
+                    <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wide border border-blue-200">
                       Park Layout
                     </span>
                   </div>
-                  <h2 className="text-5xl lg:text-7xl font-black text-slate-900">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-slate-900 px-4 sm:px-0">
                     Choose Your
                     <span className="block text-emerald-600 mt-2">
                       Perfect Spot
                     </span>
                   </h2>
-                  <p className="text-2xl text-slate-600 max-w-3xl mx-auto font-light">
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 max-w-3xl mx-auto font-light px-4 sm:px-0">
                     Explore our park layout and find the ideal location for your
                     new home
                   </p>
                 </div>
 
                 {/* Park Map Display */}
-                <div className="max-w-5xl mx-auto">
-                  <div className="relative group">
-                    <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                      <Image
-                        src="/PecanRidge/ParkMap.jpg"
-                        alt="Pecan Ridge RV Park Map showing all lots and amenities"
-                        width={2000}
-                        height={1500}
-                        className="w-full h-auto"
-                        priority
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="max-w-6xl mx-auto">
+                  <div className="relative">
+                    {/* Map Container with Professional Aspect Ratio */}
+
+                    {/* Aspect ratio wrapper - 4:3 for better viewing */}
+                    <div
+                      className="relative w-full"
+                      style={{ paddingBottom: "75%" }}
+                    >
+                      <div className="absolute inset-0 p-3 sm:p-4 md:p-6">
+                        <div className="relative w-full h-full rounded-xl overflow-hidden">
+                          <Image
+                            src="/PecanRidge/ParkMap.jpg"
+                            alt="Pecan Ridge RV Park Map showing all lots and amenities"
+                            fill
+                            className="object-contain p-2 sm:p-3 md:p-4"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+                            priority
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     {/* Call to Action */}
-                    <div className="text-center mt-12">
-                      <p className="text-lg text-slate-600 mb-6">
+                    <div className="text-center mt-8 sm:mt-10 md:mt-12">
+                      <p className="text-sm sm:text-base md:text-lg text-slate-600 mb-4 sm:mb-6 px-4 max-w-2xl mx-auto">
                         Interested in a specific lot? Contact us to check
-                        availability
+                        availability and schedule a tour of the park
                       </p>
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="tel:3342007299">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
+                        <a href="tel:3342007299" className="w-full sm:w-auto">
                           <Button
                             size="lg"
-                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-8 h-auto font-bold rounded-2xl"
+                            className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-8 h-auto font-bold rounded-2xl hover:scale-105 transition-transform"
                           >
-                            <Phone className="mr-2 size-5" />
+                            <Phone className="mr-2 size-4 sm:size-5" />
                             Call (334) 200-7299
                           </Button>
                         </a>
@@ -772,8 +785,8 @@ export default function PecanRidgePage() {
           </section>
 
           {/* Google Maps Embed */}
-          <div className="space-y-6">
-            <div className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="relative h-[300px] sm:h-[400px] md:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3397.7866555778544!2d-85.39844612397174!3d31.508988374232747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x889067f7e5a5b7f5%3A0x5a1e9c4e3e4e4e4e!2s8676%20Cottonwood%20Rd%2C%20Dothan%2C%20AL%2036301!5e0!3m2!1sen!2sus!4v1730000000000!5m2!1sen!2sus"
                 width="100%"
@@ -788,17 +801,19 @@ export default function PecanRidgePage() {
             </div>
 
             {/* Address and CTA */}
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-10 text-white shadow-2xl">
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 text-white shadow-2xl">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <MapPin className="size-8 text-white" />
-                    <h3 className="text-3xl font-black">Visit Us Today</h3>
+                <div className="w-full md:w-auto">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <MapPin className="size-6 sm:size-8 text-white flex-shrink-0" />
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-black">
+                      Visit Us Today
+                    </h3>
                   </div>
-                  <p className="text-2xl font-bold mb-2">
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold mb-2">
                     8676 Cottonwood Road, Dothan, AL 36301
                   </p>
-                  <p className="text-white/90 text-lg">
+                  <p className="text-white/90 text-sm sm:text-base md:text-lg">
                     Easy access from US-431 and Ross Clark Circle
                   </p>
                 </div>
@@ -806,13 +821,13 @@ export default function PecanRidgePage() {
                   href="https://www.google.com/maps/dir//8676+Cottonwood+Road+Dothan+AL+36301"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group"
+                  className="group w-full md:w-auto"
                 >
                   <Button
                     size="lg"
-                    className="bg-white text-emerald-600 hover:bg-slate-50 font-bold text-lg px-8 py-6 h-auto shadow-xl transition-transform duration-200 ease-in-out group-hover:scale-105 group-hover:-translate-y-1 rounded-2xl"
+                    className="w-full md:w-auto bg-white text-emerald-600 hover:bg-slate-50 font-bold text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 h-auto shadow-xl transition-transform duration-200 ease-in-out group-hover:scale-105 group-hover:-translate-y-1 rounded-2xl"
                   >
-                    <MapPin className="mr-2 size-5 transition-transform duration-200 group-hover:scale-110 group-hover:text-emerald-700" />
+                    <MapPin className="mr-2 size-4 sm:size-5 transition-transform duration-200 group-hover:scale-110 group-hover:text-emerald-700" />
                     Get Directions
                   </Button>
                 </a>
