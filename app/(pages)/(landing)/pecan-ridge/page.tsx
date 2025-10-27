@@ -222,9 +222,8 @@ export default function PecanRidgePage() {
 
             <div className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-10">
               <ApplicationModal variant="default" />
-              {/* TODO: Replace with real phone number */}
               <a
-                href="tel:5551234567"
+                href="tel:3342007299"
                 tabIndex={0}
                 className="inline-block focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400 rounded-xl"
               >
@@ -234,7 +233,7 @@ export default function PecanRidgePage() {
                   className="border-2 border-white/30 bg-white/10 backdrop-blur-xl text-white hover:bg-white/20 text-xl px-12 py-8 h-auto font-bold hover:scale-105 transition-all rounded-2xl"
                 >
                   <Phone className="mr-3 size-6" />
-                  (555) 123-4567 {/* PLACEHOLDER - Update with real number */}
+                  (334) 200-7299
                 </Button>
               </a>
             </div>
@@ -588,7 +587,7 @@ export default function PecanRidgePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-20">
             {[
               {
-                name: "Wiregrass Commons Mall",
+                name: "Dollar General",
                 distance: "1.3 miles",
                 type: "Shopping",
                 icon: "🛍️",
@@ -733,36 +732,38 @@ export default function PecanRidgePage() {
                 </div>
 
                 {/* Park Map Display */}
-                <div className="relative group">
-                  <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                    <Image
-                      src="/PecanRidge/Park%20Map%2002-01.jpg"
-                      alt="Pecan Ridge RV Park Map showing all lots and amenities"
-                      width={2000}
-                      height={1500}
-                      className="w-full h-auto"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
+                <div className="max-w-5xl mx-auto">
+                  <div className="relative group">
+                    <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                      <Image
+                        src="/PecanRidge/ParkMap.jpg"
+                        alt="Pecan Ridge RV Park Map showing all lots and amenities"
+                        width={2000}
+                        height={1500}
+                        className="w-full h-auto"
+                        priority
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
 
-                  {/* Call to Action */}
-                  <div className="text-center mt-12">
-                    <p className="text-lg text-slate-600 mb-6">
-                      Interested in a specific lot? Contact us to check
-                      availability
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <a href="tel:5551234567">
-                        <Button
-                          size="lg"
-                          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-8 h-auto font-bold rounded-2xl"
-                        >
-                          <Phone className="mr-2 size-5" />
-                          Call (555) 123-4567 {/* PLACEHOLDER */}
-                        </Button>
-                      </a>
-                      <ApplicationModal variant="default" />
+                    {/* Call to Action */}
+                    <div className="text-center mt-12">
+                      <p className="text-lg text-slate-600 mb-6">
+                        Interested in a specific lot? Contact us to check
+                        availability
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="tel:3342007299">
+                          <Button
+                            size="lg"
+                            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl text-lg px-10 py-8 h-auto font-bold rounded-2xl"
+                          >
+                            <Phone className="mr-2 size-5" />
+                            Call (334) 200-7299
+                          </Button>
+                        </a>
+                        <ApplicationModal variant="default" />
+                      </div>
                     </div>
                   </div>
                 </div>
