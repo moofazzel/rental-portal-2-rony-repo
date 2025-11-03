@@ -1,13 +1,11 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IDocument } from "@/types/document.types";
-import { Calendar, Download, Edit, Eye, FileText, Trash2 } from "lucide-react";
+import { Calendar, FileText } from "lucide-react";
 import { CldImage } from "next-cloudinary";
 import { useState } from "react";
-import { DeleteDocumentModal } from "./DeleteDocumentModal";
 import { EditDocumentModal } from "./EditDocumentModal";
 
 interface DocumentTableProps {
@@ -29,9 +27,6 @@ export function DocumentTable({
   properties,
 }: DocumentTableProps) {
   const [editingDocument, setEditingDocument] = useState<IDocument | null>(
-    null
-  );
-  const [deletingDocument, setDeletingDocument] = useState<IDocument | null>(
     null
   );
 
@@ -76,10 +71,6 @@ export function DocumentTable({
     setEditingDocument(doc);
   };
 
-  const handleDelete = (doc: IDocument) => {
-    setDeletingDocument(doc);
-  };
-
   const handleEditSave = async (
     documentId: string,
     updatedData: Partial<IDocument>
@@ -88,9 +79,8 @@ export function DocumentTable({
     setEditingDocument(null);
   };
 
-  const handleDeleteConfirm = async (documentId: string) => {
-    await onDelete(documentId);
-    setDeletingDocument(null);
+  const handleDeleteComplete = () => {
+    setEditingDocument(null);
   };
 
   const handleView = (doc: IDocument) => {
@@ -156,9 +146,9 @@ export function DocumentTable({
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                     Uploaded
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  {/* <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
                     Actions
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
 
@@ -168,7 +158,8 @@ export function DocumentTable({
                     key={doc._id}
                     className={`${
                       index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } hover:bg-blue-50 transition-colors duration-200`}
+                    } hover:bg-blue-50 transition-colors duration-200 cursor-pointer`}
+                    onClick={() => handleEdit(doc)}
                   >
                     <td className="px-4 py-3">
                       <div>
@@ -186,7 +177,10 @@ export function DocumentTable({
                           <div className="mt-2">
                             <div
                               className="w-16 h-16 rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                              onClick={() => onImageClick(doc)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onImageClick(doc);
+                              }}
                               title="Click to view image"
                             >
                               <CldImage
@@ -236,7 +230,10 @@ export function DocumentTable({
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    {/* <td
+                      className="px-4 py-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="flex items-center gap-2">
                         {doc.fileType === "PDF" && (
                           <Button
@@ -262,34 +259,8 @@ export function DocumentTable({
                             </div>
                           </Button>
                         )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          title="Download"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          title="Edit"
-                          onClick={() => handleEdit(doc)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                          title="Delete"
-                          onClick={() => handleDelete(doc)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -304,15 +275,9 @@ export function DocumentTable({
         isOpen={!!editingDocument}
         onClose={() => setEditingDocument(null)}
         onSave={handleEditSave}
+        onDelete={onDelete}
+        onDeleteComplete={handleDeleteComplete}
         properties={properties}
-      />
-
-      {/* Delete Document Modal */}
-      <DeleteDocumentModal
-        document={deletingDocument}
-        isOpen={!!deletingDocument}
-        onClose={() => setDeletingDocument(null)}
-        onConfirm={handleDeleteConfirm}
       />
     </>
   );
