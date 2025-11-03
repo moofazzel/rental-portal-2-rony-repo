@@ -94,18 +94,11 @@ export function DocumentTable({
   };
 
   const handleView = (doc: IDocument) => {
-    if (doc.fileType === "IMAGE" && doc.fileUrl) {
-      onImageClick(doc);
-      return;
-    }
-    if (doc.fileType === "PDF" && doc.fileUrl) {
-      // Prefer inline viewing for PDFs using Cloudinary flag
-      const inlineUrl = doc.fileUrl.includes("/upload/")
-        ? doc.fileUrl.replace("/upload/", "/upload/fl_inline/")
-        : doc.fileUrl;
-      window.open(inlineUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
+    if (!doc.fileUrl) return;
+
+    // Handle PDF, DOC, and other document types - open in new tab
+    // Browsers will handle PDFs inline, other types may prompt download
+    window.open(doc.fileUrl, "_blank", "noopener,noreferrer");
   };
 
   if (documents.length === 0) {
@@ -245,15 +238,17 @@ export function DocumentTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          title="View"
-                          onClick={() => handleView(doc)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        {doc.fileType === "PDF" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            title="View"
+                            onClick={() => handleView(doc)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
                         {doc.fileType === "IMAGE" && doc.fileUrl && (
                           <Button
                             variant="ghost"
