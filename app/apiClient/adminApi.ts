@@ -226,6 +226,31 @@ export async function updateUserById({
   });
 }
 
+// Update User Info (for admin profile updates - name, phoneNumber, bio, preferredLocation)
+export async function updateUserInfo({
+  userId,
+  data,
+}: {
+  userId: string;
+  data: {
+    name?: string;
+    phoneNumber?: string;
+    bio?: string;
+    preferredLocation?: string;
+    profileImage?: string;
+  };
+}) {
+  const url = `${API_BASE_URL}/users/${userId}`;
+  return api(url, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+    requireToken: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 //delete user By id
 export async function deleteUserById({ userId }: { userId: string }) {
   const url = `${API_BASE_URL}/users/${userId}`;

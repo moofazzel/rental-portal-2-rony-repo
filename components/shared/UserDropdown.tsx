@@ -1,6 +1,7 @@
 "use client";
 
 import InviteTenantModal from "@/app/(pages)/(root)/admin/tenants/(components)/InviteTenantModal";
+import { Route } from "@/constants/RouteConstants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,12 @@ import { Logout } from "./Logout";
 
 export default function UserDropdown() {
   const { data: session } = useSession();
+  
+  // Determine profile path based on user role
+  const profilePath = 
+    session?.user?.role === "SUPER_ADMIN" || session?.user?.role === "ADMIN"
+      ? Route.AdminProfilePath
+      : Route.ProfilePath;
 
   return (
     <>
@@ -44,7 +51,7 @@ export default function UserDropdown() {
                   {session?.user?.email}
                 </div>
                 <Link
-                  href="/profile"
+                  href={profilePath}
                   className="text-xs text-blue-600 font-medium hover:underline "
                 >
                   Profile & Preferences
